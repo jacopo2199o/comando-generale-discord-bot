@@ -32,7 +32,7 @@ for (const file of eventFiles) {
 	const filePath = path.join(eventPath, file);
 	const event = await import(pathToFileURL(filePath));
 
-	if (event.once) {
+	if (event.a.once) {
 		client.once(event.name, (...args) => event.execute(...args));
 	} else {
 		client.on(event.name, (...args) => event.execute(...args));
