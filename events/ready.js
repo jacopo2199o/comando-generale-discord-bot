@@ -1,9 +1,10 @@
 import { Events } from "discord.js";
 
-export const data = {
-	name: Events.ClientReady,
-	once: true,
-	execute: client => {
-		console.log(`ready! logged in as ${client.user.tag}`);
-	}
+const name = Events.ClientReady;
+const once = true;
+
+const execute = (client) => {
+	console.log(`ready! logged in as ${client.user.tag}`);
 };
+
+export { name, once, execute };

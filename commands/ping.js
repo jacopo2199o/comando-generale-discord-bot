@@ -1,9 +1,12 @@
 import { SlashCommandBuilder } from "discord.js";
 
-export const data = new SlashCommandBuilder()
+const cooldown = 4;
+const data = new SlashCommandBuilder()
 	.setName("ping")
 	.setDescription("replies with pong");
 
-export async function execute(interaction) {
+const execute = async (interaction) => {
 	await interaction.reply("pong");
-}
+};
+
+export {cooldown, data, execute};
