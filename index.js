@@ -4,8 +4,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const filename = fileURLToPath(import.meta.url);
+const dirname = path.dirname(filename);
 
 const client = new Client({
 	intents: [
@@ -14,9 +14,9 @@ const client = new Client({
 	]
 });
 
-const commandsPath = path.join(__dirname, "commands");
+const commandsPath = path.join(dirname, "commands");
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith(".js"));
-const eventPath = path.join(__dirname, "events");
+const eventPath = path.join(dirname, "events");
 const eventFiles = fs.readdirSync(eventPath).filter(file => file.endsWith(".js"));
 
 client.commands = new Collection();
