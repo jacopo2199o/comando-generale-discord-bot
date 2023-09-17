@@ -10,6 +10,7 @@ const dirname = path.dirname(filename);
 const client = new Client({
 	intents: [
 		GatewayIntentBits.Guilds,
+		GatewayIntentBits.GuildMembers,
 		GatewayIntentBits.GuildMessages
 	]
 });

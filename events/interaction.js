@@ -2,6 +2,9 @@ import { Events, Collection } from "discord.js";
 
 const name = Events.InteractionCreate;
 
+/**
+ * @param {import("discord.js").Interaction} interaction
+ */
 const execute = async (interaction) => {
 	if (!interaction.isChatInputCommand()) return;
 
@@ -14,9 +17,7 @@ const execute = async (interaction) => {
 
 	const { cooldowns } = interaction.client;
 
-	if (!cooldowns.has(command.data.name)) {
-		cooldowns.set(command.data.name, new Collection());
-	}
+	if (!cooldowns.has(command.data.name)) cooldowns.set(command.data.name, new Collection());
 
 	const now = Date.now();
 	const timestamps = cooldowns.get(command.data.name);
