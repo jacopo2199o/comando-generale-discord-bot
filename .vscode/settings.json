@@ -1,0 +1,12 @@
+{
+	"workbench.startupEditor": "none",
+	"editor.autoClosingBrackets": "never",
+	"git.autofetch": true,
+	"terminal.integrated.defaultProfile.windows": "PowerShell",
+	"html.autoClosingTags": false,
+	"editor.autoClosingDelete": "never",
+	"editor.autoClosingOvertype": "never",
+	"editor.autoClosingQuotes": "never",
+	"typescript.autoClosingTags": false,
+	"javascript.autoClosingTags": false
+}

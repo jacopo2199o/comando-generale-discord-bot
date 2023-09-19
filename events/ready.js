@@ -1,4 +1,5 @@
 import { Events } from "discord.js";
+import { myTest } from "../testing.js";
 
 const name = Events.ClientReady;
 const once = true;
@@ -8,11 +9,6 @@ const once = true;
  */
 const execute = async (client) => {
 	console.log(`ready! logged in as ${client.user.tag}`);
-
-	const guild = client.guilds.resolve("1048181529085497444");
-	const members = await guild.members.fetch();
-	members.each(member => {
-		member.roles.cache.forEach(role => console.log(member.displayName, role.name));
-	});
+	await myTest(client);
 };
 export { name, once, execute };
