@@ -8,5 +8,8 @@
 	"editor.autoClosingOvertype": "never",
 	"editor.autoClosingQuotes": "never",
 	"typescript.autoClosingTags": false,
-	"javascript.autoClosingTags": false
+	"javascript.autoClosingTags": false,
+	"editor.insertSpaces": true,
+	"editor.detectIndentation": false,
+	"editor.tabSize": 2
 }

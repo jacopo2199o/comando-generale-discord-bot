@@ -8,7 +8,7 @@ const once = true;
  * @param {import("discord.js").Client} client
  */
 const execute = async (client) => {
-	console.log(`ready! logged in as ${client.user.tag}`);
-	// await myTest(client);
+  console.log(`logged in as ${client.user.username}`);
+  // await myTest(client);
 };
 export { name, once, execute };

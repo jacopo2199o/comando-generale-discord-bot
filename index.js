@@ -8,11 +8,11 @@ const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
 const client = new Client({
-	intents: [
-		GatewayIntentBits.Guilds,
-		GatewayIntentBits.GuildMembers,
-		GatewayIntentBits.GuildMessages
-	]
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildMessages
+  ]
 });
 
 const commandsPath = path.join(dirname, "commands");
@@ -26,24 +26,24 @@ client.cooldowns = new Collection();
 dotenv.config();
 
 for (const file of commandFiles) {
-	const filePath = path.join(commandsPath, file);
-	const command = await import(pathToFileURL(filePath));
-	if ("data" in command && "execute" in command) {
-		client.commands.set(command.data.name, command);
-	} else {
-		console.log(`[warning] the command ad ${filePath} is missing required "data" or "execute" property`);
-	}
+  const filePath = path.join(commandsPath, file);
+  const command = await import(pathToFileURL(filePath));
+  if ("data" in command && "execute" in command) {
+    client.commands.set(command.data.name, command);
+  } else {
+    console.error(`[warning] the command ad ${filePath} is missing required "data" or "execute" property`);
+  }
 }
 
 for (const file of eventFiles) {
-	const filePath = path.join(eventPath, file);
-	const event = await import(pathToFileURL(filePath));
+  const filePath = path.join(eventPath, file);
+  const event = await import(pathToFileURL(filePath));
 
-	if (event.once) {
-		client.once(event.name, (...args) => event.execute(...args));
-	} else {
-		client.on(event.name, (...args) => event.execute(...args));
-	}
+  if (event.once) {
+    client.once(event.name, (...args) => event.execute(...args));
+  } else {
+    client.on(event.name, (...args) => event.execute(...args));
+  }
 }
 
 client.login(process.env.BOT_TOKEN);
