@@ -1,6 +1,13 @@
 import fs from "node:fs";
 import { SlashCommandBuilder } from "discord.js";
-import { start, dayInterval, dayMilliseconds, guild, client, filePath } from "./start-activity-points.js";
+import { serverId } from "../index.js";
+import {
+  start,
+  dayInterval,
+  activityPointsPath,
+  //membersActivity,
+  rolesTable
+} from "./start-activity-points.js";
 
 const cooldown = 4;
 const data = new SlashCommandBuilder()
@@ -13,23 +20,23 @@ const data = new SlashCommandBuilder()
 const execute = async (interaction) => {
   await interaction.deferReply();
 
-  const resume = (guild, client, membersActivity) => {
-    dayInterval.millisecondsRemaining = 0;
-    dayInterval.startTime = new Date();
-    start(guild, client, membersActivity);
-    dayInterval.id = setInterval(start, dayMilliseconds, guild, client, membersActivity);
-  };
+  const guild = interaction.client.guilds.resolve(serverId);
+  const client = interaction.client;
+  let membersActivity = JSON.parse(fs.readFileSync(activityPointsPath));
   
-  if (!dayInterval.millisecondsRemaining) {
+  if (dayInterval.id) {
     await interaction.editReply("monitoring activity is not stopped: nothing to resume");
     return;
   }
 
-  const membersActivity = fs.readFileSync(JSON.parse(filePath));
+  dayInterval.millisecondsRemaining = null;
+  dayInterval.millisecondsStartTime = new Date();
+  setTimeout(() => {
+    start(guild, client, rolesTable, membersActivity);
+    dayInterval.id = setInterval(start, dayInterval.millisecondInterval, guild, client, rolesTable, membersActivity);
+  }, dayInterval.millisecondsRemaining);
 
-  setTimeout(resume, dayInterval.millisecondsRemaining, guild, client, membersActivity);
-
-  await interaction.editReply("monitoring activity resumed");
+  await interaction.editReply("activity points resumed: monitoring...");
 };
 
 export {
