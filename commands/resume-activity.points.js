@@ -20,9 +20,9 @@ const data = new SlashCommandBuilder()
 const execute = async (interaction) => {
   await interaction.deferReply();
 
+  let membersActivity = JSON.parse(fs.readFileSync(activityPointsPath));
   const guild = interaction.client.guilds.resolve(serverId);
   const client = interaction.client;
-  let membersActivity = JSON.parse(fs.readFileSync(activityPointsPath));
   
   if (dayInterval.id) {
     await interaction.editReply("monitoring activity is not stopped: nothing to resume");
