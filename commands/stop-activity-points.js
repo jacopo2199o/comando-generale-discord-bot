@@ -1,10 +1,10 @@
-import fs from "node:fs";
 import { SlashCommandBuilder } from "discord.js";
 import {
   dayInterval,
-  membersActivity,
-  activityPointsPath
+  activityPoints,
+  activityPointsFilePath
 } from "./start-activity-points.js";
+import { saveFile } from "../general-utilities.js";
 
 const cooldown = 4;
 const data = new SlashCommandBuilder()
@@ -25,9 +25,7 @@ const execute = async (interaction) => {
   dayInterval.millisecondsRemaining = new Date() - dayInterval.millisecondsStartTime;
   dayInterval.id = clearInterval(dayInterval.id);
 
-  fs.writeFileSync(activityPointsPath, JSON.stringify(membersActivity, null, 2), error => {
-    if (error) throw error;
-  });
+  saveFile(activityPoints, activityPointsFilePath);
 
   await interaction.editReply("activity points saved: stop monitoring");
 };

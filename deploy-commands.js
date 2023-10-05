@@ -24,14 +24,14 @@ for (const file of commandFiles) {
   }
 }
 
-const rest = new REST().setToken(process.env.BOT_TOKEN);
+const rest = new REST().setToken(process.env.bot_token);
 
 (async () => {
   try {
     console.log(`refreshing ${commands.length} application slash commands.`);
 
     const data = await rest.put(
-      Routes.applicationCommands(process.env.CLIENT_ID),
+      Routes.applicationCommands(process.env.client_id),
       { body: commands },
     );
 

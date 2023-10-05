@@ -1,12 +1,10 @@
 import fs from "node:fs";
 import { SlashCommandBuilder } from "discord.js";
-import { serverId } from "../index.js";
+import { community } from "../events/ready.js";
 import {
   start,
   dayInterval,
-  activityPointsPath,
-  //membersActivity,
-  rolesTable
+  activityPointsFilePath,
 } from "./start-activity-points.js";
 
 const cooldown = 4;
@@ -20,8 +18,8 @@ const data = new SlashCommandBuilder()
 const execute = async (interaction) => {
   await interaction.deferReply();
 
-  let membersActivity = JSON.parse(fs.readFileSync(activityPointsPath));
-  const guild = interaction.client.guilds.resolve(serverId);
+  let activityPoints = JSON.parse(fs.readFileSync(activityPointsFilePath));
+  const guild = interaction.client.guilds.resolve(community.id);
   const client = interaction.client;
   
   if (dayInterval.id) {
@@ -32,8 +30,8 @@ const execute = async (interaction) => {
   dayInterval.millisecondsRemaining = null;
   dayInterval.millisecondsStartTime = new Date();
   setTimeout(() => {
-    start(guild, client, rolesTable, membersActivity);
-    dayInterval.id = setInterval(start, dayInterval.millisecondInterval, guild, client, rolesTable, membersActivity);
+    start(guild, client, community.ranks, activityPoints);
+    dayInterval.id = setInterval(start, dayInterval.millisecondsDuration, guild, client, community.ranks, activityPoints);
   }, dayInterval.millisecondsRemaining);
 
   await interaction.editReply("activity points resumed: monitoring...");
