@@ -1,8 +1,7 @@
 import { SlashCommandBuilder } from "discord.js";
 import {
   dayInterval,
-  activityPoints,
-  activityPointsFilePath
+  activity,
 } from "./start-activity-points.js";
 import { saveFile } from "../general-utilities.js";
 
@@ -25,7 +24,7 @@ const execute = async (interaction) => {
   dayInterval.millisecondsRemaining = new Date() - dayInterval.millisecondsStartTime;
   dayInterval.id = clearInterval(dayInterval.id);
 
-  saveFile(activityPoints, activityPointsFilePath);
+  saveFile(activity.profiles, activity.filePath);
 
   await interaction.editReply("activity points saved: stop monitoring");
 };

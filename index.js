@@ -10,24 +10,21 @@ import {
   Collection,
   GatewayIntentBits
 } from "discord.js";
-import { deepFreeze } from "./general-utilities.js";
 
 dotenv.config();
 
 const bot = (() => {
   const paths = ((commands, events) => {
-    const baseDirectoryName = (() => {
-      const basePath = (() => {
-        return fileURLToPath(import.meta.url);
-      })();
+    const baseName = (() => {
+      const basePath = fileURLToPath(import.meta.url);
       return path.dirname(basePath);
     })();
-    return {
-      commands: path.join(baseDirectoryName, commands),
-      events: path.join(baseDirectoryName, events)
-    };
+    return Object.freeze({
+      commands: path.join(baseName, commands),
+      events: path.join(baseName, events)
+    });
   })("commands", "events");
-  return deepFreeze({
+  return Object.freeze({
     commands: {
       files: fs.readdirSync(paths.commands)
         .filter(file => file.endsWith(".js")),
@@ -55,9 +52,7 @@ const bot = (() => {
   for (const file of bot.commands.files) {
     const command = await (() => {
       const fileURL = (() => {
-        const filePath = (() => {
-          return path.join(bot.commands.path, file);
-        })();
+        const filePath = path.join(bot.commands.path, file);
         return pathToFileURL(filePath);
       })();
       return import(fileURL);
@@ -76,9 +71,7 @@ const bot = (() => {
   for (const file of bot.events.files) {
     const event = await (() => {
       const fileURL = (() => {
-        const filePath = (() => {
-          return path.join(bot.events.path, file);
-        })();
+        const filePath = path.join(bot.events.path, file);
         return pathToFileURL(filePath);
       })();
       return import(fileURL);
