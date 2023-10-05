@@ -18,18 +18,22 @@ const data = new SlashCommandBuilder()
 const execute = async (interaction) => {
   await interaction.deferReply();
 
-  const client = interaction.client;
-  const guild = interaction.client.guilds.resolve(community.id);
-
-  activity.points = JSON.parse(fs.readFileSync(activity.filePath));
-  
   if (dayInterval.id) {
     await interaction.editReply("monitoring activity is not stopped: nothing to resume");
     return;
   }
 
+  const client = interaction.client;
+  const guild = interaction.client.guilds.resolve(community.id);
+  
+  activity.points = ((path) => {
+    const data = fs.readFileSync(path);
+    return JSON.parse(data);
+  })(activity.filePath);
+
   dayInterval.millisecondsRemaining = null;
   dayInterval.millisecondsStartTime = new Date();
+  
   setTimeout(() => {
     start(guild, client, community, activity);
     dayInterval.id = setInterval(start, dayInterval.millisecondsDuration, guild, client, community, activity);

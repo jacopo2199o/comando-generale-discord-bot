@@ -43,4 +43,7 @@ const execute = async (interaction) => {
   await command.execute(interaction);
 };
 
-export { name, execute };
+export {
+  name,
+  execute
+};

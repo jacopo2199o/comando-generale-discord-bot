@@ -97,6 +97,7 @@ const start = (guild, client, community, activity) => {
         });
     }
   });
+
   saveFile(activity.profiles, activity.filePath);
 };
 
@@ -152,7 +153,7 @@ const execute = async (interaction) => {
         const rank = community.ranks.find(rank => rank.id === role.id);
         if (
           rank &&
-          rank.points > profile.points
+          rank.points >= profile.points
         ) {
           if (rank.points <= maxPoints.thirdClass) {
             profile.points = rank.points + additionalPoints.thirdClass;
