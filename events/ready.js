@@ -22,11 +22,13 @@ const community = (() => {
   if (argv[2] === "-comando generale") {
     return Object.freeze({
       id: process.env.comando_generale_id,
+      room: "705692949467496480",
       ranks: ranks.comandoGenerale
     });
   } else if (argv[2] === "-jacopo2199o") {
     return Object.freeze({
       id: process.env.jacopo2199o_id,
+      room: "1100786695613456455",
       ranks: ranks.jacopo2199o
     });
   } else {
