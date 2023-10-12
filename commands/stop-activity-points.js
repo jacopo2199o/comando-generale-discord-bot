@@ -1,9 +1,5 @@
 import { SlashCommandBuilder } from "discord.js";
-import {
-  dayInterval,
-  activity,
-} from "./start-activity-points.js";
-import { saveFile } from "../general-utilities.js";
+import { activity } from "./start-activity-points.js";
 
 const cooldown = 4;
 const data = new SlashCommandBuilder()
@@ -16,15 +12,11 @@ const data = new SlashCommandBuilder()
 const execute = async (interaction) => {
   await interaction.deferReply();
 
-  if (!dayInterval.id) {
+  const stopped = activity.stop();
+  
+  if (stopped === "not started") {
     await interaction.editReply("activity points is not started: nothing to stop");
-    return;
   }
-
-  dayInterval.millisecondsRemaining = new Date() - dayInterval.millisecondsStartTime;
-  dayInterval.id = clearInterval(dayInterval.id);
-
-  saveFile(activity.profiles, activity.filePath);
 
   await interaction.editReply("activity points saved: stop monitoring");
 };

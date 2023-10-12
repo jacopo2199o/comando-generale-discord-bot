@@ -1,16 +1,17 @@
 import dotenv from "dotenv";
 import { Events } from "discord.js";
 import { community } from "./ready.js";
+import { activity } from "../commands/start-activity-points.js";
 
 dotenv.config();
 
 const name = Events.GuildMemberAdd;
 /**
- * @param {import("discord.js").GuildMember} member
+ * @param {import("discord.js").GuildMember} guildMember
  */
-const execute = async (member) => {
+const execute = async (guildMember) => {
 
-  const baseRole = (() => {
+  const baseRoleId = (() => {
     if (community.id === process.env.comando_generale_id) {
       return "1008665802716741733";
     } else if (community.id === process.env.jacopo2199o_id) {
@@ -18,13 +19,15 @@ const execute = async (member) => {
     }
   })();
 
-  if (!member.roles.cache.has(baseRole)) {
-    member.roles.add(baseRole); // membro
+  if (!guildMember.roles.cache.has(baseRoleId)) {
+    guildMember.roles.add(baseRoleId);
   }
 
+  activity.addProfile();
+
   // per sicurezza, assegna il ruolo base per iniziare
-  await member.guild.channels.cache.get(community.room)
-    .send(`Hello ${member.displayName}`);
+  await guildMember.guild.channels.cache.get(community.room)
+    .send(`Hello ${guildMember.displayName}`);
 };
 
 export {

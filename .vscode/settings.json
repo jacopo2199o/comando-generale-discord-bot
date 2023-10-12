@@ -11,5 +11,6 @@
 	"javascript.autoClosingTags": false,
 	"editor.insertSpaces": true,
 	"editor.detectIndentation": false,
-	"editor.tabSize": 2
+	"editor.tabSize": 2,
+  "javascript.suggestionActions.enabled": false
 }

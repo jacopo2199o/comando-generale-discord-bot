@@ -1,11 +1,6 @@
-import fs from "node:fs";
 import { SlashCommandBuilder } from "discord.js";
+import { activity } from "./start-activity-points.js";
 import { community } from "../events/ready.js";
-import {
-  activity,
-  dayInterval,
-  start,
-} from "./start-activity-points.js";
 
 const cooldown = 4;
 const data = new SlashCommandBuilder()
@@ -18,26 +13,12 @@ const data = new SlashCommandBuilder()
 const execute = async (interaction) => {
   await interaction.deferReply();
 
-  if (dayInterval.id) {
+  const resumed = activity.resume(community);
+
+  if (resumed === "not stopped") {
     await interaction.editReply("monitoring activity is not stopped: nothing to resume");
     return;
   }
-
-  const client = interaction.client;
-  const guild = interaction.client.guilds.resolve(community.id);
-  
-  activity.points = ((path) => {
-    const data = fs.readFileSync(path);
-    return JSON.parse(data);
-  })(activity.filePath);
-
-  dayInterval.millisecondsRemaining = null;
-  dayInterval.millisecondsStartTime = new Date();
-  
-  setTimeout(() => {
-    start(guild, client, community, activity);
-    dayInterval.id = setInterval(start, dayInterval.millisecondsDuration, guild, client, community, activity);
-  }, dayInterval.millisecondsRemaining);
 
   await interaction.editReply("activity points resumed: monitoring...");
 };
