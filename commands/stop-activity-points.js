@@ -12,13 +12,14 @@ const data = new SlashCommandBuilder()
 const execute = async (interaction) => {
   await interaction.deferReply();
 
-  const stopped = activity.stop();
-  
+  const stopped = await activity.stop();
+
   if (stopped === "not started") {
     await interaction.editReply("activity points is not started: nothing to stop");
+  } else {
+    await interaction.editReply("activity points saved: stop monitoring");
   }
 
-  await interaction.editReply("activity points saved: stop monitoring");
 };
 
 export {

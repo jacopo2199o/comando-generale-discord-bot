@@ -13,7 +13,7 @@ const data = new SlashCommandBuilder()
 const execute = async (interaction) => {
   await interaction.deferReply();
 
-  const resumed = activity.resume(community);
+  const resumed = activity.resume(community, interaction.client);
 
   if (resumed === "not stopped") {
     await interaction.editReply("monitoring activity is not stopped: nothing to resume");

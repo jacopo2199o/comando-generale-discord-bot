@@ -18,9 +18,14 @@ const execute = async (interaction) => {
   await interaction.deferReply();
 
   await activity.initialize(community, interaction.client);
-  activity.start(community, interaction.client);
+  const started = activity.start(community, interaction.client);
 
-  await interaction.editReply("activity points created: start monitoring...");
+  if (started === "not stopped") {
+    await interaction.editReply("activity points created: start monitoring...");
+  } else {
+    await interaction.editReply("activity points already started: stop activity first");
+  }
+
 };
 
 export {

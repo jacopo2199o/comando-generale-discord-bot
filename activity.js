@@ -14,7 +14,7 @@ const Activity = function () {
   });
   this.dayInterval = Object.defineProperty({
     id: undefined,
-    millisecondsDuration: 2000, // correggere nel tempo reale in millisecondi di un giorno
+    millisecondsDuration: 1000, // correggere nel tempo reale in millisecondi di un giorno
     millisecondsStartTime: undefined,
     millisecondsRemaining: undefined
   }, "millisecondsDuration", {
@@ -131,7 +131,7 @@ Activity.prototype.initialize = async function (community, client) {
   saveFile(this.profiles, this.filePath);
 };
 
-Activity.prototype.resume = function (community) {
+Activity.prototype.resume = function (community, client) {
   if (this.dayInterval.id) {
     return "not stopped";
   }
@@ -145,8 +145,8 @@ Activity.prototype.resume = function (community) {
   this.dayInterval.millisecondsStartTime = new Date();
 
   setTimeout(() => {
-    this.start();
-    this.dayInterval.id = setInterval(() => this.start(community), this.dayInterval.millisecondsDuration);
+    this.start(community, client);
+    this.dayInterval.id = setInterval(() => this.start(community, client), this.dayInterval.millisecondsDuration);
   }, this.dayInterval.millisecondsRemaining);
 
 };
@@ -154,11 +154,12 @@ Activity.prototype.resume = function (community) {
 /**
  * @param { community } community
  */
-Activity.prototype.start = function (community, client) {
+Activity.prototype.start = function (community, client) { //client serve solo per inviare i messaggi (per ora)
   // imposta la data di avvio e attiva il timer
   if (!this.dayInterval.millisecondsStartTime) {
     this.dayInterval.millisecondsStartTime = new Date();
-    this.dayInterval.id = setInterval(() => this.start(community), this.dayInterval.millisecondsDuration);
+    this.dayInterval.id = setInterval(() => this.start(community, client), this.dayInterval.millisecondsDuration);
+    return "not stopped";
   }
 
   this.profiles.forEach(async (profile) => {
@@ -228,6 +229,7 @@ Activity.prototype.stop = async function () {
   }
 
   this.dayInterval.millisecondsRemaining = new Date() - this.dayInterval.millisecondsStartTime;
+  this.dayInterval.millisecondsStartTime = null;
   this.dayInterval.id = clearInterval(this.dayInterval.id);
 
   saveFile(this.profiles, this.filePath);

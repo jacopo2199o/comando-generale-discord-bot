@@ -11,10 +11,16 @@ const name = Events.GuildMemberAdd;
  */
 const execute = async (guildMember) => {
 
-  const baseRoleId = (() => {
+  const baseRoleId = (async () => {
     if (community.id === process.env.comando_generale_id) {
+      // per sicurezza, assegna il ruolo base per iniziare
+      await guildMember.guild.channels.cache.get(community.room)
+        .send(`Hello ${guildMember.displayName}`);
       return "1008665802716741733";
     } else if (community.id === process.env.jacopo2199o_id) {
+      // per sicurezza, assegna il ruolo base per iniziare
+      await guildMember.guild.channels.cache.get(community.room)
+        .send(`Hello ${guildMember.displayName}`);
       return "1137407767368433715";
     }
   })();
@@ -23,11 +29,8 @@ const execute = async (guildMember) => {
     guildMember.roles.add(baseRoleId);
   }
 
-  activity.addProfile();
+  activity.addProfile(guildMember, baseRoleId);
 
-  // per sicurezza, assegna il ruolo base per iniziare
-  await guildMember.guild.channels.cache.get(community.room)
-    .send(`Hello ${guildMember.displayName}`);
 };
 
 export {
