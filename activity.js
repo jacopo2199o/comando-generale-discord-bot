@@ -1,8 +1,6 @@
 import fs from "node:fs";
 import { saveFile } from "./general-utilities.js";
 
-const testChannelId = "1100786695613456455"; // jacopo2199o general channel
-
 /**
  * @param {import("discord.js").Client} client
 */
@@ -22,7 +20,6 @@ const Activity = function () {
     configurable: false
   });
   this.filePath = "./resources/activity-points.json";
-
   this.maxPoints = Object.freeze({
     firstClass: 8000,
     secondClass: 800,
@@ -43,21 +40,32 @@ const Activity = function () {
     });
 };
 
+/**
+ * @param { import("discord.js").GuildMember } member
+ */
+Activity.prototype.addPoints = function (member, amount) {
+  if (this.dayInterval.millisecondsStartTime) {
+    const profile = this.profiles.find(profile => profile.id === member.id);
+    profile.points += amount;
+
+    saveFile(this.profiles, this.filePath);
+    return "success";
+  }
+};
 
 /**
  * @param { import("discord.js").GuildMember } member
  */
-Activity.prototype.addProfile = function (member, baseRoleId) {
+Activity.prototype.addProfile = function (member, baseRole) {
   if (this.dayInterval.id) {
-    const rank = this.community.ranks.find(rank => rank.id === baseRoleId);
-    const role = member.guild.roles.cache.get(baseRoleId);
+    const role = member.guild.roles.cache.get(baseRole.id);
 
     // add new member into activity
     this.profiles.push(
       Object.defineProperties({
         id: member.id,
         name: member.displayName,
-        points: rank.points + this.additionalPoints.thirdClass,
+        points: baseRole.points + this.additionalPoints.thirdClass,
         roleId: role.id,
         roleName: role.name
       }, {
@@ -75,8 +83,8 @@ Activity.prototype.addProfile = function (member, baseRoleId) {
 };
 
 /**
- * @param { community } community
  * @param { import("discord.js").Client } client
+ * @param { import("./events/ready.js").community } community
  */
 Activity.prototype.initialize = async function (community, client) {
   this.guild = await client.guilds.resolve(community.id);
@@ -104,7 +112,7 @@ Activity.prototype.initialize = async function (community, client) {
       });
     });
 
-  // set initial activity points
+  // imposta i punti iniziali
   this.members.forEach(member => {
     const profile = this.profiles.find(profile => profile.id === member.id);
     if (profile) {
@@ -131,6 +139,10 @@ Activity.prototype.initialize = async function (community, client) {
   saveFile(this.profiles, this.filePath);
 };
 
+/**
+ * @param { import("discord.js").Client } client
+ * @param { import("./events/ready.js").community } community
+ */
 Activity.prototype.resume = function (community, client) {
   if (this.dayInterval.id) {
     return "not stopped";
@@ -148,11 +160,11 @@ Activity.prototype.resume = function (community, client) {
     this.start(community, client);
     this.dayInterval.id = setInterval(() => this.start(community, client), this.dayInterval.millisecondsDuration);
   }, this.dayInterval.millisecondsRemaining);
-
 };
 
 /**
- * @param { community } community
+ * @param { import("discord.js").Client } client
+ * @param { import("./events/ready.js").community } community
  */
 Activity.prototype.start = function (community, client) { //client serve solo per inviare i messaggi (per ora)
   // imposta la data di avvio e attiva il timer
@@ -196,7 +208,7 @@ Activity.prototype.start = function (community, client) { //client serve solo pe
 
       // i messaggi dovranno essere pubblicati nell'apposito evento
       const message = `<@${profile.id}> downgraded to <@&${rank.previous.id}>`;
-      await client.channels.cache.get(testChannelId)
+      await client.channels.cache.get(community.room)
         .send({
           content: message,
           flags: [4096]
@@ -212,7 +224,7 @@ Activity.prototype.start = function (community, client) { //client serve solo pe
 
       // i messaggi dovranno essere pubblicati nell'apposito evento
       const message = `<@${profile.id}> promoted to <@&${rank.next.id}>`;
-      await this.client.channels.cache.get(testChannelId)
+      await client.channels.cache.get(community.room)
         .send({
           content: message,
           flags: [4096]

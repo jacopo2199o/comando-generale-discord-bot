@@ -7,30 +7,19 @@ dotenv.config();
 
 const name = Events.GuildMemberAdd;
 /**
- * @param {import("discord.js").GuildMember} guildMember
+ * @param {import("discord.js").GuildMember} member
  */
-const execute = async (guildMember) => {
-
-  const baseRoleId = (async () => {
-    if (community.id === process.env.comando_generale_id) {
-      // per sicurezza, assegna il ruolo base per iniziare
-      await guildMember.guild.channels.cache.get(community.room)
-        .send(`Hello ${guildMember.displayName}`);
-      return "1008665802716741733";
-    } else if (community.id === process.env.jacopo2199o_id) {
-      // per sicurezza, assegna il ruolo base per iniziare
-      await guildMember.guild.channels.cache.get(community.room)
-        .send(`Hello ${guildMember.displayName}`);
-      return "1137407767368433715";
+const execute = async (member) => {
+  if (member.guild.id === community.id) {
+    if (!member.roles.cache.has(community.baseRole.id)) {
+      member.roles.add(community.baseRole.id);
     }
-  })();
 
-  if (!guildMember.roles.cache.has(baseRoleId)) {
-    guildMember.roles.add(baseRoleId);
+    activity.addProfile(member, community.baseRole);
+    // per sicurezza, assegna il ruolo base per iniziare
+    await member.guild.channels.cache.get(community.room)
+      .send(`welcome there, ${member.displayName}`);
   }
-
-  activity.addProfile(guildMember, baseRoleId);
-
 };
 
 export {

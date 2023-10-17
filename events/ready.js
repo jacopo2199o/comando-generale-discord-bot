@@ -21,20 +21,23 @@ const community = (() => {
 
   if (argv[2] === "-comando generale") {
     return Object.freeze({
+      baseRole: ranks.comandoGenerale[ranks.comandoGenerale.length - 1],
       id: process.env.comando_generale_id,
-      room: "705692949467496480",
-      ranks: ranks.comandoGenerale
+      ranks: ranks.comandoGenerale,
+      room: "705692949467496480"
     });
   } else if (argv[2] === "-jacopo2199o") {
     return Object.freeze({
+      baseRole: ranks.jacopo2199o[ranks.jacopo2199o.length - 1],
       id: process.env.jacopo2199o_id,
-      room: "1100786695613456455",
-      ranks: ranks.jacopo2199o
+      ranks: ranks.jacopo2199o,
+      room: "1100786695613456455"
     });
   } else {
     throw new Error("server name argument must be provided");
   }
 })();
+
 const name = Events.ClientReady;
 const once = true;
 /**
