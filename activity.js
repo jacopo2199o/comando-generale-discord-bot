@@ -58,16 +58,27 @@ Activity.prototype.addPoints = function (member, amount) {
  * @param { import("discord.js").GuildMember } member
  * @param { String } baseRole
  */
-Activity.prototype.addProfile = function (member, baseRole) {
+Activity.prototype.addProfile = async function (member) {
+  if (!this.community.settings) {
+    return;
+  }
+
+  if (!member.roles.cache.has(this.community.settings.preferences.baseRoleId)) {
+    member.roles.add(this.community.settings.preferences.baseRoleId);
+  }
+
+  await member.guild.channels.cache.get(this.community.settings.preferences.logRoom)
+    .send(`welcome there, ${member.displayName}`);
+
   if (this.dayInterval.id) {
-    const role = member.guild.roles.cache.get(baseRole.id);
+    const role = member.guild.roles.cache.get(this.community.settings.preferences.baseRole.id);
 
     // add new member into activity
     this.profiles.push(
       Object.defineProperties({
         id: member.id,
         name: member.displayName,
-        points: baseRole.points + this.additionalPoints.thirdClass,
+        points: this.community.settings.preferences.baseRole.points + this.additionalPoints.thirdClass,
         roleId: role.id,
         roleName: role.name
       }, {

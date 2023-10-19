@@ -13,14 +13,7 @@ const execute = async (member) => {
    * @type { import("../community.js").Community }
    */
   const community = communities.get(member.guild.id);
-
-  if (!member.roles.cache.has(community.settings.preferences.baseRoleId)) {
-    member.roles.add(community.settings.preferences.baseRoleId);
-  }
-
-  community.activity.addProfile(member, community.settings.preferences.baseRoleId);
-  await member.guild.channels.cache.get(community.settings.preferences.logRoom)
-    .send(`welcome there, ${member.displayName}`);
+  community.activity.addProfile(member);
 };
 
 export {
