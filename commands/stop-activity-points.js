@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "discord.js";
-import { activity } from "./start-activity-points.js";
+import { communities } from "../events/ready.js";
 
 const cooldown = 4;
 const data = new SlashCommandBuilder()
@@ -9,10 +9,15 @@ const data = new SlashCommandBuilder()
 /**
  * @param {import("discord.js").Interaction} interaction
 */
+
 const execute = async (interaction) => {
   await interaction.deferReply();
-
-  const stopped = await activity.stop();
+  
+  /**
+   * @type { import("../community.js").Community }
+   */
+  const community = communities.get(interaction.guildId);
+  const stopped = await community.activity.stop();
 
   if (stopped === "not started") {
     await interaction.editReply("activity points is not started: nothing to stop");

@@ -1,11 +1,9 @@
 import { SlashCommandBuilder } from "discord.js";
 import dotenv from "dotenv";
-import { community } from "../events/ready.js";
-import { Activity } from "../activity.js";
+import { communities } from "../events/ready.js";
 
 dotenv.config();
 
-const activity = new Activity();
 const cooldown = 4;
 const data = new SlashCommandBuilder()
   .setName("start-activity-points")
@@ -17,19 +15,26 @@ const data = new SlashCommandBuilder()
 const execute = async (interaction) => {
   await interaction.deferReply();
 
-  await activity.initialize(community, interaction.client);
-  const started = activity.start(community, interaction.client);
+  /**
+   * @type { import("../community.js").Community }
+   */
+  const community = communities.get(interaction.guildId);
+  const initialized = await community.activity.initialize(interaction.client);
 
-  if (started === "not stopped") {
-    await interaction.editReply("activity points created: start monitoring...");
+  if (initialized === "not ready") {
+    await interaction.editReply("settings are not available: use /setup-activity-points");
   } else {
-    await interaction.editReply("activity points already started: stop activity first");
+    const started = community.activity.start(interaction.client);
+    if (started === "not stopped") {
+      await interaction.editReply("activity points created: start monitoring...");
+    } else {
+      await interaction.editReply("activity points already started: stop activity first");
+    }
   }
 
 };
 
 export {
-  activity,
   cooldown,
   data,
   execute

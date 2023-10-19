@@ -20,7 +20,9 @@ const execute = async (interaction) => {
 
   const { cooldowns } = interaction.client;
 
-  if (!cooldowns.has(command.data.name)) cooldowns.set(command.data.name, new Collection());
+  if (!cooldowns.has(command.data.name)) {
+    cooldowns.set(command.data.name, new Collection());
+  }
 
   const now = Date.now();
   const timestamps = cooldowns.get(command.data.name);

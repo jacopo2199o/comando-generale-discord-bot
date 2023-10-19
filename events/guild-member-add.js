@@ -1,7 +1,6 @@
 import dotenv from "dotenv";
 import { Events } from "discord.js";
-import { community } from "./ready.js";
-import { activity } from "../commands/start-activity-points.js";
+import { communities } from "./ready.js";
 
 dotenv.config();
 
@@ -10,16 +9,18 @@ const name = Events.GuildMemberAdd;
  * @param {import("discord.js").GuildMember} member
  */
 const execute = async (member) => {
-  if (member.guild.id === community.id) {
-    if (!member.roles.cache.has(community.baseRole.id)) {
-      member.roles.add(community.baseRole.id);
-    }
+  /**
+   * @type { import("../community.js").Community }
+   */
+  const community = communities.get(member.guild.id);
 
-    activity.addProfile(member, community.baseRole);
-    // per sicurezza, assegna il ruolo base per iniziare
-    await member.guild.channels.cache.get(community.room)
-      .send(`welcome there, ${member.displayName}`);
+  if (!member.roles.cache.has(community.settings.preferences.baseRoleId)) {
+    member.roles.add(community.settings.preferences.baseRoleId);
   }
+
+  community.activity.addProfile(member, community.settings.preferences.baseRoleId);
+  await member.guild.channels.cache.get(community.settings.preferences.logRoom)
+    .send(`welcome there, ${member.displayName}`);
 };
 
 export {

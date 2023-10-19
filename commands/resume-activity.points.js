@@ -1,6 +1,5 @@
 import { SlashCommandBuilder } from "discord.js";
-import { activity } from "./start-activity-points.js";
-import { community } from "../events/ready.js";
+import { communities } from "../events/ready.js";
 
 const cooldown = 4;
 const data = new SlashCommandBuilder()
@@ -13,7 +12,11 @@ const data = new SlashCommandBuilder()
 const execute = async (interaction) => {
   await interaction.deferReply();
 
-  const resumed = activity.resume(community, interaction.client);
+  /**
+ * @type { import("../community.js").Community }
+ */
+  const community = communities.get(interaction.guildId);
+  const resumed = community.activity.resume(interaction.client);
 
   if (resumed === "not stopped") {
     await interaction.editReply("monitoring activity is not stopped: nothing to resume");
