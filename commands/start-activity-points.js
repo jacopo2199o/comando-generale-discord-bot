@@ -22,7 +22,7 @@ const execute = async (interaction) => {
   const initialized = await community.activity.initialize(interaction.client);
 
   if (initialized === "not ready") {
-    await interaction.editReply("settings are not available: use /setup-activity-points");
+    await interaction.editReply("preferences are not available: use /set-preferences");
   } else {
     const started = community.activity.start(interaction.client);
     if (started === "not stopped") {

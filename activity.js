@@ -11,9 +11,9 @@ const Activity = function (community) {
     thirdClass: 5
   });
   this.community = community;
-  this.dayInterval = Object.defineProperty({
+  this.dayTimeout = Object.defineProperty({
     id: undefined,
-    millisecondsDuration: 1000, // correggere nel tempo reale in millisecondi di un giorno
+    millisecondsDuration: 2000, // correggere nel tempo reale in millisecondi di un giorno
     millisecondsStartTime: undefined,
     millisecondsRemaining: undefined
   }, "millisecondsDuration", {
@@ -31,13 +31,6 @@ const Activity = function (community) {
     high: 4
   });
   this.profiles = [];
-
-  Object.defineProperty(this,
-    "filePath",
-    {
-      writable: false,
-      configurable: false
-    });
 };
 
 /**
@@ -45,7 +38,7 @@ const Activity = function (community) {
  * @param { Number } amount
  */
 Activity.prototype.addPoints = function (member, amount) {
-  if (this.dayInterval.millisecondsStartTime) {
+  if (this.dayTimeout.millisecondsStartTime) {
     const profile = this.profiles.find(profile => profile.id === member.id);
     profile.points += amount;
 
@@ -70,7 +63,7 @@ Activity.prototype.addProfile = async function (member) {
   await member.guild.channels.cache.get(this.community.settings.preferences.logRoom)
     .send(`welcome there, ${member.displayName}`);
 
-  if (this.dayInterval.id) {
+  if (this.dayTimeout.id) {
     const role = member.guild.roles.cache.get(this.community.settings.preferences.baseRole.id);
 
     // add new member into activity
@@ -108,7 +101,7 @@ Activity.prototype.initialize = async function (client) {
     .members.fetch();
 
   // popola il vettore dei profili attività
-  this.profiles = this.members.filter(member => member.user.id !== process.env.client_id)
+  this.profiles = this.members.filter(member => !member.user.bot && member.id !== this.community.adminId)
     .map(member => {
       return Object.defineProperties({
         id: member.id,
@@ -133,7 +126,7 @@ Activity.prototype.initialize = async function (client) {
     const profile = this.profiles.find(profile => profile.id === member.id);
     if (profile) {
       member.roles.cache.forEach(role => {
-        const rank = this.community.ranks.find(rank => rank.id === role.id);
+        const rank = this.community.settings.ranks.find(rank => rank.id === role.id);
         if (rank && rank.points >= profile.points) {
           if (rank.points <= this.maxPoints.thirdClass) {
             profile.points = rank.points + this.additionalPoints.thirdClass;
@@ -149,14 +142,18 @@ Activity.prototype.initialize = async function (client) {
     }
   });
 
-  saveFile(this.profiles, this.filePath);
+  saveFile(this.profiles, this.community.settings.filePaths.activity);
 };
 
 /**
  * @param { import("discord.js").Client } client
  */
 Activity.prototype.resume = function (client) {
-  if (this.dayInterval.id) {
+  if (!this.dayTimeout.id) {
+    return "not started";
+  }
+
+  if (this.dayTimeout.millisecondsStartTime !== null) {
     return "not stopped";
   }
 
@@ -165,13 +162,55 @@ Activity.prototype.resume = function (client) {
     return JSON.parse(data);
   })(this.community.settings.filePaths.activity);
 
-  this.dayInterval.millisecondsRemaining = null;
-  this.dayInterval.millisecondsStartTime = new Date();
+  this.dayTimeout.millisecondsStartTime = new Date();
 
   setTimeout(() => {
     this.start(client);
-    this.dayInterval.id = setInterval(() => this.start(client), this.dayInterval.millisecondsDuration);
-  }, this.dayInterval.millisecondsRemaining);
+    this.dayTimeout.millisecondsRemaining = null;
+    this.dayTimeout.id = setTimeout(() => this.start(client), this.dayTimeout.millisecondsDuration);
+  }, this.dayTimeout.millisecondsRemaining);
+};
+
+/**
+ * @param { import("discord.js").Channel } logChannel
+ * @param { import("discord.js").Role } baseRole
+ */
+Activity.prototype.setPreferences = function (logChannel, baseRole, startPoints) {
+  this.community.settings.preferences = {
+    logChannelId: logChannel.id,
+    baseRole: {
+      id: baseRole.id,
+      points: startPoints
+    }
+  };
+
+  saveFile(this.community.settings.preferences, this.community.settings.filePaths.preferences);
+
+  return "success";
+};
+
+/**
+ * @param {import("discord.js").Role} role 
+ */
+Activity.prototype.setRank = function (role, points) {
+  if (!this.community.settings.preferences) {
+    return "preferences missing";
+  }
+
+  if (this.community.settings.preferences.baseRole.points <= points) {
+    return "points minor equal";
+  }
+
+  if (!this.community.settings.ranks) {
+    this.community.settings.ranks = [];
+  }
+
+  this.community.settings.ranks.push({
+    id: role.id,
+    points
+  });
+
+  saveFile(this.community.settings.ranks, this.community.settings.filePaths.ranks);
 };
 
 /**
@@ -179,9 +218,9 @@ Activity.prototype.resume = function (client) {
  */
 Activity.prototype.start = function (client) { //client serve solo per inviare i messaggi (per ora)
   // imposta la data di avvio e attiva il timer
-  if (!this.dayInterval.millisecondsStartTime) {
-    this.dayInterval.millisecondsStartTime = new Date();
-    this.dayInterval.id = setInterval(() => this.start(client), this.dayInterval.millisecondsDuration);
+  if (!this.dayTimeout.millisecondsStartTime) {
+    this.dayTimeout.millisecondsStartTime = new Date();
+    this.dayTimeout.id = setTimeout(() => this.start(client), this.dayTimeout.millisecondsDuration);
     return "not stopped";
   }
 
@@ -208,31 +247,36 @@ Activity.prototype.start = function (client) { //client serve solo per inviare i
     }
 
     // aggiorna i ruoli
-    if (rank.previous && profile.points < rank.actual.points) {
+    if (rank.previous
+      && rank.actual
+      && profile.points < rank.actual.points
+    ) {
       // member.roles.remove(actualRole.id);
       // member.roles.add(previousRole.id);
       profile.roleId = rank.previous.id;
-      profile.roleName = this.guild.roles.cache.get(rank.previous.id).name;
+      profile.roleName = client.guilds.resolve(this.community.id)
+        .roles.cache.get(rank.previous.id)
+        .name;
 
-      // i messaggi dovranno essere pubblicati nell'apposito evento
       const message = `<@${profile.id}> downgraded to <@&${rank.previous.id}>`;
-      await client.channels.cache.get(this.community.settings.preferences.logRoom)
+      await client.channels.cache.get(this.community.settings.preferences.logChannelId)
         .send({
           content: message,
           flags: [4096]
         });
-    } else if (
-      rank.next &&
-      profile.points >= rank.next.points
+    } else if (rank.next
+      && rank.actual
+      && profile.points >= rank.next.points
     ) {
       // member.roles.remove(actualRole.id);
       // member.roles.add(nextRole.id);
       profile.roleId = rank.next.id;
-      profile.roleName = this.guild.roles.cache.get(rank.next.id).name;
+      profile.roleName = client.guilds.resolve(this.community.id)
+        .roles.cache.get(rank.previous.id)
+        .name;
 
-      // invia la notifica nei canali predefiniti
       const message = `<@${profile.id}> promoted to <@&${rank.next.id}>`;
-      await client.channels.cache.get(this.community.settings.preferences.logRoom)
+      await client.channels.cache.get(this.community.settings.preferences.logChannelId)
         .send({
           content: message,
           flags: [4096]
@@ -240,19 +284,21 @@ Activity.prototype.start = function (client) { //client serve solo per inviare i
     }
   });
 
-  saveFile(this.profiles, this.filePath);
+  saveFile(this.profiles, this.community.settings.filePaths.activity);
+
+  this.dayTimeout.id = setTimeout(() => this.start(client), this.dayTimeout.millisecondsDuration);
 };
 
 Activity.prototype.stop = async function () {
-  if (!this.dayInterval.id) {
+  if (!this.dayTimeout.id) {
     return "not started";
   }
 
-  this.dayInterval.millisecondsRemaining = new Date() - this.dayInterval.millisecondsStartTime;
-  this.dayInterval.millisecondsStartTime = null;
-  this.dayInterval.id = clearInterval(this.dayInterval.id);
+  this.dayTimeout.millisecondsRemaining = new Date() - this.dayTimeout.millisecondsStartTime;
+  this.dayTimeout.millisecondsStartTime = null;
+  this.dayTimeout.id = clearTimeout(this.dayTimeout.id);
 
-  saveFile(this.profiles, this.filePath);
+  saveFile(this.profiles, this.community.settings.filePaths.activity);
 };
 
 export { Activity };

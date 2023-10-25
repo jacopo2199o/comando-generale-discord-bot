@@ -18,12 +18,13 @@ const execute = async (interaction) => {
   const community = communities.get(interaction.guildId);
   const resumed = community.activity.resume(interaction.client);
 
-  if (resumed === "not stopped") {
+  if (resumed === "not started") {
+    await interaction.editReply("monitoring activity is not started: nothing to resume");
+  } else if (resumed === "not stopped") {
     await interaction.editReply("monitoring activity is not stopped: nothing to resume");
-    return;
+  } else {
+    await interaction.editReply("activity points resumed: monitoring...");
   }
-
-  await interaction.editReply("activity points resumed: monitoring...");
 };
 
 export {

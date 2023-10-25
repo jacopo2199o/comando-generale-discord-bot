@@ -9,6 +9,7 @@ import { Activity } from "./activity.js";
 const Community = function (guild) {
   this.activity = new Activity(this);
   this.id = guild.id;
+  this.adminId = guild.ownerId;
   this.settings = (() => {
     const object = (() => {
       const data = (() => {
@@ -21,13 +22,13 @@ const Community = function (guild) {
                   return path.dirname(basePath);
                 })(import.meta.url);
                 return baseDirectory + resourcesFolder;
-              })("/resources");
+              })("\\resources");
               return {
                 activity: resourcesFolder + activityFolder,
                 ranks: resourcesFolder + ranksFolder,
                 preferences: resourcesFolder + preferencesFolder
               };
-            })("/activity/", "/ranks/", "/preferences/");
+            })("\\activity\\", "\\ranks\\", "\\preferences\\");
             return {
               activity: resourcesFolders.activity + name.replace(regexp, "-"),
               ranks: resourcesFolders.ranks + name.replace(regexp, "-"),
