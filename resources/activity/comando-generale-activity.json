@@ -649,6 +649,13 @@
     "roleName": "membro"
   },
   {
+    "id": "1166870736124788776",
+    "name": "Pizza2501",
+    "points": 15,
+    "roleId": "1008665802716741733",
+    "roleName": "membro"
+  },
+  {
     "id": "667739579377385503",
     "name": "M4Z1NG4Z",
     "points": 85,
@@ -773,6 +780,13 @@
     "points": 15,
     "roleId": "1008665802716741733",
     "roleName": "membro"
+  },
+  {
+    "id": "980187298358497300",
+    "name": "Generał XD",
+    "points": 85,
+    "roleId": "956497551853510657",
+    "roleName": "gran generale"
   },
   {
     "id": "1147185697573318737",
@@ -1132,6 +1146,13 @@
     "roleName": "membro"
   },
   {
+    "id": "703172700956262462",
+    "name": "Jak",
+    "points": 15,
+    "roleId": "1008665802716741733",
+    "roleName": "membro"
+  },
+  {
     "id": "1083295613770285106",
     "name": "heinkel.",
     "points": 35,
@@ -1181,6 +1202,13 @@
     "roleName": "colonnello"
   },
   {
+    "id": "1166644666184245251",
+    "name": "Ubossdjapigia",
+    "points": 15,
+    "roleId": "1008665802716741733",
+    "roleName": "membro"
+  },
+  {
     "id": "956232348008054844",
     "name": "And9Rev",
     "points": 35,
@@ -1190,9 +1218,9 @@
   {
     "id": "703236790877683782",
     "name": "Stormpheenix",
-    "points": 15,
-    "roleId": "1008665802716741733",
-    "roleName": "membro"
+    "points": 350,
+    "roleId": "1062347431947288677",
+    "roleName": "sovrintendente"
   },
   {
     "id": "696960845564870696",
@@ -1587,11 +1615,25 @@
     "roleName": "membro"
   },
   {
+    "id": "576744052888698910",
+    "name": "Saxster",
+    "points": 45,
+    "roleId": "1007289184236613724",
+    "roleName": "gran comandante"
+  },
+  {
     "id": "273426897180819456",
     "name": "CoRsaDe",
     "points": 75,
     "roleId": "956482376589017151",
     "roleName": "generale"
+  },
+  {
+    "id": "187807468724813825",
+    "name": "Crystal Seth",
+    "points": 15,
+    "roleId": "1008665802716741733",
+    "roleName": "membro"
   },
   {
     "id": "911311156864495616",
@@ -2032,7 +2074,7 @@
   },
   {
     "id": "1120415964387889253",
-    "name": "Cosmin972",
+    "name": "Cosmin972 or liam",
     "points": 15,
     "roleId": "1008665802716741733",
     "roleName": "membro"
@@ -2464,7 +2506,7 @@
   },
   {
     "id": "879082674420064297",
-    "name": "Davi76",
+    "name": "Davi67",
     "points": 15,
     "roleId": "1008665802716741733",
     "roleName": "membro"
@@ -2715,13 +2757,6 @@
     "roleName": "dirigente"
   },
   {
-    "id": "591795772757114930",
-    "name": "Astrohs",
-    "points": 15,
-    "roleId": "1008665802716741733",
-    "roleName": "membro"
-  },
-  {
     "id": "1159093667156467842",
     "name": "Dialga",
     "points": 350,
@@ -2850,9 +2885,9 @@
   {
     "id": "956932944109387807",
     "name": "Mattya055",
-    "points": 35,
-    "roleId": "1007289333998440568",
-    "roleName": "comandante"
+    "points": 150,
+    "roleId": "1062347134122332200",
+    "roleName": "assistente"
   },
   {
     "id": "1028001501446156328",
@@ -3168,6 +3203,13 @@
     "roleName": "membro"
   },
   {
+    "id": "1126237610445131786",
+    "name": "BomB_rock/2",
+    "points": 15,
+    "roleId": "1008665802716741733",
+    "roleName": "membro"
+  },
+  {
     "id": "701508357512495225",
     "name": "Stewie84",
     "points": 35,
@@ -3268,9 +3310,9 @@
   {
     "id": "1124411278467801118",
     "name": "Melignu",
-    "points": 15,
-    "roleId": "1008665802716741733",
-    "roleName": "membro"
+    "points": 35,
+    "roleId": "1007289333998440568",
+    "roleName": "comandante"
   },
   {
     "id": "911970732592992266",
@@ -3588,6 +3630,13 @@
     "roleName": "sovrintendente"
   },
   {
+    "id": "633764147259244566",
+    "name": "Papy-One",
+    "points": 85,
+    "roleId": "956497551853510657",
+    "roleName": "gran generale"
+  },
+  {
     "id": "210686215630880768",
     "name": "GiuseppeC83",
     "points": 25,
@@ -3884,6 +3933,13 @@
   {
     "id": "913000097250418699",
     "name": "king of penguins",
+    "points": 15,
+    "roleId": "1008665802716741733",
+    "roleName": "membro"
+  },
+  {
+    "id": "790619902745903126",
+    "name": "IceGameMaster",
     "points": 15,
     "roleId": "1008665802716741733",
     "roleName": "membro"

@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import { saveFile } from "./general-utilities.js";
+import { saveFile, splitMessages } from "./general-utilities.js";
 
 /**
  * @param { import("./community.js").Community } community
@@ -49,7 +49,6 @@ Activity.prototype.addPoints = function (member, amount) {
 
 /**
  * @param { import("discord.js").GuildMember } member
- * @param { String } baseRole
  */
 Activity.prototype.addProfile = async function (member) {
   if (!this.community.settings) {
@@ -89,7 +88,6 @@ Activity.prototype.addProfile = async function (member) {
 };
 
 /**
- * @param { import("discord.js").Guild } guild
  * @param { import("discord.js").Client } client
  */
 Activity.prototype.initialize = async function (client) {
@@ -174,6 +172,7 @@ Activity.prototype.resume = function (client) {
 /**
  * @param { import("discord.js").Channel } logChannel
  * @param { import("discord.js").Role } baseRole
+ * @param { Number } startPoints
  */
 Activity.prototype.setPreferences = function (logChannel, baseRole, startPoints) {
   this.community.settings.preferences = {
@@ -184,7 +183,13 @@ Activity.prototype.setPreferences = function (logChannel, baseRole, startPoints)
     }
   };
 
+  this.community.settings.ranks = [{
+    id: baseRole.id,
+    points: startPoints
+  }];
+
   saveFile(this.community.settings.preferences, this.community.settings.filePaths.preferences);
+  saveFile(this.community.settings.ranks, this.community.settings.filePaths.ranks);
 
   return "success";
 };
@@ -194,11 +199,10 @@ Activity.prototype.setPreferences = function (logChannel, baseRole, startPoints)
  */
 Activity.prototype.setRank = function (role, points) {
   if (!this.community.settings.preferences) {
+    if (this.community.settings.preferences.baseRole.points <= points) {
+      return "points minor equal";
+    }
     return "preferences missing";
-  }
-
-  if (this.community.settings.preferences.baseRole.points <= points) {
-    return "points minor equal";
   }
 
   if (!this.community.settings.ranks) {
@@ -216,7 +220,9 @@ Activity.prototype.setRank = function (role, points) {
 /**
  * @param { import("discord.js").Client } client
  */
-Activity.prototype.start = function (client) { //client serve solo per inviare i messaggi (per ora)
+Activity.prototype.start = async function (client) {
+  let messages = [];
+
   // imposta la data di avvio e attiva il timer
   if (!this.dayTimeout.millisecondsStartTime) {
     this.dayTimeout.millisecondsStartTime = new Date();
@@ -224,7 +230,7 @@ Activity.prototype.start = function (client) { //client serve solo per inviare i
     return "not stopped";
   }
 
-  this.profiles.forEach(async (profile) => {
+  this.profiles.forEach((profile) => {
     //const member = this.community.guild.members.cache.find(member => member.id === profile.id);
     const rank = ((ranks, roleId) => {
       const index = ranks.findIndex(rank => rank.id === roleId);
@@ -235,7 +241,7 @@ Activity.prototype.start = function (client) { //client serve solo per inviare i
       });
     })(this.community.settings.ranks, profile.roleId);
 
-    // subtract points
+    // sottrai punti in quantità diversa in base al progresso
     if (profile.points > 0) {
       if (profile.points <= 100) {
         profile.points -= this.pointsDecay.low;
@@ -258,12 +264,7 @@ Activity.prototype.start = function (client) { //client serve solo per inviare i
         .roles.cache.get(rank.previous.id)
         .name;
 
-      const message = `<@${profile.id}> downgraded to <@&${rank.previous.id}>`;
-      await client.channels.cache.get(this.community.settings.preferences.logChannelId)
-        .send({
-          content: message,
-          flags: [4096]
-        });
+      messages.push(`<@${profile.id}> downgraded to <@&${rank.previous.id}>\n`);
     } else if (rank.next
       && rank.actual
       && profile.points >= rank.next.points
@@ -275,14 +276,23 @@ Activity.prototype.start = function (client) { //client serve solo per inviare i
         .roles.cache.get(rank.previous.id)
         .name;
 
-      const message = `<@${profile.id}> promoted to <@&${rank.next.id}>`;
+      messages.push(`<@${profile.id}> downgraded to <@&${rank.previous.id}>\n`);
+    }
+  });
+
+  if (messages) {
+    let chunks = splitMessages(messages, 2000);
+
+    for (let chunk of chunks){
       await client.channels.cache.get(this.community.settings.preferences.logChannelId)
         .send({
-          content: message,
+          content: chunk,
           flags: [4096]
         });
     }
-  });
+    messages = [];
+    chunks = null;
+  }
 
   saveFile(this.profiles, this.community.settings.filePaths.activity);
 

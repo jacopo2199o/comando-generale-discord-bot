@@ -18,7 +18,30 @@ const saveFile = (data, filePath) => {
   });
 };
 
+/**
+ * @param { Array<String> } messages 
+ * @param { Number } size 
+ */
+function splitMessages(messages, size) {
+  let characters = 0;
+  let chunk = "";
+  let chunks = [];
+  for (let i = 0; i < messages.length; i++) {
+    characters += messages[i].length;
+    if (characters < size) {
+      chunk += messages[i];
+    } else {
+      chunks.push(chunk);
+      chunk = "";
+      characters = 0;
+    }
+  }
+
+  return chunks;
+}
+
 export {
   deepFreeze,
-  saveFile
+  saveFile,
+  splitMessages
 };

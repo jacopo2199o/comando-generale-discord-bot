@@ -58,10 +58,7 @@ const bot = (() => {
       return import(fileURL);
     })();
 
-    if (
-      "data" in command &&
-      "execute" in command
-    ) {
+    if ("data" in command && "execute" in command) {
       client.commands.set(command.data.name, command);
     } else {
       console.error(`[warning] the command ad ${bot.commands.path} is missing required "data" or "execute" property`);

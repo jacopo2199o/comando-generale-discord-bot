@@ -24,9 +24,12 @@ const execute = async (interaction) => {
   if (initialized === "not ready") {
     await interaction.editReply("preferences are not available: use /set-preferences");
   } else {
-    const started = community.activity.start(interaction.client);
+    const started = await community.activity.start(interaction.client);
+
     if (started === "not stopped") {
       await interaction.editReply("activity points created: start monitoring...");
+    } else if (started === "already started") {
+      await interaction.editReply("activity points already started: cancel");
     } else {
       await interaction.editReply("activity points already started: stop activity first");
     }

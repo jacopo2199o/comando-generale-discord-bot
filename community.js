@@ -11,6 +11,7 @@ const Community = function (guild) {
   this.id = guild.id;
   this.adminId = guild.ownerId;
   this.settings = (() => {
+    let isSetup = false;
     const object = (() => {
       const data = (() => {
         const filePaths = ((activitySuffix, ranksSuffix, preferencesSuffix) => {
@@ -41,7 +42,6 @@ const Community = function (guild) {
             preferences: partialFilePaths.preferences.concat(preferencesSuffix)
           };
         })("-activity.json", "-ranks.json", "-preferences.json");
-
         if (
           fs.existsSync(filePaths.activity)
           && fs.existsSync(filePaths.ranks)
@@ -53,25 +53,54 @@ const Community = function (guild) {
             ranks: fs.readFileSync(filePaths.ranks),
             preferences: fs.readFileSync(filePaths.preferences)
           };
+        } else {
+          isSetup = true;
+
+          return {
+            filePaths,
+            activity: undefined,
+            ranks: undefined,
+            preferences: undefined
+          };
         }
       })();
 
-      if (data) {
+      if (data && !isSetup) {
         return {
           filePaths: data.filePaths,
           activity: JSON.parse(data.activity),
           ranks: JSON.parse(data.ranks),
           preferences: JSON.parse(data.preferences)
         };
+      } else {
+        return {
+          filePaths: data.filePaths,
+          activity: undefined,
+          ranks: undefined,
+          preferences: undefined
+        };
       }
     })();
 
-    if (object) {
-      return Object.freeze({
+    if (object && !isSetup) {
+      return Object.defineProperty({
         filePaths: object.filePaths,
         activity: object.activity,
         ranks: object.ranks,
         preferences: object.preferences
+      }, "filePath", {
+        writable: false,
+        configurable: false
+      });
+    } else {
+      return Object.defineProperty({
+        filePaths: object.filePaths,
+        activity: undefined,
+        ranks: undefined,
+        preferences: undefined
+      }, "filePath", {
+        writable: false,
+        configurable: false
       });
     }
   })();
