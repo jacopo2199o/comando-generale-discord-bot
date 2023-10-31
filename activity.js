@@ -5,11 +5,6 @@ import { saveFile, splitMessages } from "./general-utilities.js";
  * @param { import("./community.js").Community } community
  */
 const Activity = function (community) {
-  this.additionalPoints = Object.freeze({
-    firstClass: 500,
-    secondClass: 50,
-    thirdClass: 5
-  });
   this.community = community;
   this.dayTimeout = Object.defineProperty({
     id: undefined,
@@ -19,16 +14,6 @@ const Activity = function (community) {
   }, "millisecondsDuration", {
     writable: false,
     configurable: false
-  });
-  this.maxPoints = Object.freeze({
-    firstClass: 8000,
-    secondClass: 800,
-    thirdClass: 80
-  });
-  this.pointsDecay = Object.freeze({
-    low: 1,
-    moderate: 2,
-    high: 4
   });
   this.profiles = [];
 };
@@ -84,7 +69,6 @@ Activity.prototype.addProfile = async function (member) {
         }
       }));
   }
-
 };
 
 /**
@@ -120,25 +104,18 @@ Activity.prototype.initialize = async function (client) {
     });
 
   // imposta i punti iniziali
-  this.members.forEach(member => {
-    const profile = this.profiles.find(profile => profile.id === member.id);
-    if (profile) {
+  this.members.filter(member => !member.user.bot && member.id !== this.community.adminId)
+    .forEach(member => {
+      const profile = this.profiles.find(profile => profile.id === member.id);
       member.roles.cache.forEach(role => {
         const rank = this.community.settings.ranks.find(rank => rank.id === role.id);
         if (rank && rank.points >= profile.points) {
-          if (rank.points <= this.maxPoints.thirdClass) {
-            profile.points = rank.points + this.additionalPoints.thirdClass;
-          } else if (rank.points <= this.maxPoints.secondClass) {
-            profile.points = rank.points + this.additionalPoints.secondClass;
-          } else if (rank.points <= this.maxPoints.firstClass) {
-            profile.points = rank.points + this.additionalPoints.firstClass;
-          }
+          profile.points = rank.points;
           profile.roleId = role.id;
           profile.roleName = role.name;
         }
       });
-    }
-  });
+    });
 
   saveFile(this.profiles, this.community.settings.filePaths.activity);
 };
@@ -241,21 +218,15 @@ Activity.prototype.start = async function (client) {
       });
     })(this.community.settings.ranks, profile.roleId);
 
-    // sottrai punti in quantità diversa in base al progresso
+    // sottrai punti
     if (profile.points > 0) {
-      if (profile.points <= 100) {
-        profile.points -= this.pointsDecay.low;
-      } else if (profile.points <= 800) {
-        profile.points -= this.pointsDecay.moderate;
-      } else if (profile.points <= 7000) {
-        profile.points -= this.pointsDecay.high;
-      }
+      profile.points -= 1;
     }
 
     // aggiorna i ruoli
     if (rank.previous
       && rank.actual
-      && profile.points < rank.actual.points
+      && profile.points <= rank.previous.points
     ) {
       // member.roles.remove(actualRole.id);
       // member.roles.add(previousRole.id);
@@ -281,17 +252,17 @@ Activity.prototype.start = async function (client) {
   });
 
   if (messages) {
-    let chunks = splitMessages(messages, 2000);
+    let parts = splitMessages(messages, 2000);
 
-    for (let chunk of chunks){
+    for (let part of parts) {
       await client.channels.cache.get(this.community.settings.preferences.logChannelId)
         .send({
-          content: chunk,
+          content: part,
           flags: [4096]
         });
     }
     messages = [];
-    chunks = null;
+    parts = [];
   }
 
   saveFile(this.profiles, this.community.settings.filePaths.activity);
