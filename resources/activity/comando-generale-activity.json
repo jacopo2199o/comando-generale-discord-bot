@@ -1279,6 +1279,13 @@
     "roleName": "membro"
   },
   {
+    "id": "952981380873199616",
+    "name": "Meti illyrian",
+    "points": 0,
+    "roleId": "1008665802716741733",
+    "roleName": "membro"
+  },
+  {
     "id": "1127278215120035861",
     "name": "Sup_Mas☨",
     "points": 0,
@@ -1400,6 +1407,13 @@
   {
     "id": "982012665285185546",
     "name": "Sig Anderson 2",
+    "points": 0,
+    "roleId": "1008665802716741733",
+    "roleName": "membro"
+  },
+  {
+    "id": "835435893903851550",
+    "name": "Kocmoc.Nety",
     "points": 0,
     "roleId": "1008665802716741733",
     "roleName": "membro"
@@ -1568,9 +1582,9 @@
   {
     "id": "1019359296959545405",
     "name": "RUBIX047",
-    "points": 38,
-    "roleId": "1007289184236613724",
-    "roleName": "gran comandante"
+    "points": 0,
+    "roleId": "1008665802716741733",
+    "roleName": "membro"
   },
   {
     "id": "1147673453034479626",
@@ -1899,7 +1913,7 @@
   },
   {
     "id": "408639934581440543",
-    "name": "Ganga_0012",
+    "name": "alleganga",
     "points": 0,
     "roleId": "1008665802716741733",
     "roleName": "membro"
@@ -2243,6 +2257,13 @@
   {
     "id": "692800070965395559",
     "name": "hhorizo 🇦🇱",
+    "points": 0,
+    "roleId": "1008665802716741733",
+    "roleName": "membro"
+  },
+  {
+    "id": "1123656846780153947",
+    "name": "ROMAN-ITALIAN BALL",
     "points": 0,
     "roleId": "1008665802716741733",
     "roleName": "membro"
@@ -2703,9 +2724,7 @@
   {
     "id": "602956794943504434",
     "name": "TheMosko",
-    "points": 0,
-    "roleId": "1008665802716741733",
-    "roleName": "membro"
+    "points": 0
   },
   {
     "id": "382532185271304192",
@@ -2766,9 +2785,9 @@
   {
     "id": "710324431284600912",
     "name": "ReckerXVII",
-    "points": 38,
-    "roleId": "1007289184236613724",
-    "roleName": "gran comandante"
+    "points": 0,
+    "roleId": "1008665802716741733",
+    "roleName": "membro"
   },
   {
     "id": "947097348977344562",
@@ -3018,9 +3037,9 @@
   {
     "id": "1033715726562902046",
     "name": "[CG] SaLaz",
-    "points": 118,
-    "roleId": "1062347254142345217",
-    "roleName": "assistente capo"
+    "points": 0,
+    "roleId": "1008665802716741733",
+    "roleName": "membro"
   },
   {
     "id": "1083953260026667008",
@@ -3519,7 +3538,7 @@
   },
   {
     "id": "919406295013027891",
-    "name": "Mr Brr really go brr",
+    "name": "Anna 🇨🇦🇮🇱",
     "points": 0,
     "roleId": "1008665802716741733",
     "roleName": "membro"
@@ -3667,9 +3686,9 @@
   {
     "id": "282573946262519808",
     "name": "saraska",
-    "points": 158,
-    "roleId": "1062347622255439942",
-    "roleName": "sovrintendente capo"
+    "points": 0,
+    "roleId": "1008665802716741733",
+    "roleName": "membro"
   },
   {
     "id": "353636528804855808",
@@ -4010,13 +4029,6 @@
   {
     "id": "790619902745903126",
     "name": "IceGameMaster",
-    "points": 0,
-    "roleId": "1008665802716741733",
-    "roleName": "membro"
-  },
-  {
-    "id": "474260401631002631",
-    "name": "Dekulo",
     "points": 0,
     "roleId": "1008665802716741733",
     "roleName": "membro"

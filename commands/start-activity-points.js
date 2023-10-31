@@ -7,7 +7,7 @@ dotenv.config();
 const cooldown = 4;
 const data = new SlashCommandBuilder()
   .setName("start-activity-points")
-  .setDescription("set initial activity points and start monitoring");
+  .setDescription("start activity points and start monitoring");
 
 /**
  * @param {import("discord.js").Interaction} interaction
@@ -26,12 +26,10 @@ const execute = async (interaction) => {
   } else {
     const started = await community.activity.start(interaction.client);
 
-    if (started === "not stopped") {
-      await interaction.editReply("activity points created: start monitoring...");
-    } else if (started === "already started") {
-      await interaction.editReply("activity points already started: cancel");
+    if (started !== "running") {
+      await interaction.editReply("activity points already started: use /stop-activity");
     } else {
-      await interaction.editReply("activity points already started: stop activity first");
+      await interaction.editReply("activity points created: start monitoring...");
     }
   }
 

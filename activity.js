@@ -1,35 +1,25 @@
-import fs from "node:fs";
-import { saveFile, splitMessages } from "./general-utilities.js";
+import {
+  readFile,
+  saveFile,
+  splitMessages
+} from "./general-utilities.js";
 
 /**
  * @param { import("./community.js").Community } community
  */
 const Activity = function (community) {
   this.community = community;
-  this.dayTimeout = Object.defineProperty({
+  this.timeout = Object.defineProperty({
     id: undefined,
-    millisecondsDuration: 2000, // correggere nel tempo reale in millisecondi di un giorno
-    millisecondsStartTime: undefined,
-    millisecondsRemaining: undefined
+    msDuration: 3000, // correggere nel tempo reale in millisecondi di un giorno
+    msStartTime: undefined,
+    msRemaining: undefined,
+    status: "not running"
   }, "millisecondsDuration", {
     writable: false,
     configurable: false
   });
   this.profiles = [];
-};
-
-/**
- * @param { import("discord.js").GuildMember } member
- * @param { Number } amount
- */
-Activity.prototype.addPoints = function (member, amount) {
-  if (this.dayTimeout.millisecondsStartTime) {
-    const profile = this.profiles.find(profile => profile.id === member.id);
-    profile.points += amount;
-
-    saveFile(this.profiles, this.filePath);
-    return "success";
-  }
 };
 
 /**
@@ -47,7 +37,7 @@ Activity.prototype.addProfile = async function (member) {
   await member.guild.channels.cache.get(this.community.settings.preferences.logRoom)
     .send(`welcome there, ${member.displayName}`);
 
-  if (this.dayTimeout.id) {
+  if (this.timeout.id) {
     const role = member.guild.roles.cache.get(this.community.settings.preferences.baseRole.id);
 
     // add new member into activity
@@ -75,7 +65,7 @@ Activity.prototype.addProfile = async function (member) {
  * @param { import("discord.js").Client } client
  */
 Activity.prototype.initialize = async function (client) {
-  if (!this.community.settings) {
+  if (!this.community.settings.preferences) {
     return "not ready";
   }
 
@@ -124,26 +114,20 @@ Activity.prototype.initialize = async function (client) {
  * @param { import("discord.js").Client } client
  */
 Activity.prototype.resume = function (client) {
-  if (!this.dayTimeout.id) {
-    return "not started";
+  if (this.timeout.status === "running") {
+    return this.timeout.status;
   }
 
-  if (this.dayTimeout.millisecondsStartTime !== null) {
-    return "not stopped";
-  }
+  this.profiles = readFile(this.community.settings.filePaths.activity);
 
-  this.profiles = ((path) => {
-    const data = fs.readFileSync(path);
-    return JSON.parse(data);
-  })(this.community.settings.filePaths.activity);
-
-  this.dayTimeout.millisecondsStartTime = new Date();
+  this.timeout.msStartTime = new Date();
+  this.timeout.status = "running";
 
   setTimeout(() => {
     this.start(client);
-    this.dayTimeout.millisecondsRemaining = null;
-    this.dayTimeout.id = setTimeout(() => this.start(client), this.dayTimeout.millisecondsDuration);
-  }, this.dayTimeout.millisecondsRemaining);
+    this.timeout.msRemaining = null;
+    this.timeout.id = setTimeout(() => this.start(client), this.timeout.msDuration);
+  }, this.timeout.msRemaining);
 };
 
 /**
@@ -201,10 +185,11 @@ Activity.prototype.start = async function (client) {
   let messages = [];
 
   // imposta la data di avvio e attiva il timer
-  if (!this.dayTimeout.millisecondsStartTime) {
-    this.dayTimeout.millisecondsStartTime = new Date();
-    this.dayTimeout.id = setTimeout(() => this.start(client), this.dayTimeout.millisecondsDuration);
-    return "not stopped";
+  if (this.timeout.status === "not running") {
+    this.timeout.msStartTime = new Date();
+    this.timeout.status = "running";
+    this.timeout.id = setTimeout(() => this.start(client), this.timeout.msDuration);
+    return this.timeout.status;
   }
 
   this.profiles.forEach((profile) => {
@@ -267,19 +252,41 @@ Activity.prototype.start = async function (client) {
 
   saveFile(this.profiles, this.community.settings.filePaths.activity);
 
-  this.dayTimeout.id = setTimeout(() => this.start(client), this.dayTimeout.millisecondsDuration);
+  this.timeout.id = setTimeout(() => this.start(client), this.timeout.msDuration);
 };
 
 Activity.prototype.stop = async function () {
-  if (!this.dayTimeout.id) {
-    return "not started";
+  if (this.timeout.status === "not running") {
+    return this.timeout.status;
   }
 
-  this.dayTimeout.millisecondsRemaining = new Date() - this.dayTimeout.millisecondsStartTime;
-  this.dayTimeout.millisecondsStartTime = null;
-  this.dayTimeout.id = clearTimeout(this.dayTimeout.id);
+  this.timeout.msRemaining = new Date() - this.timeout.msStartTime;
+  this.timeout.msStartTime = null;
+  this.timeout.status = "not running";
+  this.timeout.id = clearTimeout(this.timeout.id);
 
   saveFile(this.profiles, this.community.settings.filePaths.activity);
+};
+
+/**
+ * @param { import("discord.js").Interaction } interaction
+ * @param { import("discord.js").GuildMember } member
+ * @param { Number } amount
+ */
+Activity.prototype.takePoint = function (member, amount) {
+  if (this.timeout.status === "not running") {
+    return this.timeout.status;
+  }
+
+  const profile = this.profiles.find(profile => profile.id === member.id);
+
+  if (!profile && member.id === this.community.adminId) {
+    return "administrator";
+  }
+
+  profile.points += amount;
+
+  saveFile(this.profiles, this.filePath);
 };
 
 export { Activity };

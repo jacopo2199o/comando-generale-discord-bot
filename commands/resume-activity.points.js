@@ -4,7 +4,7 @@ import { communities } from "../events/ready.js";
 const cooldown = 4;
 const data = new SlashCommandBuilder()
   .setName("resume-activity-points")
-  .setDescription("retrieve activity points and restart monitoring");
+  .setDescription("resume activity points and restart monitoring");
 
 /**
  * @param {import("discord.js").Interaction} interaction
@@ -18,10 +18,8 @@ const execute = async (interaction) => {
   const community = communities.get(interaction.guildId);
   const resumed = community.activity.resume(interaction.client);
 
-  if (resumed === "not started") {
-    await interaction.editReply("monitoring activity is not started: nothing to resume");
-  } else if (resumed === "not stopped") {
-    await interaction.editReply("monitoring activity is not stopped: nothing to resume");
+  if (resumed === "running") {
+    await interaction.editReply("activity points already started: stop activity first");
   } else {
     await interaction.editReply("activity points resumed: monitoring...");
   }

@@ -4,7 +4,7 @@ import { communities } from "../events/ready.js";
 const cooldown = 4;
 const data = new SlashCommandBuilder()
   .setName("stop-activity-points")
-  .setDescription("save activity points and stop monitoring");
+  .setDescription("stop activity points and saving");
 
 /**
  * @param {import("discord.js").Interaction} interaction
@@ -19,7 +19,7 @@ const execute = async (interaction) => {
   const community = communities.get(interaction.guildId);
   const stopped = await community.activity.stop();
 
-  if (stopped === "not started") {
+  if (stopped === "not running") {
     await interaction.editReply("activity points is not started: nothing to stop");
   } else {
     await interaction.editReply("activity points saved: stop monitoring");
