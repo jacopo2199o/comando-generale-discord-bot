@@ -19,9 +19,9 @@ const execute = async (interaction) => {
   const resumed = community.activity.resume(interaction.client);
 
   if (resumed === "running") {
-    await interaction.editReply("activity points already started: stop activity first");
+    await interaction.editReply("activity points already started: use /stop activity");
   } else {
-    await interaction.editReply("activity points resumed: monitoring...");
+    await interaction.editReply("resume monitoring");
   }
 };
 

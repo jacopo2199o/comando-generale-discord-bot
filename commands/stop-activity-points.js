@@ -20,11 +20,10 @@ const execute = async (interaction) => {
   const stopped = await community.activity.stop();
 
   if (stopped === "not running") {
-    await interaction.editReply("activity points is not started: nothing to stop");
+    await interaction.editReply("activity points not started: use /start-activity");
   } else {
-    await interaction.editReply("activity points saved: stop monitoring");
+    await interaction.editReply("stop monitoring");
   }
-
 };
 
 export {

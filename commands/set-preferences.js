@@ -9,17 +9,7 @@ const data = new SlashCommandBuilder()
     .setName("log-channel")
     .setDescription("log channel for notifications")
     .setRequired(true)
-    .addChannelTypes(ChannelType.GuildText))
-  .addRoleOption(option => option
-    .setName("base-role")
-    .setDescription("base role for new members")
-    .setRequired(true))
-  .addNumberOption(option => option
-    .setName("start-points")
-    .setDescription("start points for base role")
-    .setRequired(true)
-    .setMinValue(1)
-    .setMaxValue(1000000));
+    .addChannelTypes(ChannelType.GuildText));
 
 /**
  * @param {import("discord.js").Interaction} interaction
@@ -32,24 +22,16 @@ const execute = async (interaction) => {
    */
   const community = communities.get(interaction.guildId);
   const set = (() => {
-    const preferences = ((logChannel, baseRole, startPoints) => {
-      return Object.freeze({
-        logChannel: interaction.options.getChannel(logChannel),
-        baseRole: interaction.options.getRole(baseRole),
-        startPoints: interaction.options.getNumber(startPoints)
-      });
-    })("log-channel", "base-role", "start-points");
-    return community.activity.setPreferences(
-      preferences.logChannel,
-      preferences.baseRole,
-      preferences.startPoints
-    );
+    const preferences = ((logChannel) => {
+      return Object.freeze({ logChannel: interaction.options.getChannel(logChannel) });
+    })("log-channel");
+    return community.activity.setPreferences(preferences.logChannel);
   })();
 
-  if (set === "success") {
-    await interaction.editReply("preferences saved");
-  } else {
+  if (set !== "success") {
     await interaction.editReply("something went wrong");
+  } else {
+    await interaction.editReply("preferences saved");
   }
 };
 

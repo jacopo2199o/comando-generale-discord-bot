@@ -11,98 +11,80 @@ const Community = function (guild) {
   this.id = guild.id;
   this.adminId = guild.ownerId;
   this.settings = (() => {
-    let isSetup = false;
-    const object = (() => {
-      const data = (() => {
-        const filePaths = ((activitySuffix, ranksSuffix, preferencesSuffix) => {
-          const partialFilePaths = ((name, regexp) => {
-            const resourcesFolders = ((activityFolder, ranksFolder, preferencesFolder) => {
-              const resourcesFolder = ((resourcesFolder) => {
-                const baseDirectory = ((fileURL) => {
-                  const basePath = fileURLToPath(fileURL);
-                  return path.dirname(basePath);
-                })(import.meta.url);
-                return baseDirectory + resourcesFolder;
-              })("\\resources");
-              return {
-                activity: resourcesFolder + activityFolder,
-                ranks: resourcesFolder + ranksFolder,
-                preferences: resourcesFolder + preferencesFolder
-              };
-            })("\\activity\\", "\\ranks\\", "\\preferences\\");
+    const data = (() => {
+      const filePaths = ((activitySuffix, ranksSuffix, preferencesSuffix) => {
+        const partialFilePaths = ((name, regexp) => {
+          const resourcesFolders = ((activityFolder, ranksFolder, preferencesFolder) => {
+            const resourcesFolder = ((resourcesFolder) => {
+              const baseDirectory = ((fileURL) => {
+                const basePath = fileURLToPath(fileURL);
+                return path.dirname(basePath);
+              })(import.meta.url);
+              return baseDirectory + resourcesFolder;
+            })("\\resources");
             return {
-              activity: resourcesFolders.activity + name.replace(regexp, "-"),
-              ranks: resourcesFolders.ranks + name.replace(regexp, "-"),
-              preferences: resourcesFolders.preferences + name.replace(regexp, "-")
+              activity: resourcesFolder + activityFolder,
+              ranks: resourcesFolder + ranksFolder,
+              preferences: resourcesFolder + preferencesFolder
             };
-          })(guild.name, /\s+/g);
+          })("\\activity\\", "\\ranks\\", "\\preferences\\");
           return {
-            activity: partialFilePaths.activity.concat(activitySuffix),
-            ranks: partialFilePaths.ranks.concat(ranksSuffix),
-            preferences: partialFilePaths.preferences.concat(preferencesSuffix)
+            activity: resourcesFolders.activity + name.replace(regexp, "-"),
+            ranks: resourcesFolders.ranks + name.replace(regexp, "-"),
+            preferences: resourcesFolders.preferences + name.replace(regexp, "-")
           };
-        })("-activity.json", "-ranks.json", "-preferences.json");
-        if (
-          fs.existsSync(filePaths.activity)
-          && fs.existsSync(filePaths.ranks)
-          && fs.existsSync(filePaths.preferences)
-        ) {
-          return {
-            filePaths,
-            activity: fs.readFileSync(filePaths.activity),
-            ranks: fs.readFileSync(filePaths.ranks),
-            preferences: fs.readFileSync(filePaths.preferences)
-          };
-        } else {
-          isSetup = true;
-
-          return {
-            filePaths,
-            activity: undefined,
-            ranks: undefined,
-            preferences: undefined
-          };
-        }
-      })();
-
-      if (data && !isSetup) {
+        })(guild.name, /\s+/g);
         return {
-          filePaths: data.filePaths,
-          activity: JSON.parse(data.activity),
-          ranks: JSON.parse(data.ranks),
-          preferences: JSON.parse(data.preferences)
+          activity: partialFilePaths.activity.concat(activitySuffix),
+          ranks: partialFilePaths.ranks.concat(ranksSuffix),
+          preferences: partialFilePaths.preferences.concat(preferencesSuffix)
         };
-      } else {
-        return {
-          filePaths: data.filePaths,
-          activity: undefined,
-          ranks: undefined,
-          preferences: undefined
-        };
-      }
-    })();
+      })("-activity.json", "-ranks.json", "-preferences.json");
 
-    if (object && !isSetup) {
-      return Object.defineProperty({
-        filePaths: object.filePaths,
-        activity: object.activity,
-        ranks: object.ranks,
-        preferences: object.preferences
-      }, "filePath", {
-        writable: false,
-        configurable: false
-      });
-    } else {
-      return Object.defineProperty({
-        filePaths: object.filePaths,
+      const data = {
+        filePaths,
         activity: undefined,
         ranks: undefined,
         preferences: undefined
-      }, "filePath", {
-        writable: false,
-        configurable: false
-      });
+      };
+
+      if(fs.existsSync(filePaths.activity)) {
+        data.activity = fs.readFileSync(filePaths.activity);
+      } else {
+        fs.writeFileSync(filePaths.activity, "[]");
+      }
+
+      if(fs.existsSync(filePaths.ranks)) {
+        data.ranks = fs.readFileSync(filePaths.ranks);
+      } else {
+        fs.writeFileSync(filePaths.ranks, "[]");
+      }
+
+      if(fs.existsSync(filePaths.preferences)) {
+        data.preferences = fs.readFileSync(filePaths.preferences);
+      } else {
+        fs.writeFileSync(filePaths.preferences, "{}");
+      }
+
+      return data;
+    })();
+
+    if (data.activity) {
+      data.activity = JSON.parse(data.activity);
     }
+
+    if (data.ranks) {
+      data.ranks = JSON.parse(data.ranks);
+    }
+
+    if (data.preferences) {
+      data.preferences = JSON.parse(data.preferences);
+    }
+
+    return Object.defineProperty(data, "filePath", {
+      writable: false,
+      configurable: false
+    });
   })();
 };
 

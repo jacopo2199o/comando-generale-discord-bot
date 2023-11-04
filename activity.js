@@ -11,9 +11,9 @@ const Activity = function (community) {
   this.community = community;
   this.timeout = Object.defineProperty({
     id: undefined,
-    msDuration: 3000, // correggere nel tempo reale in millisecondi di un giorno
-    msStartTime: undefined,
-    msRemaining: undefined,
+    msDuration: 4000, // correggere nel tempo reale in millisecondi di un giorno
+    msStartTime: 0,
+    msRemaining: 0,
     status: "not running"
   }, "millisecondsDuration", {
     writable: false,
@@ -75,21 +75,15 @@ Activity.prototype.initialize = async function (client) {
   // popola il vettore dei profili attività
   this.profiles = this.members.filter(member => !member.user.bot && member.id !== this.community.adminId)
     .map(member => {
-      return Object.defineProperties({
+      return Object.defineProperty({
         id: member.id,
         name: member.displayName,
         points: 0,
         roleId: undefined,
         roleName: undefined
-      }, {
-        id: {
-          writable: false,
-          configurable: false
-        },
-        name: {
-          writable: false,
-          configurable: false
-        }
+      }, "id", {
+        writable: false,
+        configurable: false
       });
     });
 
@@ -107,7 +101,10 @@ Activity.prototype.initialize = async function (client) {
       });
     });
 
-  saveFile(this.profiles, this.community.settings.filePaths.activity);
+  saveFile({
+    msRemaining: this.timeout.msRemaining,
+    profiles: this.profiles
+  }, this.community.settings.filePaths.activity);
 };
 
 /**
@@ -118,15 +115,15 @@ Activity.prototype.resume = function (client) {
     return this.timeout.status;
   }
 
-  this.profiles = readFile(this.community.settings.filePaths.activity);
-
-  this.timeout.msStartTime = new Date();
+  const activity = readFile(this.community.settings.filePaths.activity);
+  this.profiles = activity.profiles;
+  this.timeout.msRemaining = activity.msRemaining;
+  this.timeout.msStartTime = new Date().getTime();
   this.timeout.status = "running";
 
-  setTimeout(() => {
+  this.timeout.id = setTimeout(() => {
     this.start(client);
-    this.timeout.msRemaining = null;
-    this.timeout.id = setTimeout(() => this.start(client), this.timeout.msDuration);
+    this.timeout.msRemaining = 0;
   }, this.timeout.msRemaining);
 };
 
@@ -135,22 +132,12 @@ Activity.prototype.resume = function (client) {
  * @param { import("discord.js").Role } baseRole
  * @param { Number } startPoints
  */
-Activity.prototype.setPreferences = function (logChannel, baseRole, startPoints) {
+Activity.prototype.setPreferences = function (logChannel) {
   this.community.settings.preferences = {
     logChannelId: logChannel.id,
-    baseRole: {
-      id: baseRole.id,
-      points: startPoints
-    }
   };
 
-  this.community.settings.ranks = [{
-    id: baseRole.id,
-    points: startPoints
-  }];
-
   saveFile(this.community.settings.preferences, this.community.settings.filePaths.preferences);
-  saveFile(this.community.settings.ranks, this.community.settings.filePaths.ranks);
 
   return "success";
 };
@@ -160,20 +147,27 @@ Activity.prototype.setPreferences = function (logChannel, baseRole, startPoints)
  */
 Activity.prototype.setRank = function (role, points) {
   if (!this.community.settings.preferences) {
-    if (this.community.settings.preferences.baseRole.points <= points) {
-      return "points minor equal";
-    }
     return "preferences missing";
   }
 
-  if (!this.community.settings.ranks) {
-    this.community.settings.ranks = [];
+  if (this.community.settings.ranks.find(rank => rank.points === points)) {
+    return "equal points";
+  }
+
+  if (this.community.settings.ranks.find(rank => rank.id === role.id)) {
+    return "equal role";
+  }
+
+  if (this.timeout.status === "running") {
+    return this.timeout.status;
   }
 
   this.community.settings.ranks.push({
     id: role.id,
-    points
+    points: points
   });
+
+  this.community.settings.ranks.sort((a, b) => b.points - a.points);
 
   saveFile(this.community.settings.ranks, this.community.settings.filePaths.ranks);
 };
@@ -186,20 +180,22 @@ Activity.prototype.start = async function (client) {
 
   // imposta la data di avvio e attiva il timer
   if (this.timeout.status === "not running") {
-    this.timeout.msStartTime = new Date();
+    this.timeout.msStartTime = new Date().getTime();
     this.timeout.status = "running";
     this.timeout.id = setTimeout(() => this.start(client), this.timeout.msDuration);
     return this.timeout.status;
   }
+
+  this.timeout.msStartTime = new Date().getTime();
 
   this.profiles.forEach((profile) => {
     //const member = this.community.guild.members.cache.find(member => member.id === profile.id);
     const rank = ((ranks, roleId) => {
       const index = ranks.findIndex(rank => rank.id === roleId);
       return Object.freeze({
-        next: ranks[index - 1],
-        actual: ranks[index],
-        previous: ranks[index + 1],
+        next: this.community.settings.ranks[index - 1],
+        actual: this.community.settings.ranks[index],
+        previous: this.community.settings.ranks[index + 1],
       });
     })(this.community.settings.ranks, profile.roleId);
 
@@ -232,11 +228,11 @@ Activity.prototype.start = async function (client) {
         .roles.cache.get(rank.previous.id)
         .name;
 
-      messages.push(`<@${profile.id}> downgraded to <@&${rank.previous.id}>\n`);
+      messages.push(`<@${profile.id}> promoted to <@&${rank.previous.id}>\n`);
     }
   });
 
-  if (messages) {
+  if (messages.length) {
     let parts = splitMessages(messages, 2000);
 
     for (let part of parts) {
@@ -246,11 +242,15 @@ Activity.prototype.start = async function (client) {
           flags: [4096]
         });
     }
+
     messages = [];
     parts = [];
   }
 
-  saveFile(this.profiles, this.community.settings.filePaths.activity);
+  saveFile({
+    msRemaining: this.timeout.msRemaining,
+    profiles: this.profiles
+  }, this.community.settings.filePaths.activity);
 
   this.timeout.id = setTimeout(() => this.start(client), this.timeout.msDuration);
 };
@@ -259,13 +259,15 @@ Activity.prototype.stop = async function () {
   if (this.timeout.status === "not running") {
     return this.timeout.status;
   }
-
-  this.timeout.msRemaining = new Date() - this.timeout.msStartTime;
+  this.timeout.msRemaining = new Date().getTime() - this.timeout.msStartTime;
   this.timeout.msStartTime = null;
   this.timeout.status = "not running";
   this.timeout.id = clearTimeout(this.timeout.id);
 
-  saveFile(this.profiles, this.community.settings.filePaths.activity);
+  saveFile({
+    msRemaining: this.timeout.msRemaining,
+    profiles: this.profiles
+  }, this.community.settings.filePaths.activity);
 };
 
 /**
@@ -286,7 +288,10 @@ Activity.prototype.takePoint = function (member, amount) {
 
   profile.points += amount;
 
-  saveFile(this.profiles, this.filePath);
+  saveFile({
+    msRemaining: this.timeout.msRemaining,
+    profiles: this.profiles
+  }, this.community.settings.filePaths.activity);
 };
 
 export { Activity };

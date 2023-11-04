@@ -40,8 +40,14 @@ const execute = async (interaction) => {
 
   if (set === "preferences missing") {
     await interaction.editReply("preferences are not available: use /set-preferences");
-  } else if(set === "points minor equal") {
-    await interaction.editReply("points entered are lower or equal than basic role");
+  } else if(set === "running") {
+    await interaction.editReply("activity points is started: stop activity first");
+  } else if(set === "equal role") {
+    await interaction.editReply("role entered is arlready present");
+  } else if(set === "equal points") {
+    await interaction.editReply("points entered are equal to another role");
+  } else {
+    await interaction.editReply("role saved");
   }
 };
 

@@ -29,10 +29,9 @@ const execute = async (interaction) => {
     if (started !== "running") {
       await interaction.editReply("activity points already started: use /stop-activity");
     } else {
-      await interaction.editReply("activity points created: start monitoring...");
+      await interaction.editReply("start monitoring");
     }
   }
-
 };
 
 export {

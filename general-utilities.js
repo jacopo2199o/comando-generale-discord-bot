@@ -40,7 +40,12 @@ function splitMessages(messages, size) {
       characters = 0;
     }
   }
-  return chunks;
+
+  if (!chunks.length) {
+    return [chunk];
+  } else {
+    return chunks;
+  }
 }
 
 export {
