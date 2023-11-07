@@ -14,19 +14,19 @@ const data = new SlashCommandBuilder()
 */
 const execute = async (interaction) => {
   await interaction.deferReply();
-
+  
   /**
    * @type { import("../community.js").Community }
-   */
+  */
   const community = communities.get(interaction.guildId);
-  const initialized = await community.activity.initialize(interaction.client);
+  const isInitialized = await community.activity.initialize(interaction.client);
 
-  if (initialized === "not ready") {
+  if (isInitialized === "not ready") {
     await interaction.editReply("preferences are not available: use /set-preferences");
   } else {
-    const started = await community.activity.start(interaction.client);
+    const isStarted = await community.activity.start(interaction.client);
 
-    if (started !== "running") {
+    if (isStarted !== "running") {
       await interaction.editReply("activity points already started: use /stop-activity");
     } else {
       await interaction.editReply("start monitoring");

@@ -15,11 +15,11 @@ const execute = async (interaction) => {
   
   /**
    * @type { import("../community.js").Community }
-   */
+  */
   const community = communities.get(interaction.guildId);
-  const stopped = await community.activity.stop();
+  const isStopped = await community.activity.stop();
 
-  if (stopped === "not running") {
+  if (isStopped === "not running") {
     await interaction.editReply("activity points not started: use /start-activity");
   } else {
     await interaction.editReply("stop monitoring");

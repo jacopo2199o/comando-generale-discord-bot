@@ -11,17 +11,19 @@ const data = new SlashCommandBuilder()
  */
 const execute = async (interaction) => {
   await interaction.deferReply();
-
+  
   /**
-  * @type { import("../community.js").Community }
+   * @type { import("../community.js").Community }
   */
   const community = communities.get(interaction.guildId);
-  const added = community.activity.takePoint(interaction.member, 1);
+  const isTaken = community.activity.takePoint(interaction.member, 1);
 
-  if (added === "not ready") {
+  if (isTaken === "not running") {
     await interaction.editReply("activity points is not started: try again later");
-  } else if (added === "administrator") {
+  } else if (isTaken === "administrator") {
     await interaction.editReply("administrators are excluded");
+  } else if (isTaken === "not found") {
+    await interaction.editReply("something went wrong");
   } else {
     await interaction.editReply(`<@${interaction.member.id}> received 1 activity point`);
   }

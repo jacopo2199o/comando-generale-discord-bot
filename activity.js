@@ -26,38 +26,29 @@ const Activity = function (community) {
  * @param { import("discord.js").GuildMember } member
  */
 Activity.prototype.addProfile = async function (member) {
-  if (!this.community.settings) {
-    return;
+  if (!this.community.settings.preferences) {
+    return "preferences missing";
   }
 
-  if (!member.roles.cache.has(this.community.settings.preferences.baseRoleId)) {
-    member.roles.add(this.community.settings.preferences.baseRoleId);
-  }
-
-  await member.guild.channels.cache.get(this.community.settings.preferences.logRoom)
+  await member.guild.channels.cache.get(this.community.settings.preferences.logChannelId)
     .send(`welcome there, ${member.displayName}`);
 
-  if (this.timeout.id) {
+  if (this.timeout.status === "running") {
     const role = member.guild.roles.cache.get(this.community.settings.preferences.baseRole.id);
 
     // add new member into activity
     this.profiles.push(
-      Object.defineProperties({
+      Object.defineProperty({
         id: member.id,
         name: member.displayName,
         points: this.community.settings.preferences.baseRole.points + this.additionalPoints.thirdClass,
         roleId: role.id,
         roleName: role.name
-      }, {
-        id: {
-          writable: false,
-          configurable: false
-        },
-        name: {
-          writable: false,
-          configurable: false
-        }
-      }));
+      }, "id", {
+        writable: false,
+        configurable: false
+      })
+    );
   }
 };
 
@@ -90,21 +81,20 @@ Activity.prototype.initialize = async function (client) {
   // imposta i punti iniziali
   this.members.filter(member => !member.user.bot && member.id !== this.community.adminId)
     .forEach(member => {
-      const profile = this.profiles.find(profile => profile.id === member.id);
       member.roles.cache.forEach(role => {
+        const profile = this.profiles.find(profile => profile.id === member.id);
         const rank = this.community.settings.ranks.find(rank => rank.id === role.id);
-        if (rank && rank.points >= profile.points) {
-          profile.points = rank.points;
-          profile.roleId = role.id;
-          profile.roleName = role.name;
+        if (profile && rank) {
+          if (rank.points >= profile.points) {
+            profile.points = rank.points;
+            profile.roleId = role.id;
+            profile.roleName = role.name;
+          }
         }
       });
     });
 
-  saveFile({
-    msRemaining: this.timeout.msRemaining,
-    profiles: this.profiles
-  }, this.community.settings.filePaths.activity);
+  saveFile({ msRemaining: this.timeout.msRemaining, profiles: this.profiles }, this.community.settings.filePaths.activity);
 };
 
 /**
@@ -129,12 +119,14 @@ Activity.prototype.resume = function (client) {
 
 /**
  * @param { import("discord.js").Channel } logChannel
- * @param { import("discord.js").Role } baseRole
- * @param { Number } startPoints
  */
-Activity.prototype.setPreferences = function (logChannel) {
+Activity.prototype.setPreferences = function (logChannel, baseRole) {
   this.community.settings.preferences = {
     logChannelId: logChannel.id,
+    baseRole: {
+      id: baseRole.id,
+      points: baseRole.points
+    }
   };
 
   saveFile(this.community.settings.preferences, this.community.settings.filePaths.preferences);
@@ -150,6 +142,10 @@ Activity.prototype.setRank = function (role, points) {
     return "preferences missing";
   }
 
+  if (this.community.settings.preferences.baseRole.points >= points) {
+    return "greater equal base points";
+  }
+
   if (this.community.settings.ranks.find(rank => rank.points === points)) {
     return "equal points";
   }
@@ -162,11 +158,7 @@ Activity.prototype.setRank = function (role, points) {
     return this.timeout.status;
   }
 
-  this.community.settings.ranks.push({
-    id: role.id,
-    points: points
-  });
-
+  this.community.settings.ranks.push({ id: role.id, points: points });
   this.community.settings.ranks.sort((a, b) => b.points - a.points);
 
   saveFile(this.community.settings.ranks, this.community.settings.filePaths.ranks);
@@ -186,49 +178,43 @@ Activity.prototype.start = async function (client) {
     return this.timeout.status;
   }
 
+  this.timeout.msRemaining = this.timeout.msDuration;
   this.timeout.msStartTime = new Date().getTime();
 
   this.profiles.forEach((profile) => {
-    //const member = this.community.guild.members.cache.find(member => member.id === profile.id);
-    const rank = ((ranks, roleId) => {
-      const index = ranks.findIndex(rank => rank.id === roleId);
-      return Object.freeze({
-        next: this.community.settings.ranks[index - 1],
-        actual: this.community.settings.ranks[index],
-        previous: this.community.settings.ranks[index + 1],
-      });
-    })(this.community.settings.ranks, profile.roleId);
-
     // sottrai punti
     if (profile.points > 0) {
       profile.points -= 1;
     }
 
+    //const member = this.community.guild.members.cache.find(member => member.id === profile.id);
+    const rank = ((ranks, roleId) => {
+      const index = ranks.findIndex(rank => rank.id === roleId);
+      //const index = ranks.findIndex(rank => rank.points === profile.points);
+      if (index !== -1) {
+        return Object.freeze({ next: this.community.settings.ranks[index - 1], previous: this.community.settings.ranks[index + 1] });
+      }
+    })(this.community.settings.ranks, profile.roleId);
+
     // aggiorna i ruoli
-    if (rank.previous
-      && rank.actual
-      && profile.points <= rank.previous.points
-    ) {
-      // member.roles.remove(actualRole.id);
-      // member.roles.add(previousRole.id);
-      profile.roleId = rank.previous.id;
-      profile.roleName = client.guilds.resolve(this.community.id)
-        .roles.cache.get(rank.previous.id)
-        .name;
-
-      messages.push(`<@${profile.id}> downgraded to <@&${rank.previous.id}>\n`);
-    } else if (rank.next
-      && rank.actual
-      && profile.points >= rank.next.points
-    ) {
-      // member.roles.remove(actualRole.id);
-      // member.roles.add(nextRole.id);
-      profile.roleId = rank.next.id;
-      profile.roleName = client.guilds.resolve(this.community.id)
-        .roles.cache.get(rank.previous.id)
-        .name;
-
-      messages.push(`<@${profile.id}> promoted to <@&${rank.previous.id}>\n`);
+    if (rank) {
+      if (rank.previous && profile.points <= rank.previous.points) {
+        // member.roles.remove(actualRole.id);
+        // member.roles.add(previousRole.id);
+        profile.roleId = rank.previous.id;
+        profile.roleName = client.guilds.resolve(this.community.id)
+          .roles.cache.get(rank.previous.id)
+          .name;
+        messages.push(`<@${profile.id}> downgraded to <@&${rank.previous.id}>\n`);
+      } else if (rank.next && profile.points >= rank.next.points) {
+        // member.roles.remove(actualRole.id);
+        // member.roles.add(nextRole.id);
+        profile.roleId = rank.next.id;
+        profile.roleName = client.guilds.resolve(this.community.id)
+          .roles.cache.get(rank.previous.id)
+          .name;
+        messages.push(`<@${profile.id}> promoted to <@&${rank.previous.id}>\n`);
+      }
     }
   });
 
@@ -237,10 +223,7 @@ Activity.prototype.start = async function (client) {
 
     for (let part of parts) {
       await client.channels.cache.get(this.community.settings.preferences.logChannelId)
-        .send({
-          content: part,
-          flags: [4096]
-        });
+        .send({ content: part, flags: [4096] });
     }
 
     messages = [];
@@ -259,6 +242,7 @@ Activity.prototype.stop = async function () {
   if (this.timeout.status === "not running") {
     return this.timeout.status;
   }
+
   this.timeout.msRemaining = new Date().getTime() - this.timeout.msStartTime;
   this.timeout.msStartTime = null;
   this.timeout.status = "not running";
@@ -271,19 +255,22 @@ Activity.prototype.stop = async function () {
 };
 
 /**
- * @param { import("discord.js").Interaction } interaction
  * @param { import("discord.js").GuildMember } member
  * @param { Number } amount
  */
 Activity.prototype.takePoint = function (member, amount) {
+  const profile = this.profiles.find(profile => profile.id === member.id);
+
   if (this.timeout.status === "not running") {
     return this.timeout.status;
   }
 
-  const profile = this.profiles.find(profile => profile.id === member.id);
-
-  if (!profile && member.id === this.community.adminId) {
+  if (member.id === this.community.adminId) {
     return "administrator";
+  }
+
+  if (!profile) {
+    return "not found";
   }
 
   profile.points += amount;

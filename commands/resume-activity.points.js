@@ -13,12 +13,12 @@ const execute = async (interaction) => {
   await interaction.deferReply();
 
   /**
- * @type { import("../community.js").Community }
- */
+   * @type { import("../community.js").Community }
+  */
   const community = communities.get(interaction.guildId);
-  const resumed = community.activity.resume(interaction.client);
+  const isResumed = community.activity.resume(interaction.client);
 
-  if (resumed === "running") {
+  if (isResumed === "running") {
     await interaction.editReply("activity points already started: use /stop activity");
   } else {
     await interaction.editReply("resume monitoring");

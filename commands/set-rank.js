@@ -23,12 +23,12 @@ const data = new SlashCommandBuilder()
  */
 const execute = async (interaction) => {
   await interaction.deferReply();
-
+  
   /**
    * @type { import("../community.js").Community }
-   */
+  */
   const community = communities.get(interaction.guildId);
-  const set = (() => {
+  const isSetted = (() => {
     const rank = ((role, points) => {
       return {
         role: interaction.options.getRole(role),
@@ -38,14 +38,16 @@ const execute = async (interaction) => {
     return community.activity.setRank(rank.role, rank.points);
   })();
 
-  if (set === "preferences missing") {
+  if (isSetted === "preferences missing") {
     await interaction.editReply("preferences are not available: use /set-preferences");
-  } else if(set === "running") {
-    await interaction.editReply("activity points is started: stop activity first");
-  } else if(set === "equal role") {
-    await interaction.editReply("role entered is arlready present");
-  } else if(set === "equal points") {
-    await interaction.editReply("points entered are equal to another role");
+  } else if (isSetted === "running") {
+    await interaction.editReply("preferences are not available: use /set-preferences");
+  } else if (isSetted === "greater equal base points") {
+    await interaction.editReply("points entered are less than or equal the base role");
+  } else if (isSetted === "equal role") {
+    await interaction.editReply("role entered is already present");
+  } else if (isSetted === "equal points") {
+    await interaction.editReply("points entered are equals to another role");
   } else {
     await interaction.editReply("role saved");
   }

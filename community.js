@@ -48,19 +48,19 @@ const Community = function (guild) {
         preferences: undefined
       };
 
-      if(fs.existsSync(filePaths.activity)) {
+      if (fs.existsSync(filePaths.activity)) {
         data.activity = fs.readFileSync(filePaths.activity);
       } else {
         fs.writeFileSync(filePaths.activity, "[]");
       }
 
-      if(fs.existsSync(filePaths.ranks)) {
+      if (fs.existsSync(filePaths.ranks)) {
         data.ranks = fs.readFileSync(filePaths.ranks);
       } else {
         fs.writeFileSync(filePaths.ranks, "[]");
       }
 
-      if(fs.existsSync(filePaths.preferences)) {
+      if (fs.existsSync(filePaths.preferences)) {
         data.preferences = fs.readFileSync(filePaths.preferences);
       } else {
         fs.writeFileSync(filePaths.preferences, "{}");
@@ -71,14 +71,20 @@ const Community = function (guild) {
 
     if (data.activity) {
       data.activity = JSON.parse(data.activity);
+    } else {
+      data.activity = [];
     }
 
     if (data.ranks) {
       data.ranks = JSON.parse(data.ranks);
+    } else {
+      data.ranks = [];
     }
 
     if (data.preferences) {
       data.preferences = JSON.parse(data.preferences);
+    } else {
+      data.preferences = {};
     }
 
     return Object.defineProperty(data, "filePath", {

@@ -1,5 +1,5 @@
 {
-  "msRemaining": 0,
+  "msRemaining": 3522,
   "profiles": [
     {
       "id": "1059782589176627310",
@@ -57,11 +57,6 @@
       "points": 0
     },
     {
-      "id": "406543252897005569",
-      "name": "[RNM]Zimnidava",
-      "points": 0
-    },
-    {
       "id": "714188194790375426",
       "name": "m700",
       "points": 0
@@ -99,11 +94,6 @@
     {
       "id": "972364932043640872",
       "name": "𝗖𝗹𝗼𝗻𝗲 𝗔𝗽𝗲𝘀 𝗕𝗼𝘁",
-      "points": 0
-    },
-    {
-      "id": "710083141984845854",
-      "name": "L'egregio Barred",
       "points": 0
     },
     {
@@ -332,6 +322,11 @@
       "points": 0
     },
     {
+      "id": "1094932274832736268",
+      "name": "lauramartinez8051014",
+      "points": 0
+    },
+    {
       "id": "1096272030141272097",
       "name": "gioco1",
       "points": 0
@@ -353,7 +348,7 @@
     },
     {
       "id": "1121702415691952208",
-      "name": "Dokshin_47",
+      "name": "Dokshin_Dal_1947",
       "points": 0
     },
     {
@@ -872,11 +867,6 @@
       "points": 0
     },
     {
-      "id": "1130594210265960548",
-      "name": "greez",
-      "points": 0
-    },
-    {
       "id": "856952273527767100",
       "name": "TUSK",
       "points": 0
@@ -1149,11 +1139,6 @@
     {
       "id": "556443582907547659",
       "name": "Dadone6",
-      "points": 0
-    },
-    {
-      "id": "1091300393444720640",
-      "name": "XxDedalusxX",
       "points": 0
     },
     {
@@ -1717,11 +1702,6 @@
       "points": 0
     },
     {
-      "id": "1123722085311717517",
-      "name": "ItsCheez",
-      "points": 0
-    },
-    {
       "id": "1167966259451809795",
       "name": "Vigilantes 🫸",
       "points": 0
@@ -2017,8 +1997,18 @@
       "points": 0
     },
     {
+      "id": "992117982824247297",
+      "name": "Rtg Jayy",
+      "points": 0
+    },
+    {
       "id": "902188561854529587",
       "name": "ʑi°²",
+      "points": 0
+    },
+    {
+      "id": "1168177183332769854",
+      "name": "ncgeminidan",
       "points": 0
     },
     {
@@ -2108,7 +2098,7 @@
     },
     {
       "id": "1082412566325768242",
-      "name": "SmileyPirate",
+      "name": "Baller",
       "points": 0
     },
     {
@@ -2229,7 +2219,7 @@
     {
       "id": "1033715726562902046",
       "name": "[CG] SaLaz",
-      "points": 0,
+      "points": 8,
       "roleId": "1109520466865041449",
       "roleName": "sottoprefetto"
     },
@@ -2564,6 +2554,11 @@
       "points": 0
     },
     {
+      "id": "1170924477153017927",
+      "name": "SABE2020",
+      "points": 0
+    },
+    {
       "id": "711628674360934461",
       "name": "Verpi.07",
       "points": 0
@@ -2611,11 +2606,6 @@
     {
       "id": "1129419396088086650",
       "name": "Giggio macello",
-      "points": 0
-    },
-    {
-      "id": "252167107981082625",
-      "name": "Mark鬼",
       "points": 0
     },
     {
@@ -2691,9 +2681,9 @@
     {
       "id": "282573946262519808",
       "name": "saraska",
-      "points": 1,
-      "roleId": "1109520466865041449",
-      "roleName": "sottoprefetto"
+      "points": 10,
+      "roleId": "1109520330034249778",
+      "roleName": "prefetto"
     },
     {
       "id": "353636528804855808",
@@ -2902,7 +2892,7 @@
     },
     {
       "id": "693410128044490802",
-      "name": "ezggntsigma120azovstal",
+      "name": "sss",
       "points": 0
     },
     {
@@ -2938,11 +2928,6 @@
     {
       "id": "913000097250418699",
       "name": "king of penguins",
-      "points": 0
-    },
-    {
-      "id": "790619902745903126",
-      "name": "IceGameMaster",
       "points": 0
     }
   ]
