@@ -1,7 +1,7 @@
 import { ChannelType, SlashCommandBuilder } from "discord.js";
 import { communities } from "../events/ready.js";
 
-const cooldown = 4; // modificalo per sbloccare il comando ogni ora
+const cooldown = 1;
 const data = new SlashCommandBuilder()
   .setName("set-preferences")
   .setDescription("set preferences for log channel and base role")

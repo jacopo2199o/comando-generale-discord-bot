@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "discord.js";
 import { communities } from "../events/ready.js";
 
-const cooldown = 4; // modificalo per sbloccare il comando ogni ora
+const cooldown = 10; // modificalo per sbloccare il comando ogni ora
 const data = new SlashCommandBuilder()
   .setName("take-activity-point")
   .setDescription("take activity point for ranking up");

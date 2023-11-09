@@ -4,7 +4,7 @@ import { communities } from "../events/ready.js";
 
 dotenv.config();
 
-const cooldown = 4;
+const cooldown = 1;
 const data = new SlashCommandBuilder()
   .setName("start-activity-points")
   .setDescription("start activity points and start monitoring");

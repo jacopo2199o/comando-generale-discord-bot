@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "discord.js";
 import { communities } from "../events/ready.js";
 
-const cooldown = 4;
+const cooldown = 1;
 const data = new SlashCommandBuilder()
   .setName("resume-activity-points")
   .setDescription("resume activity points and restart monitoring");

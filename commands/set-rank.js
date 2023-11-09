@@ -1,29 +1,27 @@
 import { SlashCommandBuilder } from "discord.js";
 import { communities } from "../events/ready.js";
 
-const cooldown = 4; // modificalo per sbloccare il comando ogni ora
+const cooldown = 1;
 const data = new SlashCommandBuilder()
   .setName("set-rank")
   .setDescription("set rank to obtainable roles")
   .addRoleOption(option => option
     .setName("role")
     .setDescription("role that can be obtained")
-    .setRequired(true)
-  )
+    .setRequired(true))
   .addNumberOption(option => option
     .setName("points")
     .setDescription("points required for promotion")
     .setMinValue(1)
     .setMaxValue(1000000)
-    .setRequired(true)
-  );
+    .setRequired(true));
 
 /**
  * @param {import("discord.js").Interaction} interaction
  */
 const execute = async (interaction) => {
   await interaction.deferReply();
-  
+
   /**
    * @type { import("../community.js").Community }
   */
