@@ -8,6 +8,7 @@ import { Activity } from "./activity.js";
  */
 const Community = function (guild) {
   this.activity = new Activity(this);
+  this.client = guild.client;
   this.id = guild.id;
   this.adminId = guild.ownerId;
   this.settings = (() => {

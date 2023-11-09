@@ -34,19 +34,16 @@ const execute = async (interaction) => {
   const isSetted = (() => {
     const preferences = ((logChannel, baseRole, startPoints) => {
       return Object.freeze({
-        logChannel: interaction.options.getChannel(logChannel),
-        baseRole: {
-          id: interaction.options.getRole(baseRole)
-            .id,
-          points: interaction.options.getNumber(startPoints)
-        }
+        logChannelId: interaction.options.getChannel(logChannel),
+        baseRole: interaction.options.getRole(baseRole),
+        points: interaction.options.getNumber(startPoints)
       });
     })("log-channel", "base-role", "start-points");
-    return community.activity.setPreferences(preferences.logChannel, preferences.baseRole);
+    return community.activity.setPreferences(preferences.logChannelId, preferences.baseRole, preferences.points);
   })();
 
-  if (isSetted !== "success") {
-    await interaction.editReply("something went wrong");
+  if (isSetted === "running") {
+    await interaction.editReply("activity points started: use /stop-activity-points");
   } else {
     await interaction.editReply("preferences saved");
   }

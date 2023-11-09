@@ -2,6 +2,7 @@
   "logChannelId": "1165937736121860198",
   "baseRole": {
     "id": "1008665802716741733",
+    "name": "membro",
     "points": 10
   }
 }

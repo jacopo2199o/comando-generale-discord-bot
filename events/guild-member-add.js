@@ -12,8 +12,8 @@ const execute = async (member) => {
   /**
    * @type { import("../community.js").Community }
    */
-  const community = communities.get(member.guild.id);
-  community.activity.addProfile(member);
+  communities.get(member.guild.id)
+    .activity.addProfile(member);
 };
 
 export {
