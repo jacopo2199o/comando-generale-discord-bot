@@ -18,6 +18,5 @@
   },
   "engines": {
     "node": "18.17.x"
-  },
-  "start": "node index.js"
+  }
 }
