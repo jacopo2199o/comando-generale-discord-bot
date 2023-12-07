@@ -1,5 +1,3 @@
-import fs from "node:fs";
-
 const deepFreeze = (object) => {
   Object.keys(object).forEach((property) => {
     if (
@@ -9,11 +7,6 @@ const deepFreeze = (object) => {
       deepFreeze(object[property]);
   });
   return Object.freeze(object);
-};
-
-const readFile = (path) => {
-  const data = fs.readFileSync(path);
-  return JSON.parse(data);
 };
 
 /**
@@ -54,19 +47,7 @@ const sendMesseges = async (community, messages) => {
   }
 };
 
-const saveFile = (data, filePath) => {
-  const JSONData = JSON.stringify(data, null, 2);
-  fs.writeFileSync(filePath, JSONData);
-};
-
-/**
- * @param { Array<String> } messages 
- * @param { Number } size 
- */
-
 export {
   deepFreeze,
-  sendMesseges,
-  saveFile,
-  readFile
+  sendMesseges
 };
