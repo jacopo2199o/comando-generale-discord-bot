@@ -4,6 +4,9 @@ import {
   GatewayIntentBits
 } from "discord.js";
 import { execute } from "./events/ready.js";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 (async () => {
   const client = new Client({
