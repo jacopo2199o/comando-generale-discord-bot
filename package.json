@@ -15,5 +15,8 @@
   "type": "module",
   "devDependencies": {
     "eslint": "^8.49.0"
+  },
+  "engines": {
+    "node": "18.17.x"
   }
 }
