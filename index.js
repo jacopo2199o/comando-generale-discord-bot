@@ -1,26 +1,20 @@
-import {
-  Client,
-  Collection,
-  GatewayIntentBits
-} from "discord.js";
-import { execute } from "./events/ready.js";
+import { Client, GatewayIntentBits } from "discord.js";
+import { ready } from "./events/ready.js";
+import { roleUpdate } from "./events/guild-member-update.js";
+import { execute } from "./events/interaction-create.js";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-(async () => {
-  const client = new Client({
-    intents: [
-      GatewayIntentBits.Guilds,
-      GatewayIntentBits.GuildMembers,
-      GatewayIntentBits.GuildMessages
-    ]
-  });
-  client.commands = new Collection();
-  client.cooldowns = new Collection();
+const client = new Client({
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildMessages
+  ]
+});
 
-  client.once("ready", execute);
-  //client.on(event.name, (...args) => event.execute(...args));
-
-  client.login(process.env.bot_token);
-})();
+client.once("ready", ready);
+client.on("interactionCreate", execute);
+client.on("guildMemberUpdate", roleUpdate);
+client.login(process.env.bot_token);

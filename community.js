@@ -4,7 +4,8 @@
 const Community = function (guild) {
   this.client = guild.client;
   this.id = guild.id;
-  this.adminId = guild.ownerId;
+  this.admin = guild.ownerId;
+  this.logChannel = guild.channels.cache.find((channel) => channel.name === "🤖bot-testing");
 };
 
 export { Community };
