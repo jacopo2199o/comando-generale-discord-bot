@@ -1,14 +1,9 @@
-import { communities } from "./ready.js";
 import { ranks } from "../resources/ranks.js";
 import { sendMesseges } from "../resources/general-utilities.js";
 /**
  * @param {import("discord.js").Interaction} interaction
  */
 const execute = async (interaction) => {
-  /**
-  * @type { import("../community.js").Community }
-  */
-  const community = communities.get(interaction.guildId);
   const messages = [];
 
   if (!interaction.isChatInputCommand()) {
@@ -16,7 +11,8 @@ const execute = async (interaction) => {
   }
 
   if (interaction.commandName === "check-activity") {
-    const members = await interaction.client.guilds.resolve(community.id)
+    const admin = interaction.guild.ownerId;
+    const members = await interaction.client.guilds.resolve(interaction.guild.id)
       .members.fetch();
 
     let isDowngrading = false;
@@ -24,7 +20,7 @@ const execute = async (interaction) => {
     await interaction.deferReply();
 
     members.forEach((member) => {
-      if (/* !member.user.bot && */ member.id !== community.admin) {
+      if (member.id !== admin) {
         member.roles.cache.forEach(async (role) => {
           const rankIndex = ranks.findIndex((rank) => rank === role.name);
 
@@ -54,7 +50,7 @@ const execute = async (interaction) => {
       await interaction.editReply("nobody to downgrade");
     }
   } else if (interaction.commandName === "check-landing") {
-    const members = await interaction.client.guilds.resolve(community.id)
+    const members = await interaction.client.guilds.resolve(interaction.guild.id)
       .members.fetch();
 
     await interaction.deferReply();
@@ -65,26 +61,27 @@ const execute = async (interaction) => {
         // controllo registrazione incompleta
         if (!member.roles.cache.some((role) => role.name === "italiano")) {
           if (!member.roles.cache.some((role) => role.name === "international")) {
-            messages.push(`membro senza ruolo lingua: [${member.displayName}, ${member.nickname}, ${member.user.username}]`);
+            messages.push(`membro senza ruolo lingua: [${member.displayName}, ${member.nickname}, ${member.user.username}]\n`);
           }
         }
 
         // controllo doppia dichiarazione lingua
         if (member.roles.cache.some((role) => role.name === "italiano")) {
           if (member.roles.cache.some((role) => role.name === "international")) {
-            messages.push(`membro con doppio ruolo lingua: [${member.displayName}, ${member.nickname}, ${member.user.username}]`);
+            messages.push(`membro con doppio ruolo lingua: [${member.displayName}, ${member.nickname}, ${member.user.username}]\n`);
           }
         }
       }
     });
 
     if (!messages.length) {
-      await interaction.editReply("tutti i membri sono registrati correttamente");
+      await interaction.editReply("tutti i membri sono registrati correttamente");  
     } else {
-      sendMesseges(community, messages);
+      sendMesseges(messages, interaction.channel);
+      await interaction.editReply("done");  
     }
   } else {
-    console.error(`no command matching ${interaction.commandName} was found.`);
+    console.error(`no command matching ${interaction.commandName} was found`);
     return interaction.reply({ content: `comando inesistente / ${interaction.commandName}`, ephemeral: true });
   }
 };

@@ -1,6 +1,7 @@
 import { Client, GatewayIntentBits } from "discord.js";
 import { ready } from "./events/ready.js";
-import { roleUpdate } from "./events/guild-member-update.js";
+import { guildMemberUpdate } from "./events/guild-member-update.js";
+import { threadCreate } from "./events/thread-create.js";
 import { execute } from "./events/interaction-create.js";
 import dotenv from "dotenv";
 
@@ -16,5 +17,6 @@ const client = new Client({
 
 client.once("ready", ready);
 client.on("interactionCreate", execute);
-client.on("guildMemberUpdate", roleUpdate);
+client.on("guildMemberUpdate", guildMemberUpdate);
+client.on("threadCreate", threadCreate);
 client.login(process.env.bot_token);
