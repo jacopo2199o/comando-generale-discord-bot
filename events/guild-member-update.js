@@ -12,14 +12,14 @@ const guildMemberUpdate = async (oldMember, newMember) => {
   if (oldMember.roles.cache.size > newMember.roles.cache.size) {
     oldMember.roles.cache.forEach(role => {
       if (!newMember.roles.cache.has(role.id)) {
-        messages.push(`*${role}* has been removed from *${newMember}*\n`);
+        messages.push(`*${role.name}* has been removed from *${newMember.displayName}*\n`);
       }
     });
     // role was added
   } else if (oldMember.roles.cache.size < newMember.roles.cache.size) {
     newMember.roles.cache.forEach(role => {
       if (!oldMember.roles.cache.has(role.id)) {
-        messages.push(`*${role}* has been added to *${newMember}*\n`);
+        messages.push(`*${role.name}* has been added to *${newMember.displayName}*\n`);
       }
     });
   }

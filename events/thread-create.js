@@ -9,7 +9,7 @@ const threadCreate = async (thread, newlyCreated) => {
   const messages = [];
 
   if (newlyCreated) {
-    messages.push(`new thread *${thread.name}* created in ${thread.id}`);
+    messages.push(`new thread *${thread.name}* created in *${thread.parent.name}*`);
 
     sendMesseges(messages, channel);
   }

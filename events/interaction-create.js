@@ -61,21 +61,21 @@ const execute = async (interaction) => {
         // controllo registrazione incompleta
         if (!member.roles.cache.some((role) => role.name === "italiano")) {
           if (!member.roles.cache.some((role) => role.name === "international")) {
-            messages.push(`membro senza ruolo lingua: [${member.displayName}, ${member.nickname}, ${member.user.username}]\n`);
+            messages.push(`member with missing language role: *${member.displayName}, ${member.nickname}, ${member.user.username}*\n`);
           }
         }
 
         // controllo doppia dichiarazione lingua
         if (member.roles.cache.some((role) => role.name === "italiano")) {
           if (member.roles.cache.some((role) => role.name === "international")) {
-            messages.push(`membro con doppio ruolo lingua: [${member.displayName}, ${member.nickname}, ${member.user.username}]\n`);
+            messages.push(`member with *italiano* and *international* role: *${member.displayName}, ${member.nickname}, ${member.user.username}*\n`);
           }
         }
       }
     });
 
     if (!messages.length) {
-      await interaction.editReply("tutti i membri sono registrati correttamente");  
+      await interaction.editReply("all members registered");  
     } else {
       sendMesseges(messages, interaction.channel);
       await interaction.editReply("done");  

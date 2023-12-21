@@ -30,7 +30,6 @@ const sendMesseges = async (messages, channel) => {
     let parts = splitMessages(messages, 2000);
 
     for (let part of parts) {
-      // await community.logChannel.send({ content: part, flags: [4096] });
       await channel.send({ content: part, flags: [4096] });
     }
   }
