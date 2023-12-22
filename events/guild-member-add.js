@@ -12,7 +12,7 @@ const guildMemberAdd = async (guildMember) => {
   guildInvites.forEach((guildInvite) => {
     if (guildInvite.uses != referrals[guildInvite.code]) {
       referrals[guildInvite.code] = guildInvite.uses;
-      messages.push(`Welcome ${guildMember.user.tag} Invited By ${guildInvite.inviter.tag}`);
+      messages.push(`welcome *${guildMember.displayName}*\n inviter: *${guildInvite.inviter.displayName}*`);
       sendMesseges(messages, channel);
     }
   });
