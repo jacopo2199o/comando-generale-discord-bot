@@ -1,7 +1,9 @@
 import { Client, GatewayIntentBits } from "discord.js";
-import { execute } from "./events/interaction-create.js";
+import { activityDone } from "./events/activity-done.js";
+import { interactionCreate } from "./events/interaction-create.js";
 import { inviteCreate } from "./events/invite-create.js";
 import { guildMemberAdd } from "./events/guild-member-add.js";
+import { guildMemberRemove } from "./events/guild-member-remove.js";
 import { guildMemberUpdate } from "./events/guild-member-update.js";
 import { messageCreate } from "./events/message-create.js";
 import { ready } from "./events/ready.js";
@@ -20,11 +22,12 @@ const client = new Client({
 });
 
 client.once("ready", ready);
-client.on("interactionCreate", execute);
+client.on("activityDone", activityDone);
+client.on("interactionCreate", interactionCreate);
 client.on("inviteCreate", inviteCreate);
 client.on("guildMemberAdd", guildMemberAdd);
+client.on("guildMemberRemove", guildMemberRemove);
 client.on("guildMemberUpdate", guildMemberUpdate);
 client.on("threadCreate", threadCreate);
-client.on("messageCreate", messageCreate );
+client.on("messageCreate", messageCreate);
 client.login(process.env.bot_token);
-

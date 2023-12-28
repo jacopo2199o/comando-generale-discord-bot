@@ -3,7 +3,7 @@ import { sendMesseges } from "../resources/general-utilities.js";
 /**
  * @param {import("discord.js").Interaction} interaction
  */
-const execute = async (interaction) => {
+const interactionCreate = async (interaction) => {
   let messages = [];
 
   if (!interaction.isChatInputCommand()) {
@@ -11,7 +11,6 @@ const execute = async (interaction) => {
   }
 
   if (interaction.commandName === "check-activity") {
-    const admin = interaction.guild.ownerId;
     const members = await interaction.client.guilds.resolve(interaction.guild.id)
       .members.fetch();
 
@@ -20,7 +19,7 @@ const execute = async (interaction) => {
     await interaction.deferReply();
 
     members.forEach((member) => {
-      if (member.id !== admin) {
+      if (member.id !== interaction.guild.ownerId) {
         member.roles.cache.forEach(async (role) => {
           const rankIndex = ranks.findIndex((rank) => rank === role.name);
 
@@ -87,4 +86,4 @@ const execute = async (interaction) => {
   }
 };
 
-export { execute };
+export { interactionCreate };
