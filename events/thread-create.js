@@ -6,12 +6,13 @@ import { sendMesseges } from "../resources/general-utilities.js";
  */
 const threadCreate = async (thread, newlyCreated) => {
   const channel = thread.guild.channels.cache.find((channel) => channel.name === "🤖bot-testing");
-  const messages = [];
+  let messages = [];
 
   if (newlyCreated) {
     messages.push(`new thread *${thread.name}* created in *${thread.parent.name}*`);
 
     sendMesseges(messages, channel);
+    messages = [];
   }
 };
 

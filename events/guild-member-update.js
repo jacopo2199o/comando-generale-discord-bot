@@ -6,7 +6,7 @@ import { sendMesseges } from "../resources/general-utilities.js";
  */
 const guildMemberUpdate = async (oldMember, newMember) => {
   const channel = newMember.guild.channels.cache.find((channel) => channel.name === "🤖bot-testing");
-  const messages = [];
+  let messages = [];
 
   // role has been removed
   if (oldMember.roles.cache.size > newMember.roles.cache.size) {
@@ -25,6 +25,7 @@ const guildMemberUpdate = async (oldMember, newMember) => {
   }
 
   sendMesseges(messages, channel);
+  messages = [];
 };
 
 export { guildMemberUpdate };

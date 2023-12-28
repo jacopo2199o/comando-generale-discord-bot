@@ -4,7 +4,7 @@ import { sendMesseges } from "../resources/general-utilities.js";
  * @param {import("discord.js").Interaction} interaction
  */
 const execute = async (interaction) => {
-  const messages = [];
+  let messages = [];
 
   if (!interaction.isChatInputCommand()) {
     return;
@@ -78,6 +78,7 @@ const execute = async (interaction) => {
       await interaction.editReply("all members registered");  
     } else {
       sendMesseges(messages, interaction.channel);
+      messages = [];
       await interaction.editReply("done");  
     }
   } else {
