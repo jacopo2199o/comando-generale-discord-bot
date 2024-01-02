@@ -1,3 +1,4 @@
+import { customChannels } from "../resources/custom-channels.js";
 import { sendMesseges } from "../resources/general-utilities.js";
 
 /**
@@ -5,14 +6,16 @@ import { sendMesseges } from "../resources/general-utilities.js";
  * @param { Boolean } newlyCreated
  */
 const threadCreate = async (thread, newlyCreated) => {
-  const channel = thread.guild.channels.cache.find((channel) => channel.name === "🤖bot-testing");
+  const owner = await thread.fetchOwner();
+  const channel = thread.guild.channels.cache.find((channel) => channel.name === customChannels.public);
   let messages = [];
 
   if (newlyCreated) {
-    messages.push(`new thread *${thread.name}* created in *${thread.parent.name}*`);
-
+    messages.push(`*${owner.guildMember.displayName}* created *${thread.name}* thread in *${thread.parent.name}*`);
     sendMesseges(messages, channel);
     messages = [];
+
+    thread.client.emit("activity", owner.guildMember, 10);
   }
 };
 

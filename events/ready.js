@@ -7,8 +7,6 @@ const referrals = {};
  * @param { import("discord.js").Client } client
  */
 const ready = async (client) => {
-
-  // monitoring referrals
   client.guilds.cache.forEach(async (guild) => {
     const guildInvites = await guild.invites.fetch();
     const guildMembers = await guild.members.fetch();

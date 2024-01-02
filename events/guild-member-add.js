@@ -1,3 +1,4 @@
+import { customChannels } from "../resources/custom-channels.js";
 import { sendMesseges } from "../resources/general-utilities.js";
 import { activityPoints, referrals } from "./ready.js";
 
@@ -5,8 +6,8 @@ import { activityPoints, referrals } from "./ready.js";
  * @param { import("discord.js").GuildMember } guildMember
  */
 const guildMemberAdd = async (guildMember) => {
-  const channel = guildMember.guild.channels.cache.find((channel) => channel.name === "🤖bot-testing");
   const guildInvites = await guildMember.guild.invites.fetch();
+  const channel = guildMember.guild.channels.cache.find((channel) => channel.name === customChannels.welcome);
   let messages = [];
 
   guildInvites.forEach((guildInvite) => {

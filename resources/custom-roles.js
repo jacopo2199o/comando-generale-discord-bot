@@ -1,4 +1,4 @@
-const ranks = [
+const customRoles = [
   "presidente",
   "ministro",
   "senatore",
@@ -25,4 +25,4 @@ const ranks = [
   "membro"
 ];
 
-export { ranks };
+export { customRoles };

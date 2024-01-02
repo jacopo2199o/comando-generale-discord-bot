@@ -1,5 +1,5 @@
 import { Client, GatewayIntentBits } from "discord.js";
-import { activityDone } from "./events/activity-done.js";
+import { activityDone } from "./events/activity.js";
 import { interactionCreate } from "./events/interaction-create.js";
 import { inviteCreate } from "./events/invite-create.js";
 import { guildMemberAdd } from "./events/guild-member-add.js";
@@ -22,7 +22,7 @@ const client = new Client({
 });
 
 client.once("ready", ready);
-client.on("activityDone", activityDone);
+client.on("activity", activityDone);
 client.on("interactionCreate", interactionCreate);
 client.on("inviteCreate", inviteCreate);
 client.on("guildMemberAdd", guildMemberAdd);

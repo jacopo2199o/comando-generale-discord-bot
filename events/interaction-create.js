@@ -1,4 +1,4 @@
-import { ranks } from "../resources/ranks.js";
+import { customRoles } from "../resources/custom-roles.js";
 import { sendMesseges } from "../resources/general-utilities.js";
 /**
  * @param {import("discord.js").Interaction} interaction
@@ -21,12 +21,12 @@ const interactionCreate = async (interaction) => {
     members.forEach((member) => {
       if (member.id !== interaction.guild.ownerId) {
         member.roles.cache.forEach(async (role) => {
-          const rankIndex = ranks.findIndex((rank) => rank === role.name);
+          const rankIndex = customRoles.findIndex((rank) => rank === role.name);
 
           // trovata corrispondenza col nome ruolo
           if (rankIndex !== -1) {
-            const oldRank = ranks[rankIndex];
-            const newRank = ranks[rankIndex + 1];
+            const oldRank = customRoles[rankIndex];
+            const newRank = customRoles[rankIndex + 1];
 
             isDowngrading = true;
 
@@ -56,15 +56,12 @@ const interactionCreate = async (interaction) => {
 
     members.forEach((member) => {
       if (!member.user.bot) {
-
-        // controllo registrazione incompleta
         if (!member.roles.cache.some((role) => role.name === "italiano")) {
           if (!member.roles.cache.some((role) => role.name === "international")) {
             messages.push(`member with missing language role: *${member.displayName}, ${member.nickname}, ${member.user.username}*\n`);
           }
         }
 
-        // controllo doppia dichiarazione lingua
         if (member.roles.cache.some((role) => role.name === "italiano")) {
           if (member.roles.cache.some((role) => role.name === "international")) {
             messages.push(`member with *italiano* and *international* role: *${member.displayName}, ${member.nickname}, ${member.user.username}*\n`);
@@ -82,7 +79,7 @@ const interactionCreate = async (interaction) => {
     }
   } else {
     console.error(`no command matching ${interaction.commandName} was found`);
-    return interaction.reply({ content: `comando inesistente / ${interaction.commandName}`, ephemeral: true });
+    return interaction.reply({ content: `comando inesistente /${interaction.commandName}`, ephemeral: true });
   }
 };
 
