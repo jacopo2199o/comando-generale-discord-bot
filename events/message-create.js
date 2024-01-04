@@ -8,7 +8,7 @@ const messageCreate = async (message) => {
   if (!message.author.bot) {
     const channel = message.guild.channels.cache.find((channel) => channel.name === customChannels.public);
     let messages = [];
-
+    
     messages.push(`*${message.member.displayName}* sended a new message in *${message.channel.name}*`);
     sendMesseges(messages, channel);
     messages = [];

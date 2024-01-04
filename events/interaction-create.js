@@ -71,11 +71,21 @@ const interactionCreate = async (interaction) => {
     });
 
     if (!messages.length) {
-      await interaction.editReply("all members registered");  
+      await interaction.editReply("all members registered");
     } else {
       sendMesseges(messages, interaction.channel);
       messages = [];
-      await interaction.editReply("done");  
+      await interaction.editReply("done");
+    }
+  } else if (interaction.commandName === "about") {
+    await interaction.deferReply();
+
+    if (interaction.channel.isThread()) {
+      await interaction.editReply(interaction.channel.parent.topic);
+    } else if (interaction.channel.isVoiceBased()){
+      await interaction.editReply("description is not available for voice channels");
+    } else {
+      await interaction.editReply(interaction.channel.topic);
     }
   } else {
     console.error(`no command matching ${interaction.commandName} was found`);
