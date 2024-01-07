@@ -7,20 +7,51 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const commands = [];
 const rest = new REST().setToken(process.env.bot_token);
+const commands = [];
 
 commands.push(new SlashCommandBuilder()
-  .setName("check-activity")
-  .setDescription("check activity to downgrade inactive members"));
+  .setName("about")
+  .setDescription("about this channel"));
+
+commands.push(new SlashCommandBuilder()
+  .setName("clear")
+  .setDescription("clear channel from last 100 messages"));
+
+commands.push(new SlashCommandBuilder()
+  .setName("downgrade")
+  .setDescription("downgrade one rank all members"));
 
 commands.push(new SlashCommandBuilder()
   .setName("check-landing")
   .setDescription("check landing for missing or wrong base roles"));
 
 commands.push(new SlashCommandBuilder()
-  .setName("about")
-  .setDescription("about this channel"));
+  .setName("give-reputation-point")
+  .setDescription("give reputation point to a member")
+  .addUserOption((option) => option
+    .setName("member")
+    .setDescription("member to give point")
+    .setRequired(true)
+  ));
+
+commands.push(new SlashCommandBuilder()
+  .setName("view-points")
+  .setDescription("view points to next rank")
+  .addUserOption((option) => option
+    .setName("member")
+    .setDescription("member points")
+    .setRequired(false)
+  ));
+
+commands.push(new SlashCommandBuilder()
+  .setName("view-reputation-points")
+  .setDescription("view reputation points of a member")
+  .addUserOption((option) => option
+    .setName("member")
+    .setDescription("member reputation points")
+    .setRequired(false)
+  ));
 
 for (let command of commands) {
   command.toJSON();

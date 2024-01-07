@@ -11,11 +11,11 @@ const threadCreate = async (thread, newlyCreated) => {
   let messages = [];
 
   if (newlyCreated) {
-    messages.push(`*${owner.guildMember.displayName}* created *${thread.name}* thread in *${thread.parent.name}*`);
+    thread.client.emit("activity", owner.guildMember, channel, 100);
+
+    messages.push(`🧵 *${owner.guildMember.displayName}* created *${thread.name}* thread in *${thread.parent.name}*\n`);
     sendMesseges(messages, channel);
     messages = [];
-
-    thread.client.emit("activity", owner.guildMember, 10);
   }
 };
 

@@ -1,7 +1,10 @@
 //import fs from "fs";
 
-const activityPoints = {};
+const promotionPoints = {};
+const globalPoints = {};
+const reputationPoints = {};
 const referrals = {};
+
 
 /**
  * @param { import("discord.js").Client } client
@@ -11,14 +14,19 @@ const ready = async (client) => {
     const guildInvites = await guild.invites.fetch();
     const guildMembers = await guild.members.fetch();
 
+    guildMembers.forEach((guildMember) => {
+      if(!guildMember.user.bot) {
+        promotionPoints[guildMember.id] = 0;
+        globalPoints[guildMember.id] = 0;
+        reputationPoints[guildMember.id] = {
+          points: 0,
+          gaveTo: undefined
+        };
+      }
+    });
+    
     guildInvites.forEach((guildInvite) => {
       referrals[guildInvite.code] = guildInvite.uses;
-    });
-
-    guildMembers.forEach((guildMember) => {
-      if(!guildMember.user.bot && guildMember.id !== guild.ownerId) {
-        activityPoints[guildMember.id] = 0;
-      }
     });
   });
 
@@ -32,7 +40,9 @@ const ready = async (client) => {
 };
 
 export {
-  activityPoints,
+  promotionPoints,
+  globalPoints,
+  reputationPoints,
   referrals,
   ready
 };

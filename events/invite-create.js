@@ -7,15 +7,17 @@ import { referrals } from "./ready.js";
  */
 const inviteCreate = async (invite) => {
   const channel = invite.guild.channels.cache.find((channel) => channel.name === customChannels.public);
-  let messages = [];
+  const guildMember = invite.guild.members.cache.find((member) => member.id === invite.inviter.id);
 
-  messages.push(`${invite.inviter.displayName} created an invite of ${invite.maxUses} uses`);
-  sendMesseges(messages, channel);
-  messages = [];
+  let messages = [];
 
   referrals[invite.code] = invite.uses;
 
-  invite.client.emit("activity", invite.inviter, 10);
+  invite.client.emit("activity", guildMember, channel, 1);
+
+  messages.push(`🔗 *${invite.inviter.displayName}* created an invite`);
+  sendMesseges(messages, channel);
+  messages = [];
 };
 
 export { inviteCreate };
