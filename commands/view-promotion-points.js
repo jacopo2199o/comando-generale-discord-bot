@@ -1,11 +1,11 @@
 import { EmbedBuilder } from "discord.js";
-import { reputationPoints } from "../events/ready.js";
+import { promotionPoints } from "../events/ready.js";
 import { customRoles } from "../resources/custom-roles.js";
 
 /**
  * @param {import("discord.js").Interaction} interaction
  */
-const viewReputationPoints = async (interaction) => {
+const viewPromotionPoints = async (interaction) => {
   const userOption = interaction.options.getUser("member");
 
   let customRole = undefined;
@@ -25,8 +25,8 @@ const viewReputationPoints = async (interaction) => {
     });
 
     embedMessage
-      .setTitle("🏵 reputation points")
-      .setDescription(`*${guildMember}* have ${reputationPoints[guildMember.id].points} *reputation points*\n`)
+      .setTitle("⭐ promotion points")
+      .setDescription(`*${guildMember}* have ${promotionPoints[guildMember.id]}/1000 *promotion points*\n`)
       .setThumbnail(guildMember.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(customRole.color);
@@ -42,8 +42,8 @@ const viewReputationPoints = async (interaction) => {
     });
 
     embedMessage
-      .setTitle("🏵 reputation points")
-      .setDescription(`you have ${reputationPoints[interaction.member.id].points} *reputation points*\n`)
+      .setTitle("⭐ promotion points")
+      .setDescription(`you have ${promotionPoints[interaction.member.id]}/1000 *promotion points*\n`)
       .setThumbnail(interaction.member.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(customRole.color);
@@ -52,4 +52,4 @@ const viewReputationPoints = async (interaction) => {
   }
 };
 
-export { viewReputationPoints };
+export { viewPromotionPoints };

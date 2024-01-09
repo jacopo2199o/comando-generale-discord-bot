@@ -36,7 +36,7 @@ commands.push(new SlashCommandBuilder()
   ));
 
 commands.push(new SlashCommandBuilder()
-  .setName("view-points")
+  .setName("view-promotion-points")
   .setDescription("view points to next rank")
   .addUserOption((option) => option
     .setName("member")

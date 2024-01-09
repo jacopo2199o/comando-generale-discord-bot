@@ -1,30 +1,40 @@
+import { EmbedBuilder } from "discord.js";
 import { customChannels } from "../resources/custom-channels.js";
-import { sendMesseges } from "../resources/general-utilities.js";
 
 /**
- * @param { import("discord.js").GuildMember } oldMember
  * @param { import("discord.js").GuildMember } newMember
+ * @param { import("discord.js").GuildMember } oldMember
  */
 const guildMemberUpdate = async (oldMember, newMember) => {
-  const channel = newMember.guild.channels.cache.find((channel) => channel.name === customChannels.public);
-  let messages = [];
+  const customChannel = newMember.guild.channels.cache.find((channel) => channel.name === customChannels.internal);
+
+  let embedMessage = new EmbedBuilder();
 
   if (oldMember.roles.cache.size > newMember.roles.cache.size) {
     oldMember.roles.cache.forEach(role => {
       if (!newMember.roles.cache.has(role.id)) {
-        messages.push(`🔰 *${role.name}* has been removed from *${newMember.displayName}*\n`);
+        embedMessage
+          .setTitle("🔰 role")
+          .setDescription(`🔰 *${role}* has been removed from *${newMember}*\n`)
+          .setThumbnail(newMember.displayAvatarURL({ dynamic: true }))
+          .setTimestamp()
+          .setColor(role.color);
       }
     });
   } else if (oldMember.roles.cache.size < newMember.roles.cache.size) {
     newMember.roles.cache.forEach(role => {
       if (!oldMember.roles.cache.has(role.id)) {
-        messages.push(`🔰 *${role.name}* has been added to *${newMember.displayName}*\n`);
+        embedMessage
+          .setTitle("🔰 role")
+          .setDescription(`🔰 *${role}* has been added to *${newMember}*\n`)
+          .setThumbnail(newMember.displayAvatarURL({ dynamic: true }))
+          .setTimestamp()
+          .setColor(role.color);
       }
     });
   }
 
-  sendMesseges(messages, channel);
-  messages = [];
+  customChannel.send({ embeds: [embedMessage] });
 };
 
 export { guildMemberUpdate };

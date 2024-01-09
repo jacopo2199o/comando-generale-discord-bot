@@ -1,36 +1,59 @@
+import { EmbedBuilder } from "discord.js";
 import { customChannels } from "../resources/custom-channels.js";
-import { sendMesseges } from "../resources/general-utilities.js";
 import { promotionPoints, globalPoints, referrals } from "./ready.js";
+import { customRoles } from "../resources/custom-roles.js";
 
 /**
- * @param { import("discord.js").GuildMember } guildMember
- */
+  * @param { import("discord.js").GuildMember } guildMember
+*/
 const guildMemberAdd = async (guildMember) => {
   const guildInvites = await guildMember.guild.invites.fetch();
-  const channelPublic = guildMember.guild.channels.cache.find((channel) => channel.name === customChannels.public);
-  const channelWelcome = guildMember.guild.channels.cache.find((channel) => channel.name === customChannels.welcome);
+  const customChannel = guildMember.guild.channels.cache.find((channel) => channel.name === customChannels.welcome);
 
-  let messages = [];
+  /**
+   * @type { import("discord.js").Role }
+  */
+  let customRole = undefined;
+  let embedMessage = new EmbedBuilder();
+  /**
+   * @type { import("discord.js").GuildMember }
+  */
+  let inviter = undefined;
 
   promotionPoints[guildMember.id] = 0;
   globalPoints[guildMember.id] = 0;
 
-  guildInvites.forEach((guildInvite) => {
-    if (guildInvite.uses !== referrals[guildInvite.code]) {
-      const inviter = guildInvite.guild.members.cache.find((member) => member.id === guildInvite.inviter.id);
-      referrals[guildInvite.code] = guildInvite.uses;
-      
-      guildMember.client.emit("activity", inviter, channelPublic, 1000);
-      
-      messages.push(`🌱 welcome, *${guildMember}, benvenuto al *comando generale*\ninviter: *${guildInvite.inviter}*\n`);
-      sendMesseges(messages, channelWelcome);
-      messages = [];
+  guildMember.roles.cache.forEach((role) => {
+    const rankIndex = customRoles.findIndex((rank) => rank === role.name);
+
+    if (rankIndex !== -1) {
+      customRole = role;
     }
   });
-  
-  messages.push(`🌱 *${guildMember.displayName}* joined *comando generale*\n`);
-  sendMesseges(messages, channelPublic);
-  messages = [];
+
+  guildInvites.forEach((guildInvite) => {
+    if (guildInvite.uses !== referrals[guildInvite.code]) {
+      inviter = guildInvite.guild.members.cache.find((member) => member.id === guildInvite.inviter.id);
+
+      referrals[guildInvite.code] = guildInvite.uses;
+
+      guildMember.client.emit("activity", inviter, 1000);
+    }
+  });
+
+  if (inviter) {
+    embedMessage.setDescription(`🌱 new ${customRole} *${guildMember}*, joined *comando generale*\ninviter: *${inviter}*\n`)
+      .setThumbnail(guildMember.user.displayAvatarURL({ dynamic: true }))
+      .setTimestamp()
+      .setColor(customRole.color);
+  } else {
+    embedMessage.setDescription(`🌱 new ${customRole} *${guildMember}*, joined *comando generale*\n`)
+      .setThumbnail(guildMember.user.displayAvatarURL({ dynamic: true }))
+      .setTimestamp()
+      .setColor(customRole.color);
+  }
+
+  customChannel.send({ embeds: [embedMessage] });
 };
 
 export { guildMemberAdd };

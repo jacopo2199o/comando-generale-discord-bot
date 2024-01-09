@@ -2,7 +2,7 @@ import { about } from "../commands/about.js";
 import { downgrade } from "../commands/downgrade.js";
 import { checkLanding } from "../commands/check-landing.js";
 import { clear } from "../commands/clear.js";
-import { viewPoints } from "../commands/view-points.js";
+import { viewPromotionPoints } from "../commands/view-promotion-points.js";
 import { giveReputationPoint } from "../commands/give-reputation-point.js";
 import { viewReputationPoints } from "../commands/view-reputation-points.js";
 
@@ -24,8 +24,8 @@ const interactionCreate = async (interaction) => {
     downgrade(interaction);
   } else if (interaction.commandName === "give-reputation-point") {
     giveReputationPoint(interaction);
-  } else if (interaction.commandName === "view-points") {
-    viewPoints(interaction);
+  } else if (interaction.commandName === "view-promotion-points") {
+    viewPromotionPoints(interaction);
   } else if (interaction.commandName === "view-reputation-points") {
     viewReputationPoints(interaction);
   } else {

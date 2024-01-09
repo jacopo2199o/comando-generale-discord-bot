@@ -1,77 +1,103 @@
+import { EmbedBuilder } from "discord.js";
 import { reputationPoints } from "../events/ready.js";
 import { customChannels } from "../resources/custom-channels.js";
 import { customRoles } from "../resources/custom-roles.js";
-import { sendMesseges } from "../resources/general-utilities.js";
 
 /**
  * @param {import("discord.js").Interaction} interaction
  */
 const giveReputationPoint = async (interaction) => {
-  const channel = interaction.guild.channels.cache.find((channel) => channel.name === customChannels.public);
-  const user = interaction.options.getUser("member");
-  const guildMemberAuthor = interaction.guild.members.cache.find((guildMember) => guildMember.id === interaction.member.id);
-  const guildMember = interaction.guild.members.cache.find((guildMember) => guildMember.id === user.id);
+  const customChannel = interaction.guild.channels.cache.find((channel) => channel.name === customChannels.internal);
+  const member = interaction.options.getUser("member");
+  const guildMemberTaker = interaction.guild.members.cache.find((guildMember) => guildMember.id === member.id);
+  const guildMemberMaker = interaction.guild.members.cache.find((guildMember) => guildMember.id === interaction.member.id);
 
-  let guildMemberAuthorCustomRole = undefined;
-  let guildMemberCustomRole = undefined;
-  let oldGuildMemberCustomRole = undefined;
-  let messages = [];
+  let embedMessage1 = new EmbedBuilder();
+  let embedMessage2 = new EmbedBuilder();
+  let guildMemberMakerCustomRole = undefined;
+  let guildMemberTakerCustomRole = undefined;
+  let oldGuildMemberTakerCustomRole = undefined;
 
-  guildMemberAuthor.roles.cache.forEach((role) => {
+  guildMemberMaker.roles.cache.forEach((role) => {
     const rankIndex = customRoles.findIndex((customRole) => customRole === role.name);
 
     if (rankIndex !== -1) {
-      guildMemberAuthorCustomRole = customRoles[rankIndex];
+      guildMemberMakerCustomRole = role;
     }
   });
 
-  guildMember.roles.cache.forEach((role) => {
+  guildMemberTaker.roles.cache.forEach((role) => {
     const rankIndex = customRoles.findIndex((customRole) => customRole === role.name);
 
     if (rankIndex !== -1) {
-      guildMemberCustomRole = customRoles[rankIndex];
+      guildMemberTakerCustomRole = role;
     }
   });
 
   await interaction.deferReply();
 
-  if (guildMember.id === interaction.member.id) {
+  if (guildMemberTaker.id === interaction.member.id) {
     await interaction.editReply("you can not select yourself\n");
   } else {
     if (reputationPoints[interaction.member.id].gaveTo === undefined) {
-      reputationPoints[interaction.member.id].gaveTo = guildMember.id;
-      reputationPoints[guildMember.id].points += 1;
+      reputationPoints[interaction.member.id].gaveTo = guildMemberTaker.id;
+      reputationPoints[guildMemberTaker.id].points += 1;
 
-      messages.push(`🏵 ${guildMemberAuthorCustomRole} *${interaction.member.displayName}* give 1 reputation point to ${guildMemberCustomRole} *${guildMember.displayName}*\n`);
-      sendMesseges(messages, channel);
-      messages = [];
+      interaction.client.emit("activity", guildMemberTaker, 100);
+
+      embedMessage1
+        .setTitle("🏵 reputation points")
+        .setDescription(`${guildMemberMakerCustomRole} *${interaction.member}* give 1 *reputation point* to ${guildMemberTakerCustomRole} *${guildMemberTaker}*\n`)
+        .setThumbnail(guildMemberMaker.displayAvatarURL({ dynamic: true }))
+        .setTimestamp()
+        .setColor(guildMemberMakerCustomRole.color);
+
+      await interaction.editReply({ embeds: [embedMessage1] });
     } else {
-      const oldGuildMember = interaction.guild.members.cache.find((member) => member.id === reputationPoints[interaction.member.id].gaveTo);
+      const oldGuildMemberTaker = interaction.guild.members.cache.find((member) => member.id === reputationPoints[interaction.member.id].gaveTo);
 
-      oldGuildMember.roles.cache.forEach((role) => {
+      oldGuildMemberTaker.roles.cache.forEach((role) => {
         const rankIndex = customRoles.findIndex((customRole) => customRole === role.name);
-    
+
         if (rankIndex !== -1) {
-          oldGuildMemberCustomRole = customRoles[rankIndex];
+          oldGuildMemberTakerCustomRole = role;
         }
-      });  
+      });
 
-      reputationPoints[interaction.member.id].gaveTo = guildMember.id;
-      reputationPoints[oldGuildMember.id].points -= 1;
-      reputationPoints[guildMember.id].points += 1;
-      
-      interaction.client.emit("activity", guildMember, channel, 100);
-      interaction.client.emit("activity", oldGuildMember, channel, -100);
+      reputationPoints[interaction.member.id].gaveTo = guildMemberTaker.id;
+      reputationPoints[oldGuildMemberTaker.id].points -= 1;
+      reputationPoints[guildMemberTaker.id].points += 1;
 
-      messages.push(`🏵 ${guildMemberAuthorCustomRole} *${interaction.member.displayName}* give 1 reputation point to ${guildMemberCustomRole} *${guildMember.displayName}*\n`);
-      messages.push(`🏵 ${oldGuildMemberCustomRole} *${oldGuildMember.displayName}* lost 1 reputation point\n`);
-      sendMesseges(messages, channel);
-      messages = [];
+      interaction.client.emit("activity", guildMemberTaker, 100);
+      interaction.client.emit("activity", oldGuildMemberTaker, -100);
+
+      embedMessage1
+        .setTitle("🏵 reputation points")
+        .setDescription(`${guildMemberMakerCustomRole} *${interaction.member}* give 1 *reputation point* to ${guildMemberTakerCustomRole} *${guildMemberTaker}*\n`)
+        .setThumbnail(guildMemberMaker.displayAvatarURL({ dynamic: true }))
+        .setTimestamp()
+        .setColor(guildMemberMakerCustomRole.color);
+      embedMessage2
+        .setTitle("🏵 reputation points")
+        .setDescription(`${oldGuildMemberTakerCustomRole} *${oldGuildMemberTaker}* lost 1 *reputation point*\n`)
+        .setThumbnail(oldGuildMemberTaker.displayAvatarURL({ dynamic: true }))
+        .setTimestamp()
+        .setColor(oldGuildMemberTakerCustomRole.color);
+
+      customChannel.send({ embeds: [embedMessage2] });
+
+      await interaction.editReply({ embeds: [embedMessage1, embedMessage2] });
     }
-
-    
-    await interaction.editReply(`${guildMemberCustomRole} *${guildMember.displayName}* received 🏵 1 reputation point\n`);
   }
+
+  embedMessage1
+    .setTitle("🏵 reputation points")
+    .setDescription(`${guildMemberTakerCustomRole} *${guildMemberTaker}* received 1 *reputation point*\n`)
+    .setThumbnail(guildMemberTaker.displayAvatarURL({ dynamic: true }))
+    .setTimestamp()
+    .setColor(guildMemberMakerCustomRole.color);
+
+  customChannel.send({ embeds: [embedMessage1] });
 };
 
 export { giveReputationPoint };

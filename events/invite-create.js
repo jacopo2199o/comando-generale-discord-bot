@@ -1,23 +1,39 @@
+import { EmbedBuilder } from "discord.js";
 import { customChannels } from "../resources/custom-channels.js";
-import { sendMesseges } from "../resources/general-utilities.js";
+import { customRoles } from "../resources/custom-roles.js";
 import { referrals } from "./ready.js";
 
 /**
  * @param { import("discord.js").Invite } invite
  */
 const inviteCreate = async (invite) => {
-  const channel = invite.guild.channels.cache.find((channel) => channel.name === customChannels.public);
+  const customChannel = invite.guild.channels.cache.find((channel) => channel.name === customChannels.welcome);
   const guildMember = invite.guild.members.cache.find((member) => member.id === invite.inviter.id);
 
-  let messages = [];
+  let customRoleColor = undefined;
+  let customRole = undefined;
+
+  guildMember.roles.cache.forEach((role) => {
+    const rankIndex = customRoles.findIndex((rank) => rank === role.name);
+
+    if (rankIndex !== -1) {
+      customRoleColor = role.color;
+      customRole = role;
+    }
+  });
 
   referrals[invite.code] = invite.uses;
 
-  invite.client.emit("activity", guildMember, channel, 1);
+  invite.client.emit("activity", guildMember, 2);
 
-  messages.push(`🔗 *${invite.inviter.displayName}* created an invite`);
-  sendMesseges(messages, channel);
-  messages = [];
+  const embedMessage = new EmbedBuilder()
+    .setDescription(`🔗 ${customRole} *${guildMember}* created an invite`)
+    .addFields({ name: "promotion points", value: "+2", inline: true })
+    .setThumbnail(guildMember.user.displayAvatarURL({ dynamic: true }))
+    .setTimestamp()
+    .setColor(customRoleColor);
+
+  customChannel.send({ embeds: [embedMessage] });
 };
 
 export { inviteCreate };
