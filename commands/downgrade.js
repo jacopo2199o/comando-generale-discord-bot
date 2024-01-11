@@ -5,16 +5,15 @@ import { customRoles } from "../resources/custom-roles.js";
  * @param {import("discord.js").Interaction} interaction
  */
 const downgrade = async (interaction) => {
-  const guildMembers = await interaction.client.guilds.resolve(interaction.guild.id)
-    .members.fetch();
+  const guildMembers = await interaction.guild.members.fetch();
 
   let isDowngrading = false;
 
   await interaction.deferReply();
 
   guildMembers.forEach((guildMember) => {
-    promotionPoints[guildMember.id] = 0;
-    globalPoints[guildMember.id] = 0;
+    promotionPoints[guildMember.id] = 10;
+    globalPoints[guildMember.id] = 10;
 
     guildMember.roles.cache.forEach(async (role) => {
       const customRoleIndex = customRoles.findIndex((customRole) => customRole === role.name);

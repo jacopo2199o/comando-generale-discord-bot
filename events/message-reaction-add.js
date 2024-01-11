@@ -8,7 +8,7 @@ import { customPoints } from "../resources/custom-points.js";
  * @param { import("discord.js").User } user
  */
 const messageReactionAdd = async (messageReaction, user) => {
-  if (!user.bot && user.id !== messageReaction.message.guild.ownerId) {
+  if (!user.bot && user.id !== messageReaction.message.author.id && !messageReaction.message.author.bot) {
     const customChannel = messageReaction.message.guild.channels.cache.find((channel) => channel.name === customChannels.public);
     const guildMemberMaker = messageReaction.message.guild.members.cache.find((member) => member.id === user.id);
     const guildMemberTaker = messageReaction.message.guild.members.cache.find((member) => member.id === messageReaction.message.author.id);

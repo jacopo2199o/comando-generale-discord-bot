@@ -16,8 +16,8 @@ const ready = async (client) => {
 
     guildMembers.forEach((guildMember) => {
       if(!guildMember.user.bot) {
-        promotionPoints[guildMember.id] = 0;
-        globalPoints[guildMember.id] = 0;
+        promotionPoints[guildMember.id] = 10;
+        globalPoints[guildMember.id] = 10;
         reputationPoints[guildMember.id] = {
           points: 0,
           gaveTo: undefined

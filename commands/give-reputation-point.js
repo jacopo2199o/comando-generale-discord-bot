@@ -9,7 +9,11 @@ import { customPoints } from "../resources/custom-points.js";
  */
 const giveReputationPoint = async (interaction) => {
   const customChannel = interaction.guild.channels.cache.find((channel) => channel.name === customChannels.activity);
+  /**
+   * @type { import("discord.js").User }
+   */
   const userOption = interaction.options.getUser("member");
+
   const guildMemberTaker = interaction.guild.members.cache.find((guildMember) => guildMember.id === userOption.id);
   const guildMemberMaker = interaction.guild.members.cache.find((guildMember) => guildMember.id === interaction.member.id);
   const guildMemberMakerCustomRole = getCustomRole(guildMemberMaker);
@@ -22,7 +26,9 @@ const giveReputationPoint = async (interaction) => {
   await interaction.deferReply();
 
   if (guildMemberTaker.id === interaction.member.id) {
-    await interaction.editReply("you can not select yourself\n");
+    await interaction.editReply("you can not select yourself");
+  } else if (userOption.bot) {
+    await interaction.editReply("you can not select a bot");
   } else {
     if (reputationPoints[interaction.member.id].gaveTo === undefined) {
       reputationPoints[interaction.member.id].gaveTo = guildMemberTaker.id;
