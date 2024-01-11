@@ -23,8 +23,8 @@ const guildMemberRemove = async (guildMember) => {
   embedMessage
     .setTitle("🍂 member lost")
     .setDescription(`*${guildMember.displayName}* left *comando generale*\n`)
-    .setFields({name: "promotion points", value: `${customPoints.guildMemberRemove} ⭐`, inline: true})
-    .setFields({name: "to", value: `${guildMember.guild.roles.everyone}`, inline: true})
+    .addFields({name: "promotion points", value: `${customPoints.guildMemberRemove} ⭐`, inline: true})
+    .addFields({name: "to", value: `${guildMember.guild.roles.everyone}`, inline: true})
     .setThumbnail(guildMember.user.displayAvatarURL({ dynamic: true }))
     .setTimestamp()
     .setColor("DarkRed");
