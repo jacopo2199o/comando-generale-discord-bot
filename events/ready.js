@@ -1,5 +1,7 @@
 //import fs from "fs";
 
+import { ActivityType } from "discord.js";
+
 const promotionPoints = {};
 const globalPoints = {};
 const reputationPoints = {};
@@ -10,12 +12,19 @@ const referrals = {};
  * @param { import("discord.js").Client } client
  */
 const ready = async (client) => {
+  client.user.setPresence({
+    activities: [{
+      name: "https://discord.gg/F7UTwWtwTV",
+      type: ActivityType.Watching,
+    }]
+  });
+
   client.guilds.cache.forEach(async (guild) => {
     const guildInvites = await guild.invites.fetch();
     const guildMembers = await guild.members.fetch();
 
     guildMembers.forEach((guildMember) => {
-      if(!guildMember.user.bot) {
+      if (!guildMember.user.bot) {
         promotionPoints[guildMember.id] = 10;
         globalPoints[guildMember.id] = 10;
         reputationPoints[guildMember.id] = {
@@ -24,7 +33,7 @@ const ready = async (client) => {
         };
       }
     });
-    
+
     guildInvites.forEach((guildInvite) => {
       referrals[guildInvite.code] = guildInvite.uses;
     });

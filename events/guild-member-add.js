@@ -33,7 +33,7 @@ const guildMemberAdd = async (guildMember) => {
     embedMessage
       .setTitle("🌱 new member")
       .setDescription(`*${guildMember}*, joined *comando generale*`)
-      .addFields({ name: "inviter", value: `inviter: *${inviter}*`, inline: true })
+      .addFields({ name: "inviter", value: `*${inviter}*`, inline: true })
       .setThumbnail(guildMember.displayAvatarURL({ dynamic: true }))
       .setFooter({ text: `+${customPoints.guildMemberAdd} ⭐ to ${inviter.displayName}`, iconURL: `${inviter.displayAvatarURL()}` })
       .setTimestamp()
