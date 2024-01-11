@@ -2,6 +2,7 @@ import { EmbedBuilder } from "discord.js";
 import { customRoles } from "../resources/custom-roles.js";
 import { promotionPoints, globalPoints } from "./ready.js";
 import { customChannels } from "../resources/custom-channels.js";
+import { customPoints } from "../resources/custom-points.js";
 
 /**
  * @param { import("discord.js").GuildMember } guildMember
@@ -16,26 +17,26 @@ const activity = async (guildMember, points) => {
   promotionPoints[guildMember.id] += points;
   globalPoints[guildMember.id] += points;
 
-  if (promotionPoints[guildMember.id] >= 1000) {
+  if (promotionPoints[guildMember.id] >= customPoints.promotionPoints) {
     promotionPoints[guildMember.id] = 0;
 
     guildMember.roles.cache.forEach(async (role) => {
-      const rankIndex = customRoles.findIndex((rank) => rank === role.name);
+      const customRoleIndex = customRoles.findIndex((rank) => rank === role.name);
 
-      // trovata corrispondenza col nome ruolo
-      if (rankIndex !== -1) {
-        const oldRank = customRoles[rankIndex];
-        const newRank = customRoles[rankIndex - 1];
+      if (customRoleIndex !== -1) {
+        const oldCustomRole = customRoles[customRoleIndex];
+        const newCustomRole = customRoles[customRoleIndex - 1];
 
-        // l'indice 0 corrisponde al ruolo "presidente"
-        if (newRank !== undefined && newRank !== "presidente") {
-          const oldRole = guildMember.guild.roles.cache.find((role) => role.name === oldRank);
-          const newRole = guildMember.guild.roles.cache.find((role) => role.name === newRank);
+        if (newCustomRole !== undefined && newCustomRole !== "presidente") {
+          const oldRole = guildMember.guild.roles.cache.find((role) => role.name === oldCustomRole);
+          const newRole = guildMember.guild.roles.cache.find((role) => role.name === newCustomRole);
 
           await guildMember.roles.remove(oldRole.id);
           await guildMember.roles.add(newRole.id);
 
-          embedMessage.setDescription(`🎖 *${guildMember}* reached 1000 activity point\n`)
+          embedMessage
+            .setTitle("🎖️ promotion")
+            .setDescription(`*${guildMember}* reached ${customPoints.promotionPoints} *promotion points*\n`)
             .setThumbnail(guildMember.displayAvatarURL({ dynamic: true }))
             .setTimestamp()
             .setColor(newRole.color);
@@ -44,19 +45,19 @@ const activity = async (guildMember, points) => {
         }
       }
     });
-  } else if (promotionPoints[guildMember.id] < 0) {
-    promotionPoints[guildMember.id] = 1000 + points; //points in questo caso è un numero negativo
+  } else if (promotionPoints[guildMember.id] < 0 && guildMember.id !== guildMember.guild.ownerId) {
+    promotionPoints[guildMember.id] = customPoints.promotionPoints + points;
 
     guildMember.roles.cache.forEach(async (role) => {
-      const rankIndex = customRoles.findIndex((rank) => rank === role.name);
+      const customRoleIndex = customRoles.findIndex((rank) => rank === role.name);
 
-      if (rankIndex !== -1) {
-        const oldRank = customRoles[rankIndex];
-        const newRank = customRoles[rankIndex + 1];
+      if (customRoleIndex !== -1) {
+        const oldCustomRole = customRoles[customRoleIndex];
+        const newCustomRole = customRoles[customRoleIndex + 1];
 
-        if (newRank) {
-          const oldRole = guildMember.guild.roles.cache.find((role) => role.name === oldRank);
-          const newRole = guildMember.guild.roles.cache.find((role) => role.name === newRank);
+        if (newCustomRole) {
+          const oldRole = guildMember.guild.roles.cache.find((role) => role.name === oldCustomRole);
+          const newRole = guildMember.guild.roles.cache.find((role) => role.name === newCustomRole);
 
           await guildMember.roles.remove(oldRole.id);
           await guildMember.roles.add(newRole.id);

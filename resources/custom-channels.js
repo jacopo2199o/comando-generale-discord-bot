@@ -1,7 +1,8 @@
 const customChannels = {
   welcome: "💬international-embassy",
-  public: "💻registro-pubblico-beta",
+  activity: "💬ufficio-del-personale",
   private: "⛲presidenza",
+  public: "💻registro-pubblico-beta",
   internal: "🤖bot-testing",
 };
 

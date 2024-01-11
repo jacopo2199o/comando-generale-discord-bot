@@ -1,3 +1,23 @@
+import { customRoles } from "./custom-roles.js";
+
+/**
+* @param {import("discord.js").GuildMember} guildMember 
+* @returns {import("discord.js").Role}
+*/
+const getCustomRole = (guildMember) => {
+  let customRole = undefined;
+
+  guildMember.roles.cache.forEach((role) => {
+    const customRoleIndex = customRoles.findIndex((customRole) => customRole === role.name);
+
+    if (customRoleIndex !== -1) {
+      customRole = role;
+    }
+  });
+
+  return customRole;
+};
+
 /**
  * @param { import("../community.js").Community } community 
  * @param { Array<String> } messages 
@@ -35,4 +55,4 @@ const sendMesseges = async (messages, channel) => {
   }
 };
 
-export { sendMesseges };
+export { getCustomRole, sendMesseges };

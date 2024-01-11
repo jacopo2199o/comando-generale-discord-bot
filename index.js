@@ -6,6 +6,8 @@ import { guildMemberAdd } from "./events/guild-member-add.js";
 import { guildMemberRemove } from "./events/guild-member-remove.js";
 import { guildMemberUpdate } from "./events/guild-member-update.js";
 import { messageCreate } from "./events/message-create.js";
+import { messageDelete } from "./events/message-delete.js";
+import { messageReactionAdd } from "./events/message-reaction-add.js";
 import { ready } from "./events/ready.js";
 import { threadCreate } from "./events/thread-create.js";
 import dotenv from "dotenv";
@@ -17,7 +19,8 @@ const client = new Client({
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildInvites,
     GatewayIntentBits.GuildMembers,
-    GatewayIntentBits.GuildMessages
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.GuildMessageReactions
   ]
 });
 
@@ -30,4 +33,6 @@ client.on("guildMemberRemove", guildMemberRemove);
 client.on("guildMemberUpdate", guildMemberUpdate);
 client.on("threadCreate", threadCreate);
 client.on("messageCreate", messageCreate);
+client.on("messageDelete", messageDelete);
+client.on("messageReactionAdd", messageReactionAdd);
 client.login(process.env.bot_token);

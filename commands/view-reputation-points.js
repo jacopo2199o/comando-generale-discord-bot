@@ -1,6 +1,6 @@
 import { EmbedBuilder } from "discord.js";
 import { reputationPoints } from "../events/ready.js";
-import { customRoles } from "../resources/custom-roles.js";
+import { getCustomRole } from "../resources/general-utilities.js";
 
 /**
  * @param {import("discord.js").Interaction} interaction
@@ -8,21 +8,13 @@ import { customRoles } from "../resources/custom-roles.js";
 const viewReputationPoints = async (interaction) => {
   const userOption = interaction.options.getUser("member");
 
-  let customRole = undefined;
   let embedMessage = new EmbedBuilder();
 
   await interaction.deferReply();
 
   if (userOption) {
     const guildMember = interaction.guild.members.cache.find((member) => member.id === userOption.id);
-
-    guildMember.roles.cache.forEach((role) => {
-      const rankIndex = customRoles.findIndex((rank) => rank === role.name);
-
-      if (rankIndex !== -1) {
-        customRole = role;
-      }
-    });
+    const customRole = getCustomRole(guildMember);
 
     embedMessage
       .setTitle("🏵 reputation points")
@@ -33,13 +25,7 @@ const viewReputationPoints = async (interaction) => {
 
     await interaction.editReply({ embeds: [embedMessage] });
   } else {
-    interaction.member.roles.cache.forEach((role) => {
-      const rankIndex = customRoles.findIndex((rank) => rank === role.name);
-
-      if (rankIndex !== -1) {
-        customRole = role;
-      }
-    });
+    const customRole = getCustomRole(interaction.member);
 
     embedMessage
       .setTitle("🏵 reputation points")

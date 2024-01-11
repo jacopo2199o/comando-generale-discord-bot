@@ -1,3 +1,4 @@
+import { customChannels } from "../resources/custom-channels.js";
 import { sendMesseges } from "../resources/general-utilities.js";
 
 /**
@@ -5,7 +6,7 @@ import { sendMesseges } from "../resources/general-utilities.js";
  */
 const checkLanding = async (interaction) => {
   const guildMembers = await interaction.guild.members.fetch();
-  const customChannel = interaction.guild.channels.cache.find((channel) => channel.name === customChannel.internal);
+  const customChannel = interaction.guild.channels.cache.find((channel) => channel.name === customChannels.internal);
 
   let messages = [];
 
@@ -28,7 +29,7 @@ const checkLanding = async (interaction) => {
   if (!messages.length) {
     await interaction.reply("all members registered");
   } else {
-    sendMesseges(messages, interaction.channel);
+    sendMesseges(messages, customChannel);
     messages = [];
     await interaction.reply("done");
   }

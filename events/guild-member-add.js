@@ -1,7 +1,7 @@
 import { EmbedBuilder } from "discord.js";
 import { customChannels } from "../resources/custom-channels.js";
 import { promotionPoints, globalPoints, referrals } from "./ready.js";
-import { customRoles } from "../resources/custom-roles.js";
+import { customPoints } from "../resources/custom-points.js";
 
 /**
   * @param { import("discord.js").GuildMember } guildMember
@@ -9,27 +9,15 @@ import { customRoles } from "../resources/custom-roles.js";
 const guildMemberAdd = async (guildMember) => {
   const guildInvites = await guildMember.guild.invites.fetch();
   const customChannel = guildMember.guild.channels.cache.find((channel) => channel.name === customChannels.welcome);
-
-  /**
-   * @type { import("discord.js").Role }
-  */
-  let customRole = undefined;
+  
   let embedMessage = new EmbedBuilder();
   /**
-   * @type { import("discord.js").GuildMember }
+  * @type { import("discord.js").GuildMember }
   */
   let inviter = undefined;
 
   promotionPoints[guildMember.id] = 0;
   globalPoints[guildMember.id] = 0;
-
-  guildMember.roles.cache.forEach((role) => {
-    const rankIndex = customRoles.findIndex((rank) => rank === role.name);
-
-    if (rankIndex !== -1) {
-      customRole = role;
-    }
-  });
 
   guildInvites.forEach((guildInvite) => {
     if (guildInvite.uses !== referrals[guildInvite.code]) {
@@ -37,20 +25,27 @@ const guildMemberAdd = async (guildMember) => {
 
       referrals[guildInvite.code] = guildInvite.uses;
 
-      guildMember.client.emit("activity", inviter, 1000);
+      guildMember.client.emit("activity", inviter, customPoints.guildMemberAdd);
     }
   });
 
   if (inviter) {
-    embedMessage.setDescription(`🌱 new ${customRole} *${guildMember}*, joined *comando generale*\ninviter: *${inviter}*\n`)
-      .setThumbnail(guildMember.user.displayAvatarURL({ dynamic: true }))
+    embedMessage
+      .setTitle("🌱 new member")
+      .setDescription(`*${guildMember}*, joined *comando generale*`)
+      .addFields({ name: "inviter", value: `inviter: *${inviter}*`, inline: true })
+      .setThumbnail(guildMember.displayAvatarURL({ dynamic: true }))
+      .setFooter({ text: `+${customPoints.guildMemberAdd} ⭐ to ${inviter.displayName}`, iconURL: `${inviter.displayAvatarURL()}` })
       .setTimestamp()
-      .setColor(customRole.color);
+      .setColor("DarkGreen");
   } else {
-    embedMessage.setDescription(`🌱 new ${customRole} *${guildMember}*, joined *comando generale*\n`)
-      .setThumbnail(guildMember.user.displayAvatarURL({ dynamic: true }))
+    embedMessage
+      .setTitle("🌱 new member")
+      .setDescription(`*${guildMember}*, joined *comando generale*`)
+      .setThumbnail(guildMember.displayAvatarURL({ dynamic: true }))
+      .addFields({ name: "inviter", value: "none / temporary", inline: true })
       .setTimestamp()
-      .setColor(customRole.color);
+      .setColor("DarkBlue");
   }
 
   customChannel.send({ embeds: [embedMessage] });
