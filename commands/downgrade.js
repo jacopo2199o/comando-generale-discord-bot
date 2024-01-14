@@ -1,4 +1,5 @@
-import { promotionPoints, globalPoints } from "../events/ready.js";
+import { globalPoints, reputationPoints } from "../events/ready.js";
+import { customPoints } from "../resources/custom-points.js";
 import { customRoles } from "../resources/custom-roles.js";
 
 /**
@@ -12,8 +13,8 @@ const downgrade = async (interaction) => {
   await interaction.deferReply();
 
   guildMembers.forEach((guildMember) => {
-    promotionPoints[guildMember.id] = 10;
-    globalPoints[guildMember.id] = 10;
+    globalPoints[guildMember.guild.id][guildMember.id].pp = customPoints.start;
+    reputationPoints[guildMember.id] = 0;
 
     guildMember.roles.cache.forEach(async (role) => {
       const customRoleIndex = customRoles.findIndex((customRole) => customRole === role.name);

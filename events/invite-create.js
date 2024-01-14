@@ -21,7 +21,7 @@ const inviteCreate = async (invite) => {
   embedMessage
     .setTitle("🔗 new invite")
     .setDescription(`${customRole} *${guildMember}* created an invite`)
-    .addFields({ name: "promotion points", value: `+${customPoints.inviteCreate} ⭐`, inline: true })
+    .addFields({ name: "promotion points", value: `${customPoints.inviteCreate} ⭐`, inline: true })
     .addFields({ name: "to", value: `${guildMember}`, inline: true })
     .setThumbnail(guildMember.displayAvatarURL({ dynamic: true }))
     .setTimestamp()

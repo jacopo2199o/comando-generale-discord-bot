@@ -9,6 +9,8 @@ import { customChannels } from "../resources/custom-channels.js";
 import { EmbedBuilder } from "discord.js";
 import { getCustomRole } from "../resources/general-utilities.js";
 import { customPoints } from "../resources/custom-points.js";
+import { chartPromotionPoints } from "../commands/chart-promotion-points.js";
+import { save } from "../commands/save.js";
 
 /**
  * @param {import("discord.js").Interaction} interaction
@@ -30,6 +32,8 @@ const interactionCreate = async (interaction) => {
 
     if (interaction.commandName === "about") {
       about(interaction);
+    } else if (interaction.commandName === "chart-promotion-points") {
+      chartPromotionPoints(interaction);
     } else if (interaction.commandName === "check-landing") {
       checkLanding(interaction);
     } else if (interaction.commandName === "clear") {
@@ -38,6 +42,8 @@ const interactionCreate = async (interaction) => {
       downgrade(interaction);
     } else if (interaction.commandName === "give-reputation-point") {
       giveReputationPoint(interaction);
+    } else if (interaction.commandName === "save") {
+      save(interaction);
     } else if (interaction.commandName === "view-promotion-points") {
       viewPromotionPoints(interaction);
     } else if (interaction.commandName === "view-reputation-points") {
@@ -54,7 +60,7 @@ const interactionCreate = async (interaction) => {
       embedMessage
         .setTitle("⚙️ command")
         .setDescription(`${customRole} *${interaction.member}* used */${interaction.commandName}* in *${interactionChannel}*`)
-        .addFields({ name: "promotion points", value: `+${customPoints.interactionCreate} ⭐`, inline: true })
+        .addFields({ name: "promotion points", value: `${customPoints.interactionCreate} ⭐`, inline: true })
         .addFields({ name: "to", value: `${interaction.member}`, inline: true })
         .setThumbnail(interaction.member.displayAvatarURL({ dynamic: true }))
         .setTimestamp()

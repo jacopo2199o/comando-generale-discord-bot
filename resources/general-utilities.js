@@ -15,7 +15,11 @@ const getCustomRole = (guildMember) => {
     }
   });
 
-  return customRole;
+  if (customRole) {
+    return customRole;
+  } else {
+    return `error at ${guildMember}`;
+  }
 };
 
 /**

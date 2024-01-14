@@ -1,6 +1,6 @@
 import { EmbedBuilder } from "discord.js";
 import { customChannels } from "../resources/custom-channels.js";
-import { promotionPoints, globalPoints } from "./ready.js";
+import { globalPoints } from "./ready.js";
 import { customPoints } from "../resources/custom-points.js";
 
 /**
@@ -11,11 +11,11 @@ const guildMemberRemove = async (guildMember) => {
 
   let embedMessage = new EmbedBuilder();
 
-  delete promotionPoints[guildMember.id];
-  delete globalPoints[guildMember.id];
+  delete globalPoints[guildMember.guild.id][guildMember.id].g;
+  delete globalPoints[guildMember.guild.id][guildMember.id].pp;
 
-  for(const guildMemberId in promotionPoints) {
-    const otherGuildMember = guildMember.guild.members.cache.find((member) => member.id === guildMemberId);
+  for(const id in globalPoints[guildMember.guild.id]) {
+    const otherGuildMember = guildMember.guild.members.cache.find((member) => member.id === id);
 
     guildMember.client.emit("activity", otherGuildMember, customPoints.guildMemberRemove);
   }

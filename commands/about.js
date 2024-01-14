@@ -13,18 +13,18 @@ const about = async (interaction) => {
   } else if (interaction.channel.isThread()) {
     embedMessage
       .setTitle("📄 about")
-      .setDescription(`${interaction.channel.parent.topic}\n`)
+      .setDescription(`${interaction.channel.parent.topic}`)
       .setTimestamp()
-      .setColor("Grey");
+      .setColor("DarkGreen");
 
     await interaction.editReply({ embeds: [embedMessage] });
   } else {
     embedMessage
       .setTitle("📄 about")
-      .setDescription(`${interaction.channel.topic}\n`)
+      .setDescription(`${interaction.channel.topic}`)
       .setTimestamp()
-      .setColor("Grey");
-      
+      .setColor("DarkGreen");
+
     await interaction.editReply({ embeds: [embedMessage] });
   }
 };

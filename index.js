@@ -20,6 +20,7 @@ const client = new Client({
     GatewayIntentBits.GuildInvites,
     GatewayIntentBits.GuildMembers,
     GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
     GatewayIntentBits.GuildMessageReactions
   ]
 });
@@ -31,8 +32,8 @@ client.on("inviteCreate", inviteCreate);
 client.on("guildMemberAdd", guildMemberAdd);
 client.on("guildMemberRemove", guildMemberRemove);
 client.on("guildMemberUpdate", guildMemberUpdate);
-client.on("threadCreate", threadCreate);
 client.on("messageCreate", messageCreate);
 client.on("messageDelete", messageDelete);
 client.on("messageReactionAdd", messageReactionAdd);
+client.on("threadCreate", threadCreate);
 client.login(process.env.bot_token);

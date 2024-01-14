@@ -1,5 +1,5 @@
 import { EmbedBuilder } from "discord.js";
-import { promotionPoints } from "../events/ready.js";
+import { globalPoints } from "../events/ready.js";
 import { customPoints } from "../resources/custom-points.js";
 import { getCustomRole } from "../resources/general-utilities.js";
 
@@ -21,7 +21,7 @@ const viewPromotionPoints = async (interaction) => {
 
     embedMessage
       .setTitle("⭐ promotion points")
-      .setDescription(`*${guildMember}* have ${promotionPoints[guildMember.id]}/${customPoints.promotionPoints} *promotion points*\n`)
+      .setDescription(`*${guildMember}* have ${globalPoints[guildMember.guild.id][guildMember.id].pp}/${customPoints.promotionPoints} *promotion points*\n`)
       .setThumbnail(guildMember.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(customRole.color);
@@ -32,7 +32,7 @@ const viewPromotionPoints = async (interaction) => {
 
     embedMessage
       .setTitle("⭐ promotion points")
-      .setDescription(`you have ${promotionPoints[interaction.member.id]}/${customPoints.promotionPoints} *promotion points*\n`)
+      .setDescription(`you have ${globalPoints[interaction.guild.id][interaction.member.id].pp}/${customPoints.promotionPoints} *promotion points*\n`)
       .setThumbnail(interaction.member.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(customRole.color);

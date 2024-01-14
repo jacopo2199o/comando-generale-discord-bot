@@ -40,10 +40,10 @@ const giveReputationPoint = async (interaction) => {
       embedMessage1
         .setTitle("🏵 reputation points")
         .setDescription(`${guildMemberMakerCustomRole} *${interaction.member}* give 1 *reputation point* to ${guildMemberTakerCustomRole} *${guildMemberTaker}*`)
-        .addFields({ name: "promotion points", value: `+${customPoints.reputationPoints.taker} ⭐`, inline: true })
+        .addFields({ name: "promotion points", value: `${customPoints.reputationPoints.taker} ⭐`, inline: true })
         .addFields({ name: "to", value: `${guildMemberTaker}`, inline: true })
         .setThumbnail(guildMemberTaker.displayAvatarURL({ dynamic: true }))
-        .setFooter({ text: `+${customPoints.reputationPoints.maker} ⭐ to ${guildMemberMaker.displayName}`, iconURL: `${guildMemberMaker.displayAvatarURL()}` })
+        .setFooter({ text: `${customPoints.reputationPoints.maker} ⭐ to ${guildMemberMaker.displayName}`, iconURL: `${guildMemberMaker.displayAvatarURL()}` })
         .setTimestamp()
         .setColor(guildMemberMakerCustomRole.color);
 
@@ -63,10 +63,10 @@ const giveReputationPoint = async (interaction) => {
       embedMessage1
         .setTitle("🏵 reputation points")
         .setDescription(`${guildMemberMakerCustomRole} *${interaction.member}* gives 1 *reputation point* to ${guildMemberTakerCustomRole} *${guildMemberTaker}*`)
-        .addFields({ name: "promotion points", value: `+${customPoints.reputationPoints.taker} ⭐`, inline: true })
+        .addFields({ name: "promotion points", value: `${customPoints.reputationPoints.taker} ⭐`, inline: true })
         .addFields({ name: "to", value: `${guildMemberTaker}`, inline: true })
         .setThumbnail(guildMemberTaker.displayAvatarURL({ dynamic: true }))
-        .setFooter({ text: `+${customPoints.reputationPoints.maker} ⭐ to ${guildMemberMaker.displayName}`, iconURL: `${guildMemberMaker.displayAvatarURL()}` })
+        .setFooter({ text: `${customPoints.reputationPoints.maker} ⭐ to ${guildMemberMaker.displayName}`, iconURL: `${guildMemberMaker.displayAvatarURL()}` })
         .setTimestamp()
         .setColor(guildMemberMakerCustomRole.color);
       embedMessage2
@@ -85,10 +85,10 @@ const giveReputationPoint = async (interaction) => {
       embedMessage3
         .setTitle("🏵 reputation points")
         .setDescription(`${guildMemberMakerCustomRole} *${interaction.member}* give 1 *reputation point* to ${guildMemberTakerCustomRole} *${guildMemberTaker}*`)
-        .addFields({ name: "promotion points", value: `+${customPoints.reputationPoints.taker} ⭐`, inline: true })
+        .addFields({ name: "promotion points", value: `${customPoints.reputationPoints.taker} ⭐`, inline: true })
         .addFields({ name: "to", value: `${guildMemberTaker}`, inline: true })
         .setThumbnail(guildMemberTaker.displayAvatarURL({ dynamic: true }))
-        .setFooter({ text: `+${customPoints.reputationPoints.maker} ⭐ to ${guildMemberMaker.displayName}`, iconURL: `${guildMemberMaker.displayAvatarURL()}` })
+        .setFooter({ text: `${customPoints.reputationPoints.maker} ⭐ to ${guildMemberMaker.displayName}`, iconURL: `${guildMemberMaker.displayAvatarURL()}` })
         .setTimestamp()
         .setColor(guildMemberMakerCustomRole.color);
 

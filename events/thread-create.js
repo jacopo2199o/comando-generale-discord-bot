@@ -21,7 +21,7 @@ const threadCreate = async (thread, newlyCreated) => {
     embedMessage
       .setTitle("🧵 new thread")
       .setDescription(`${customRole} *${threadOwner.guildMember}* created *${thread.name}* thread in *${thread.parent.name}*\n`)
-      .addFields({ name: "promotion points", value: `+${customPoints.threadCreate} ⭐`, inline: true })
+      .addFields({ name: "promotion points", value: `${customPoints.threadCreate} ⭐`, inline: true })
       .addFields({ name: "to", value: `${threadOwner.guildMember}`, inline: true })
       .setThumbnail(threadOwner.guildMember.displayAvatarURL({ dynamic: true }))
       .setTimestamp()

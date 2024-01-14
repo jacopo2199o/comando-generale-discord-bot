@@ -9,7 +9,8 @@ import { customPoints } from "../resources/custom-points.js";
 const messageCreate = async (message) => {
   if (!message.author.bot) {
     const customChannel = message.guild.channels.cache.find((channel) => channel.name === customChannels.public);
-    const guildMember = message.guild.members.cache.find((member) => member.id === message.author.id);
+    //const guildMember = message.guild.members.cache.find((member) => member.id === message.author.id);
+    const guildMember = message.guild.members.cache.get(message.author.id);
     const customRole = getCustomRole(guildMember);
   
     let embedMessage = new EmbedBuilder();
@@ -20,7 +21,7 @@ const messageCreate = async (message) => {
   
     embedMessage
       .setDescription(`💬 ${customRole} *${guildMember}* sended a new message in *${message.channel.name}*\n`)
-      .setFooter({ text: `+${customPoints.messageCreate} ⭐ to ${guildMember.displayName}`, iconURL: `${guildMember.displayAvatarURL()}` })
+      .setFooter({ text: `${customPoints.messageCreate} ⭐ to ${guildMember.displayName}`, iconURL: `${guildMember.displayAvatarURL()}` })
       .setTimestamp()
       .setColor(customRole.color);
   

@@ -1,6 +1,6 @@
 import { EmbedBuilder } from "discord.js";
 import { customRoles } from "../resources/custom-roles.js";
-import { promotionPoints, globalPoints } from "./ready.js";
+import { globalPoints } from "./ready.js";
 import { customChannels } from "../resources/custom-channels.js";
 import { customPoints } from "../resources/custom-points.js";
 
@@ -14,11 +14,11 @@ const activity = async (guildMember, points) => {
 
   let embedMessage = new EmbedBuilder();
 
-  promotionPoints[guildMember.id] += points;
-  globalPoints[guildMember.id] += points;
+  globalPoints[guildMember.guild.id][guildMember.id].pp += points;
+  globalPoints[guildMember.guild.id][guildMember.id].g += points;
 
-  if (promotionPoints[guildMember.id] >= customPoints.promotionPoints) {
-    promotionPoints[guildMember.id] = 0;
+  if (globalPoints[guildMember.guild.id][guildMember.id].pp  >= customPoints.promotionPoints) {
+    globalPoints[guildMember.guild.id][guildMember.id].pp  = 0;
 
     guildMember.roles.cache.forEach(async (role) => {
       const customRoleIndex = customRoles.findIndex((rank) => rank === role.name);
@@ -45,8 +45,8 @@ const activity = async (guildMember, points) => {
         }
       }
     });
-  } else if (promotionPoints[guildMember.id] < 0 && guildMember.id !== guildMember.guild.ownerId) {
-    promotionPoints[guildMember.id] = customPoints.promotionPoints + points;
+  } else if (globalPoints[guildMember.guild.id][guildMember.id].pp  < 0 && guildMember.id !== guildMember.guild.ownerId) {
+    globalPoints[guildMember.guild.id][guildMember.id].pp  = customPoints.promotionPoints + points;
 
     guildMember.roles.cache.forEach(async (role) => {
       const customRoleIndex = customRoles.findIndex((rank) => rank === role.name);
