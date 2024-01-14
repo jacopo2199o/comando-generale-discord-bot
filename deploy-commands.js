@@ -10,6 +10,15 @@ dotenv.config();
 const rest = new REST().setToken(process.env.bot_token);
 const commands = [];
 
+// const about = new SlashCommandBuilder();
+// const clear = new SlashCommandBuilder();
+// const clear = new SlashCommandBuilder();
+// const clear = new SlashCommandBuilder();
+// const clear = new SlashCommandBuilder();
+// const clear = new SlashCommandBuilder();
+// const clear = new SlashCommandBuilder();
+// const clear = new SlashCommandBuilder();
+
 commands.push(new SlashCommandBuilder()
   .setName("about")
   .setDescription("about this channel"));
@@ -61,14 +70,10 @@ commands.push(new SlashCommandBuilder()
     .setRequired(false)
   ));
 
-for (let command of commands) {
-  command.toJSON();
-}
+for (let command of commands) { command.toJSON(); }
 
 try {
   const data = await rest.put(Routes.applicationCommands(process.env.client_id), { body: commands });
 
   console.log(`successfully reloaded ${data.length} application slash commands`);
-} catch (error) {
-  console.error(error);
-}
+} catch (error) { console.error(error); }

@@ -1,8 +1,8 @@
+import { ActivityType } from "discord.js";
 import fs from "fs";
 import { customPoints } from "../resources/custom-points.js";
-import { ActivityType } from "discord.js";
 
-let globalPoints = {};
+const globalPoints = {};
 const reputationPoints = {};
 const referrals = {};
 
@@ -19,23 +19,21 @@ const ready = async (client) => {
 
   client.guilds.cache.forEach(async (guild) => {
     const guildMembers = await guild.members.fetch();
-
-    let p = {};
+    const points = {};
 
     if (fs.existsSync(`./resources/database/points-${guild.id}.json`)) {
       globalPoints[guild.id] = JSON.parse(fs.readFileSync(`./resources/database/points-${guild.id}.json`));
     } else {
       guildMembers.forEach((guildMember) => {
         if (!guildMember.user.bot) {
-          p[guildMember.id] = {
+          points[guildMember.id] = {
             g: customPoints.start,
-            pp: customPoints.start,
-            rp: {points: 0, gaveTo: undefined}
+            pp: customPoints.start
           };
         }
       });
 
-      globalPoints[guild.id] = p;
+      globalPoints[guild.id] = points;
 
       fs.writeFileSync(`./resources/database/points-${guild.id}.json`, JSON.stringify(globalPoints[guild.id]));
     }
@@ -63,9 +61,9 @@ const ready = async (client) => {
 };
 
 export {
-  //promotionPoints,
   globalPoints,
-  reputationPoints,
+  ready,
   referrals,
-  ready
+  reputationPoints
 };
+

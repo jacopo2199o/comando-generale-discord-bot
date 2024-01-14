@@ -1,16 +1,16 @@
+import { EmbedBuilder } from "discord.js";
 import { about } from "../commands/about.js";
-import { downgrade } from "../commands/downgrade.js";
+import { chartPromotionPoints } from "../commands/chart-promotion-points.js";
 import { checkLanding } from "../commands/check-landing.js";
 import { clear } from "../commands/clear.js";
-import { viewPromotionPoints } from "../commands/view-promotion-points.js";
+import { downgrade } from "../commands/downgrade.js";
 import { giveReputationPoint } from "../commands/give-reputation-point.js";
+import { save } from "../commands/save.js";
+import { viewPromotionPoints } from "../commands/view-promotion-points.js";
 import { viewReputationPoints } from "../commands/view-reputation-points.js";
 import { customChannels } from "../resources/custom-channels.js";
-import { EmbedBuilder } from "discord.js";
-import { getCustomRole } from "../resources/general-utilities.js";
 import { customPoints } from "../resources/custom-points.js";
-import { chartPromotionPoints } from "../commands/chart-promotion-points.js";
-import { save } from "../commands/save.js";
+import { getCustomRole } from "../resources/general-utilities.js";
 
 /**
  * @param {import("discord.js").Interaction} interaction

@@ -1,7 +1,7 @@
 import { EmbedBuilder } from "discord.js";
 import { customChannels } from "../resources/custom-channels.js";
-import { globalPoints, referrals } from "./ready.js";
 import { customPoints } from "../resources/custom-points.js";
+import { globalPoints, referrals } from "./ready.js";
 
 /**
   * @param { import("discord.js").GuildMember } guildMember
@@ -54,3 +54,4 @@ const guildMemberAdd = async (guildMember) => {
 };
 
 export { guildMemberAdd };
+

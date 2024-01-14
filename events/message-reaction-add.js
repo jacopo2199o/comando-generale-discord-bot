@@ -1,7 +1,7 @@
 import { EmbedBuilder } from "discord.js";
 import { customChannels } from "../resources/custom-channels.js";
-import { getCustomRole } from "../resources/general-utilities.js";
 import { customPoints } from "../resources/custom-points.js";
+import { getCustomRole } from "../resources/general-utilities.js";
 
 /**
  * @param { import("discord.js").MessageReaction } messageReaction
@@ -10,12 +10,11 @@ import { customPoints } from "../resources/custom-points.js";
 const messageReactionAdd = async (messageReaction, user) => {
   if (!user.bot && user.id !== messageReaction.message.author.id && !messageReaction.message.author.bot) {
     const customChannel = messageReaction.message.guild.channels.cache.find((channel) => channel.name === customChannels.public);
+    const embedMessage = new EmbedBuilder();
     const guildMemberMaker = messageReaction.message.guild.members.cache.find((member) => member.id === user.id);
     const guildMemberTaker = messageReaction.message.guild.members.cache.find((member) => member.id === messageReaction.message.author.id);
     const customRoleMaker = getCustomRole(guildMemberMaker) || "n.a.";
-    const customRoleTaker = getCustomRole(guildMemberTaker) || "n.a.";
-    
-    let embedMessage = new EmbedBuilder();
+    const customRoleTaker = getCustomRole(guildMemberTaker) || "n.a."; 
 
     messageReaction.client.emit("activity", guildMemberMaker, customPoints.messageReactionAdd.maker);
     messageReaction.client.emit("activity", guildMemberTaker, customPoints.messageReactionAdd.taker);
@@ -35,3 +34,4 @@ const messageReactionAdd = async (messageReaction, user) => {
 };
 
 export { messageReactionAdd };
+

@@ -1,7 +1,7 @@
 import { EmbedBuilder } from "discord.js";
 import { customChannels } from "../resources/custom-channels.js";
-import { globalPoints } from "./ready.js";
 import { customPoints } from "../resources/custom-points.js";
+import { globalPoints } from "./ready.js";
 
 /**
 * @param { import("discord.js").GuildMember } guildMember

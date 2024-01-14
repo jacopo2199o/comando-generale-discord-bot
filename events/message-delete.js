@@ -1,7 +1,7 @@
 import { AuditLogEvent, EmbedBuilder } from "discord.js";
 import { customChannels } from "../resources/custom-channels.js";
-import { getCustomRole } from "../resources/general-utilities.js";
 import { customPoints } from "../resources/custom-points.js";
+import { getCustomRole } from "../resources/general-utilities.js";
 
 /**
  * @param { import("discord.js").Message } message
@@ -12,11 +12,10 @@ const messageDelete = async (message) => {
 
   if (auditLogFirstEntry.target) {
     const customChannel = message.guild.channels.cache.find((channel) => channel.name === customChannels.internal);
+    const embedMessage = new EmbedBuilder();
     const guildMemberAuthor = message.guild.members.cache.find((member) => member.id === message.author.id);
     const guildMemberExecutor = message.guild.members.cache.find((member) => member.id === auditLogFirstEntry.executor.id);
     const messageContent = message.content || "n.d.";
-
-    let embedMessage = new EmbedBuilder();
 
     if (guildMemberExecutor.id !== guildMemberAuthor.id && !guildMemberAuthor.user.bot) {
       const customRoleExecutor = getCustomRole(guildMemberExecutor);
@@ -43,3 +42,4 @@ const messageDelete = async (message) => {
 };
 
 export { messageDelete };
+

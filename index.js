@@ -1,16 +1,16 @@
 import { Client, GatewayIntentBits } from "discord.js";
+import dotenv from "dotenv";
 import { activity } from "./events/activity.js";
-import { interactionCreate } from "./events/interaction-create.js";
-import { inviteCreate } from "./events/invite-create.js";
 import { guildMemberAdd } from "./events/guild-member-add.js";
 import { guildMemberRemove } from "./events/guild-member-remove.js";
 import { guildMemberUpdate } from "./events/guild-member-update.js";
+import { interactionCreate } from "./events/interaction-create.js";
+import { inviteCreate } from "./events/invite-create.js";
 import { messageCreate } from "./events/message-create.js";
 import { messageDelete } from "./events/message-delete.js";
 import { messageReactionAdd } from "./events/message-reaction-add.js";
 import { ready } from "./events/ready.js";
 import { threadCreate } from "./events/thread-create.js";
-import dotenv from "dotenv";
 
 dotenv.config();
 

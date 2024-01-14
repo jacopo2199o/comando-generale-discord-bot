@@ -1,8 +1,8 @@
 import { EmbedBuilder } from "discord.js";
 import { reputationPoints } from "../events/ready.js";
 import { customChannels } from "../resources/custom-channels.js";
-import { getCustomRole } from "../resources/general-utilities.js";
 import { customPoints } from "../resources/custom-points.js";
+import { getCustomRole } from "../resources/general-utilities.js";
 
 /**
  * @param {import("discord.js").Interaction} interaction
