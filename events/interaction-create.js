@@ -19,10 +19,10 @@ const interactionCreate = async (interaction) => {
   if (interaction.isChatInputCommand()) {
     const customChannel = interaction.guild.channels.cache.find((channel) => channel.name === customChannels.public);
     const customRole = getCustomRole(interaction.member);
+    const embedMessage = new EmbedBuilder();
 
     let interactionChannel = undefined;
     let isValidCommand = true;
-    let embedMessage = new EmbedBuilder();
 
     if (interaction.channel.isThread()) {
       interactionChannel = interaction.channel.parent.name;

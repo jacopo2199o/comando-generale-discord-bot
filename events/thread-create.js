@@ -8,10 +8,9 @@ import { getCustomRole } from "../resources/general-utilities.js";
  * @param { Boolean } newlyCreated
  */
 const threadCreate = async (thread, newlyCreated) => {
-  const threadOwner = await thread.fetchOwner();
   const customChannel = thread.guild.channels.cache.find((channel) => channel.name === customChannels.welcome);
-
-  let embedMessage = new EmbedBuilder();
+  const embedMessage = new EmbedBuilder();
+  const threadOwner = await thread.fetchOwner();
 
   if (newlyCreated) {
     const customRole = getCustomRole(threadOwner.guildMember);
@@ -32,3 +31,4 @@ const threadCreate = async (thread, newlyCreated) => {
 };
 
 export { threadCreate };
+

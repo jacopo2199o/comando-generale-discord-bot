@@ -70,7 +70,7 @@ commands.push(new SlashCommandBuilder()
     .setRequired(false)
   ));
 
-for (let command of commands) { command.toJSON(); }
+for (const command of commands) { command.toJSON(); }
 
 try {
   const data = await rest.put(Routes.applicationCommands(process.env.client_id), { body: commands });

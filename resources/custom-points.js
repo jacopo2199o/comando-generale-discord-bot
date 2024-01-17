@@ -6,7 +6,7 @@ const customPoints = {
   inviteCreate: 10,
   messageCreate: 1,
   messageDelete: {
-    executer: 2,
+    executor: 2,
     author: -10
   },
   messageReactionAdd: {
@@ -23,3 +23,4 @@ const customPoints = {
 };
 
 export { customPoints };
+

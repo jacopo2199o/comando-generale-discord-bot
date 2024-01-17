@@ -1,4 +1,4 @@
-import { globalPoints, reputationPoints } from "../events/ready.js";
+import { globalPoints } from "../events/ready.js";
 import { customPoints } from "../resources/custom-points.js";
 import { customRoles } from "../resources/custom-roles.js";
 
@@ -7,14 +7,13 @@ import { customRoles } from "../resources/custom-roles.js";
  */
 const downgrade = async (interaction) => {
   const guildMembers = await interaction.guild.members.fetch();
-
+  
   let isDowngrading = false;
 
   await interaction.deferReply();
 
   guildMembers.forEach((guildMember) => {
-    globalPoints[guildMember.guild.id][guildMember.id].pp = customPoints.start;
-    reputationPoints[guildMember.id] = 0;
+    globalPoints[guildMember.guild.id][guildMember.id] = customPoints.start;
 
     guildMember.roles.cache.forEach(async (role) => {
       const customRoleIndex = customRoles.findIndex((customRole) => customRole === role.name);
@@ -37,10 +36,11 @@ const downgrade = async (interaction) => {
   });
 
   if (isDowngrading) {
-    await interaction.editReply("downgrading...");
+    await interaction.editReply("done");
   } else {
     await interaction.editReply("nobody to downgrade");
   }
 };
 
 export { downgrade };
+

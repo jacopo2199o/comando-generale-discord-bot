@@ -9,10 +9,13 @@ import { referrals } from "./ready.js";
  */
 const inviteCreate = async (invite) => {
   const customChannel = invite.guild.channels.cache.find((channel) => channel.name === customChannels.activity);
-  const guildMember = invite.guild.members.cache.find((member) => member.id === invite.inviter.id);
-  const customRole = getCustomRole(guildMember);
+  const embedMessage = new EmbedBuilder();
+  const customRole = getCustomRole(
+    invite.guild.members.cache.get(invite.inviter.id)
+  );
+  const guildMember = invite.guild.members.cache.get(invite.inviter.id);
 
-  let embedMessage = new EmbedBuilder();
+  await invite.guild.invites.fetch();
 
   referrals[invite.code] = invite.uses;
 
@@ -31,3 +34,4 @@ const inviteCreate = async (invite) => {
 };
 
 export { inviteCreate };
+

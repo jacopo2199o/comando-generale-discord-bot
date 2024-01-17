@@ -6,15 +6,17 @@ import { getCustomRole } from "../resources/general-utilities.js";
  * @param {import("discord.js").Interaction} interaction
  */
 const viewReputationPoints = async (interaction) => {
+  const embedMessage = new EmbedBuilder();
+  const guildMembers = await interaction.guild.members.fetch();
   const userOption = interaction.options.getUser("member");
-
-  let embedMessage = new EmbedBuilder();
 
   await interaction.deferReply();
 
   if (userOption) {
-    const guildMember = interaction.guild.members.cache.find((member) => member.id === userOption.id);
-    const customRole = getCustomRole(guildMember);
+    const customRole = getCustomRole(
+      guildMembers.get(userOption.id)
+    );
+    const guildMember = guildMembers.get(userOption.id);
 
     embedMessage
       .setTitle("🏵 reputation points")

@@ -1,3 +1,4 @@
+import fs from "fs";
 import { customRoles } from "./custom-roles.js";
 
 /**
@@ -20,6 +21,22 @@ const getCustomRole = (guildMember) => {
   } else {
     return `error at ${guildMember}`;
   }
+};
+
+/**
+ * @param { String } path
+ * @returns { JSON }  
+ */ 
+const loadFile = async (path) => {
+  const data = fs.readFileSync(path);
+
+  return JSON.parse(data);
+};
+
+const saveFile = async (path, data) => {
+  const rawData = JSON.stringify(data);
+  
+  fs.writeFileSync(path, rawData);
 };
 
 /**
@@ -59,4 +76,10 @@ const sendMesseges = async (messages, channel) => {
   }
 };
 
-export { getCustomRole, sendMesseges };
+export {
+  getCustomRole,
+  loadFile,
+  saveFile,
+  sendMesseges
+};
+

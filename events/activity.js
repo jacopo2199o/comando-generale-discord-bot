@@ -2,24 +2,23 @@ import { EmbedBuilder } from "discord.js";
 import { customChannels } from "../resources/custom-channels.js";
 import { customPoints } from "../resources/custom-points.js";
 import { customRoles } from "../resources/custom-roles.js";
+import { saveFile } from "../resources/general-utilities.js";
 import { globalPoints } from "./ready.js";
 
+let canSave = true;
 /**
  * @param { import("discord.js").GuildMember } guildMember
  * @param { import("discord.js").Channel } customChannel
  * @param { Number } points
  */
 const activity = async (guildMember, points) => {
-  const customChannel = guildMember.guild.channels.cache.find((channel) => channel.name === customChannels.welcome);
+  const customChannel = guildMember.guild.channels.cache.find((channel) => channel.name === customChannels.internal);
+  const calculatedPoints = (globalPoints[guildMember.guild.id][guildMember.id] % customPoints.promotionPoints) + points;
+  const embedMessage = new EmbedBuilder();
 
-  let embedMessage = new EmbedBuilder();
+  globalPoints[guildMember.guild.id][guildMember.id] += points;
 
-  globalPoints[guildMember.guild.id][guildMember.id].pp += points;
-  globalPoints[guildMember.guild.id][guildMember.id].g += points;
-
-  if (globalPoints[guildMember.guild.id][guildMember.id].pp  >= customPoints.promotionPoints) {
-    globalPoints[guildMember.guild.id][guildMember.id].pp  = 0;
-
+  if (calculatedPoints >= customPoints.promotionPoints && guildMember.id !== guildMember.guild.ownerId) {
     guildMember.roles.cache.forEach(async (role) => {
       const customRoleIndex = customRoles.findIndex((rank) => rank === role.name);
 
@@ -36,7 +35,9 @@ const activity = async (guildMember, points) => {
 
           embedMessage
             .setTitle("🎖️ promotion")
-            .setDescription(`*${guildMember}* reached ${customPoints.promotionPoints} *promotion points*\n`)
+            .setDescription(`*${guildMember}* reached ${customPoints.promotionPoints} *promotion points*`)
+            .addFields({ name: "old role", value: `${oldRole}`, inline: true })
+            .addFields({ name: "new role", value: `${newRole}`, inline: true })
             .setThumbnail(guildMember.displayAvatarURL({ dynamic: true }))
             .setTimestamp()
             .setColor(newRole.color);
@@ -45,9 +46,7 @@ const activity = async (guildMember, points) => {
         }
       }
     });
-  } else if (globalPoints[guildMember.guild.id][guildMember.id].pp  < 0 && guildMember.id !== guildMember.guild.ownerId) {
-    globalPoints[guildMember.guild.id][guildMember.id].pp  = customPoints.promotionPoints + points;
-
+  } else if (calculatedPoints < 0 && guildMember.id !== guildMember.guild.ownerId) {
     guildMember.roles.cache.forEach(async (role) => {
       const customRoleIndex = customRoles.findIndex((rank) => rank === role.name);
 
@@ -65,6 +64,17 @@ const activity = async (guildMember, points) => {
       }
     });
   }
+
+  if (globalPoints[guildMember.guild.id][guildMember.id] < 0) {
+    globalPoints[guildMember.guild.id][guildMember.id] = 0;
+  }
+
+  if (canSave) {
+    canSave = false;
+    await saveFile(`./resources/database/points-${guildMember.guild.id}.json`, globalPoints[guildMember.guild.id]);
+    canSave = true;
+  }
 };
 
 export { activity };
+

@@ -1,21 +1,20 @@
 import { EmbedBuilder } from "discord.js";
 import { customChannels } from "../resources/custom-channels.js";
 import { customPoints } from "../resources/custom-points.js";
-import { globalPoints } from "./ready.js";
+import { globalPoints, reputationPoints } from "./ready.js";
 
 /**
 * @param { import("discord.js").GuildMember } guildMember
 */
 const guildMemberRemove = async (guildMember) => {
   const customChannel = guildMember.guild.channels.cache.find((channel) => channel.name === customChannels.private);
+  const embedMessage = new EmbedBuilder();
 
-  let embedMessage = new EmbedBuilder();
-
-  delete globalPoints[guildMember.guild.id][guildMember.id].g;
-  delete globalPoints[guildMember.guild.id][guildMember.id].pp;
+  delete globalPoints[guildMember.guild.id][guildMember.id];
+  delete reputationPoints[guildMember.guild.id][guildMember.id];
 
   for(const id in globalPoints[guildMember.guild.id]) {
-    const otherGuildMember = guildMember.guild.members.cache.find((member) => member.id === id);
+    const otherGuildMember = guildMember.guild.members.cache.get(id);
 
     guildMember.client.emit("activity", otherGuildMember, customPoints.guildMemberRemove);
   }

@@ -7,32 +7,32 @@ import { getCustomRole } from "../resources/general-utilities.js";
  * @param {import("discord.js").Interaction} interaction
  */
 const viewPromotionPoints = async (interaction) => {
+  const embedMessage = new EmbedBuilder();
   const userOption = interaction.options.getUser("member");
+  const guildMembers = await interaction.guild.members.fetch();
 
-  let customRole = undefined;
-  let embedMessage = new EmbedBuilder();
-  
   await interaction.deferReply();
-  
+
   if (userOption) {
-    const guildMember = interaction.guild.members.cache.find((member) => member.id === userOption.id);
-    
-    customRole = getCustomRole(guildMember);
+    const customRole = getCustomRole(
+      guildMembers.get(userOption.id)
+    );
+    const guildMember = guildMembers.get(userOption.id);
 
     embedMessage
       .setTitle("⭐ promotion points")
-      .setDescription(`*${guildMember}* have ${globalPoints[guildMember.guild.id][guildMember.id].pp}/${customPoints.promotionPoints} *promotion points*\n`)
+      .setDescription(`*${guildMember}* have ${globalPoints[guildMember.guild.id][guildMember.id] % customPoints.promotionPoints}/${customPoints.promotionPoints} *promotion points*\n`)
       .setThumbnail(guildMember.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(customRole.color);
 
     await interaction.editReply({ embeds: [embedMessage] });
   } else {
-    customRole = getCustomRole(interaction.member);
+    const customRole = getCustomRole(interaction.member);
 
     embedMessage
       .setTitle("⭐ promotion points")
-      .setDescription(`you have ${globalPoints[interaction.guild.id][interaction.member.id].pp}/${customPoints.promotionPoints} *promotion points*\n`)
+      .setDescription(`you have ${globalPoints[interaction.guild.id][interaction.member.id]}/${customPoints.promotionPoints} *promotion points*\n`)
       .setThumbnail(interaction.member.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(customRole.color);
@@ -42,3 +42,4 @@ const viewPromotionPoints = async (interaction) => {
 };
 
 export { viewPromotionPoints };
+

@@ -4,7 +4,7 @@ import { EmbedBuilder } from "discord.js";
  * @param {import("discord.js").Interaction} interaction
  */
 const about = async (interaction) => {
-  let embedMessage = new EmbedBuilder();
+  const embedMessage = new EmbedBuilder();
 
   await interaction.deferReply();
 
@@ -30,3 +30,4 @@ const about = async (interaction) => {
 };
 
 export { about };
+

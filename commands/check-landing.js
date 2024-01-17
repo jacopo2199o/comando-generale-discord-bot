@@ -10,6 +10,8 @@ const checkLanding = async (interaction) => {
 
   let messages = [];
 
+  await interaction.deferReply();
+
   guildMembers.forEach((guildMember) => {
     if (!guildMember.user.bot) {
       if (!guildMember.roles.cache.some((role) => role.name === "italiano")) {
@@ -27,12 +29,12 @@ const checkLanding = async (interaction) => {
   });
 
   if (!messages.length) {
-    await interaction.reply("all members registered");
+    await interaction.editReply("all members registered");
   } else {
     sendMesseges(messages, customChannel);
-    messages = [];
-    await interaction.reply("done");
+    await interaction.editReply("done");
   }
 };
 
 export { checkLanding };
+

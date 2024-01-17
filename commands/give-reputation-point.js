@@ -9,19 +9,26 @@ import { getCustomRole } from "../resources/general-utilities.js";
  */
 const giveReputationPoint = async (interaction) => {
   const customChannel = interaction.guild.channels.cache.find((channel) => channel.name === customChannels.activity);
+  const guildMembers = await interaction.guild.members.fetch();
   /**
    * @type { import("discord.js").User }
    */
+  const guildMemberTaker = guildMembers.get(
+    interaction.options.getUser("member").id
+  );
+  const guildMemberMaker = guildMembers.get(interaction.member.id);
+  const guildMemberMakerCustomRole = getCustomRole(
+    guildMembers.get(interaction.member.id)
+  );
+  const guildMemberTakerCustomRole = getCustomRole(
+    guildMembers.get(
+      interaction.options.getUser("member").id
+    )
+  );
+  const embedMessage1 = new EmbedBuilder();
+  const embedMessage3 = new EmbedBuilder();
+  const embedMessage2 = new EmbedBuilder();
   const userOption = interaction.options.getUser("member");
-
-  const guildMemberTaker = interaction.guild.members.cache.find((guildMember) => guildMember.id === userOption.id);
-  const guildMemberMaker = interaction.guild.members.cache.find((guildMember) => guildMember.id === interaction.member.id);
-  const guildMemberMakerCustomRole = getCustomRole(guildMemberMaker);
-  const guildMemberTakerCustomRole = getCustomRole(guildMemberTaker);
-
-  let embedMessage1 = new EmbedBuilder();
-  let embedMessage2 = new EmbedBuilder();
-  let embedMessage3 = new EmbedBuilder();
 
   await interaction.deferReply();
 
@@ -30,9 +37,9 @@ const giveReputationPoint = async (interaction) => {
   } else if (userOption.bot) {
     await interaction.editReply("you can not select a bot");
   } else {
-    if (reputationPoints[interaction.member.id].gaveTo === undefined) {
-      reputationPoints[interaction.member.id].gaveTo = guildMemberTaker.id;
-      reputationPoints[guildMemberTaker.id].points += 1;
+    if (reputationPoints[interaction.guild.id][interaction.member.id].gaveTo === "") {
+      reputationPoints[interaction.guild.id][interaction.member.id].gaveTo = guildMemberTaker.id;
+      reputationPoints[interaction.guild.id][guildMemberTaker.id].points += 1;
 
       interaction.client.emit("activity", guildMemberTaker, customPoints.reputationPoints.maker);
       interaction.client.emit("activity", guildMemberTaker, customPoints.reputationPoints.taker);
@@ -49,12 +56,14 @@ const giveReputationPoint = async (interaction) => {
 
       await interaction.editReply({ embeds: [embedMessage1] });
     } else {
-      const oldGuildMemberTaker = interaction.guild.members.cache.find((member) => member.id === reputationPoints[interaction.member.id].gaveTo);
-      const oldGuildMemberTakerCustomRole = getCustomRole(oldGuildMemberTaker);
+      const oldGuildMemberTaker = guildMembers.get(reputationPoints[interaction.guild.id][interaction.member.id].gaveTo);
+      const oldGuildMemberTakerCustomRole = getCustomRole(
+        guildMembers.get(reputationPoints[interaction.guild.id][interaction.member.id].gaveTo)
+      );
 
-      reputationPoints[interaction.member.id].gaveTo = guildMemberTaker.id;
-      reputationPoints[oldGuildMemberTaker.id].points -= 1;
-      reputationPoints[guildMemberTaker.id].points += 1;
+      reputationPoints[interaction.guild.id][interaction.member.id].gaveTo = guildMemberTaker.id;
+      reputationPoints[interaction.guild.id][oldGuildMemberTaker.id].points -= 1;
+      reputationPoints[interaction.guild.id][guildMemberTaker.id].points += 1;
 
       interaction.client.emit("activity", guildMemberTaker, customPoints.reputationPoints.maker);
       interaction.client.emit("activity", guildMemberTaker, customPoints.reputationPoints.taker);
@@ -98,3 +107,4 @@ const giveReputationPoint = async (interaction) => {
 };
 
 export { giveReputationPoint };
+
