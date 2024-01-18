@@ -3,22 +3,21 @@ import { customChannels } from "../resources/custom-channels.js";
 import { customPoints } from "../resources/custom-points.js";
 import { customRoles } from "../resources/custom-roles.js";
 import { saveFile } from "../resources/general-utilities.js";
-import { globalPoints } from "./ready.js";
+import { globalPoints, reputationPoints } from "./ready.js";
 
-let canSave = true;
 /**
  * @param { import("discord.js").GuildMember } guildMember
  * @param { import("discord.js").Channel } customChannel
  * @param { Number } points
  */
 const activity = async (guildMember, points) => {
-  const customChannel = guildMember.guild.channels.cache.find((channel) => channel.name === customChannels.internal);
-  const calculatedPoints = (globalPoints[guildMember.guild.id][guildMember.id] % customPoints.promotionPoints) + points;
+  const channel = guildMember.guild.channels.cache.find((channel) => channel.name === customChannels.activity);
   const embedMessage = new EmbedBuilder();
+  const ringPoints = (globalPoints[guildMember.guild.id][guildMember.id] % customPoints.promotionPoints) + points;
 
   globalPoints[guildMember.guild.id][guildMember.id] += points;
 
-  if (calculatedPoints >= customPoints.promotionPoints && guildMember.id !== guildMember.guild.ownerId) {
+  if (ringPoints >= customPoints.promotionPoints && guildMember.id !== guildMember.guild.ownerId) {
     guildMember.roles.cache.forEach(async (role) => {
       const customRoleIndex = customRoles.findIndex((rank) => rank === role.name);
 
@@ -42,11 +41,11 @@ const activity = async (guildMember, points) => {
             .setTimestamp()
             .setColor(newRole.color);
 
-          customChannel.send({ embeds: [embedMessage] });
+          channel.send({ embeds: [embedMessage] });
         }
       }
     });
-  } else if (calculatedPoints < 0 && guildMember.id !== guildMember.guild.ownerId) {
+  } else if (ringPoints < 0 && guildMember.id !== guildMember.guild.ownerId) {
     guildMember.roles.cache.forEach(async (role) => {
       const customRoleIndex = customRoles.findIndex((rank) => rank === role.name);
 
@@ -69,11 +68,8 @@ const activity = async (guildMember, points) => {
     globalPoints[guildMember.guild.id][guildMember.id] = 0;
   }
 
-  if (canSave) {
-    canSave = false;
-    await saveFile(`./resources/database/points-${guildMember.guild.id}.json`, globalPoints[guildMember.guild.id]);
-    canSave = true;
-  }
+  await saveFile(`./resources/database/points-${guildMember.guild.id}.json`, globalPoints[guildMember.guild.id]);
+  await saveFile(`./resources/database/reputation-${guildMember.guild.id}.json`, reputationPoints[guildMember.guild.id]);
 };
 
 export { activity };

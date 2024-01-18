@@ -1,36 +1,42 @@
 import { EmbedBuilder } from "discord.js";
 import { customChannels } from "../resources/custom-channels.js";
-import { customPoints } from "../resources/custom-points.js";
+import { customPoints, getCalculatedPoints } from "../resources/custom-points.js";
 import { getCustomRole } from "../resources/general-utilities.js";
-import { referrals } from "./ready.js";
+import { referrals, reputationPoints } from "./ready.js";
 
 /**
  * @param { import("discord.js").Invite } invite
  */
 const inviteCreate = async (invite) => {
-  const customChannel = invite.guild.channels.cache.find((channel) => channel.name === customChannels.activity);
+  const channel = invite.guild.channels.cache.find((channel) => channel.name === customChannels.activity);
   const embedMessage = new EmbedBuilder();
-  const customRole = getCustomRole(
-    invite.guild.members.cache.get(invite.inviter.id)
-  );
-  const guildMember = invite.guild.members.cache.get(invite.inviter.id);
+  const maker = invite.guild.members.cache.get(invite.inviter.id);
 
-  await invite.guild.invites.fetch();
+  let makerPoints = undefined;
+  let makerRole = undefined;
+
+  if (maker !== undefined) {
+    makerPoints = getCalculatedPoints(
+      customPoints.inviteCreate,
+      reputationPoints[maker.guild.id][maker.id].points
+    );
+    makerRole = getCustomRole(maker);
+  }
 
   referrals[invite.code] = invite.uses;
 
-  invite.client.emit("activity", guildMember, customPoints.inviteCreate);
+  invite.client.emit("activity", maker, makerPoints);
 
   embedMessage
     .setTitle("🔗 new invite")
-    .setDescription(`${customRole} *${guildMember}* created an invite`)
-    .addFields({ name: "promotion points", value: `${customPoints.inviteCreate} ⭐`, inline: true })
-    .addFields({ name: "to", value: `${guildMember}`, inline: true })
-    .setThumbnail(guildMember.displayAvatarURL({ dynamic: true }))
+    .setDescription(`${makerRole} *${maker}* created an invite`)
+    .addFields({ name: "promotion points", value: `${makerPoints} ⭐`, inline: true })
+    .addFields({ name: "to", value: `${maker}`, inline: true })
+    .setThumbnail(maker.displayAvatarURL({ dynamic: true }))
     .setTimestamp()
-    .setColor(customRole.color);
+    .setColor(makerRole.color);
 
-  customChannel.send({ embeds: [embedMessage] });
+  channel.send({ embeds: [embedMessage] });
 };
 
 export { inviteCreate };

@@ -1,6 +1,6 @@
 const customPoints = {
   guildMemberAdd: 1000,
-  guildMemberRemove: -1,
+  guildMemberRemove: -1000,
   start: 10,
   interactionCreate: 2,
   inviteCreate: 10,
@@ -22,5 +22,13 @@ const customPoints = {
   threadCreate: 100
 };
 
-export { customPoints };
+const getCalculatedPoints = (customPoints, reputationPoints) => {
+  const reputationFactor = (reputationPoints / 10) + 1;
+
+  return Math.round(customPoints * reputationFactor);
+};
+
+export {
+  customPoints, getCalculatedPoints
+};
 

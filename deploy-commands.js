@@ -36,6 +36,10 @@ commands.push(new SlashCommandBuilder()
   .setDescription("chart promotion point top 10 members"));
 
 commands.push(new SlashCommandBuilder()
+  .setName("chart-reputation-points")
+  .setDescription("chart reputation point top 10 members"));
+
+commands.push(new SlashCommandBuilder()
   .setName("check-landing")
   .setDescription("check landing for missing or wrong base roles"));
 

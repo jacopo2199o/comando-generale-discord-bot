@@ -1,6 +1,7 @@
 import { EmbedBuilder } from "discord.js";
 import { about } from "../commands/about.js";
 import { chartPromotionPoints } from "../commands/chart-promotion-points.js";
+import { chartReputationPoints } from "../commands/chart-reputation-points.js";
 import { checkLanding } from "../commands/check-landing.js";
 import { clear } from "../commands/clear.js";
 import { downgrade } from "../commands/downgrade.js";
@@ -9,20 +10,26 @@ import { save } from "../commands/save.js";
 import { viewPromotionPoints } from "../commands/view-promotion-points.js";
 import { viewReputationPoints } from "../commands/view-reputation-points.js";
 import { customChannels } from "../resources/custom-channels.js";
-import { customPoints } from "../resources/custom-points.js";
+import { customPoints, getCalculatedPoints } from "../resources/custom-points.js";
 import { getCustomRole } from "../resources/general-utilities.js";
+import { reputationPoints } from "./ready.js";
 
 /**
  * @param {import("discord.js").Interaction} interaction
  */
 const interactionCreate = async (interaction) => {
   if (interaction.isChatInputCommand()) {
-    const customChannel = interaction.guild.channels.cache.find((channel) => channel.name === customChannels.public);
-    const customRole = getCustomRole(interaction.member);
+    const channel = interaction.guild.channels.cache.find((channel) => channel.name === customChannels.public);
     const embedMessage = new EmbedBuilder();
+    const makerRole = getCustomRole(interaction.member);
+    const makerPoints = getCalculatedPoints(
+      customPoints.interactionCreate,
+      reputationPoints[interaction.member.guild.id][interaction.member.id].points
+    );
 
     let interactionChannel = undefined;
     let isValidCommand = true;
+
 
     if (interaction.channel.isThread()) {
       interactionChannel = interaction.channel.parent.name;
@@ -34,6 +41,8 @@ const interactionCreate = async (interaction) => {
       about(interaction);
     } else if (interaction.commandName === "chart-promotion-points") {
       chartPromotionPoints(interaction);
+    } else if (interaction.commandName === "chart-reputation-points") {
+      chartReputationPoints(interaction);
     } else if (interaction.commandName === "check-landing") {
       checkLanding(interaction);
     } else if (interaction.commandName === "clear") {
@@ -55,20 +64,21 @@ const interactionCreate = async (interaction) => {
     }
 
     if (isValidCommand) {
-      interaction.client.emit("activity", interaction.member, customPoints.interactionCreate);
+      interaction.client.emit("activity", interaction.member, makerPoints);
 
       embedMessage
         .setTitle("⚙️ command")
-        .setDescription(`${customRole} *${interaction.member}* used */${interaction.commandName}* in *${interactionChannel}*`)
-        .addFields({ name: "promotion points", value: `${customPoints.interactionCreate} ⭐`, inline: true })
+        .setDescription(`${makerRole} *${interaction.member}* used */${interaction.commandName}* in *${interactionChannel}*`)
+        .addFields({ name: "promotion points", value: `${makerPoints} ⭐`, inline: true })
         .addFields({ name: "to", value: `${interaction.member}`, inline: true })
         .setThumbnail(interaction.member.displayAvatarURL({ dynamic: true }))
         .setTimestamp()
-        .setColor(customRole.color);
+        .setColor(makerRole.color);
 
-      customChannel.send({ embeds: [embedMessage] });
+      channel.send({ embeds: [embedMessage] });
     }
   }
 };
 
 export { interactionCreate };
+

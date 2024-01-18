@@ -1,32 +1,47 @@
 import { EmbedBuilder } from "discord.js";
 import { customChannels } from "../resources/custom-channels.js";
-import { customPoints } from "../resources/custom-points.js";
+import { customPoints, getCalculatedPoints } from "../resources/custom-points.js";
 import { getCustomRole } from "../resources/general-utilities.js";
+import { reputationPoints } from "./ready.js";
 
 /**
  * @param { import("discord.js").ThreadChannel } thread
  * @param { Boolean } newlyCreated
  */
 const threadCreate = async (thread, newlyCreated) => {
-  const customChannel = thread.guild.channels.cache.find((channel) => channel.name === customChannels.welcome);
+  const channel = thread.guild.channels.cache.find((channel) => channel.name === customChannels.welcome);
   const embedMessage = new EmbedBuilder();
   const threadOwner = await thread.fetchOwner();
 
-  if (newlyCreated) {
-    const customRole = getCustomRole(threadOwner.guildMember);
+  let maker = undefined;
+  let makerPoints = undefined;
+  let makerRole = undefined;
 
-    thread.client.emit("activity", threadOwner.guildMember, customPoints.threadCreate);
+  if (threadOwner !== undefined) {
+    maker = threadOwner.guildMember;
+
+    if (maker !== undefined) {
+      makerRole = getCustomRole(maker);
+      makerPoints = getCalculatedPoints(
+        customPoints.threadCreate,
+        reputationPoints[maker.guild.id][maker.id].points
+      );
+    }
+  }
+
+  if (newlyCreated) {
+    thread.client.emit("activity", threadOwner.guildMember, makerPoints);
 
     embedMessage
       .setTitle("🧵 new thread")
-      .setDescription(`${customRole} *${threadOwner.guildMember}* created *${thread.name}* thread in *${thread.parent.name}*\n`)
-      .addFields({ name: "promotion points", value: `${customPoints.threadCreate} ⭐`, inline: true })
-      .addFields({ name: "to", value: `${threadOwner.guildMember}`, inline: true })
+      .setDescription(`${makerRole} *${maker}* created *${thread.name}* thread in *${thread.parent.name}*\n`)
+      .addFields({ name: "promotion points", value: `${makerPoints} ⭐`, inline: true })
+      .addFields({ name: "to", value: `${maker}`, inline: true })
       .setThumbnail(threadOwner.guildMember.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
-      .setColor(customRole.color);
+      .setColor(makerRole.color);
 
-    customChannel.send({ embeds: [embedMessage] });
+    channel.send({ embeds: [embedMessage] });
   }
 };
 

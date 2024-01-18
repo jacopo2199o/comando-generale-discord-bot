@@ -7,16 +7,22 @@ import { globalPoints, reputationPoints } from "./ready.js";
 * @param { import("discord.js").GuildMember } guildMember
 */
 const guildMemberRemove = async (guildMember) => {
-  const customChannel = guildMember.guild.channels.cache.find((channel) => channel.name === customChannels.private);
+  const channel = guildMember.guild.channels.cache.find((channel) => channel.name === customChannels.private);
   const embedMessage = new EmbedBuilder();
+  const gaveToId = reputationPoints[guildMember.guild.id][guildMember.id].gaveTo;
+  const penaltyPoints = Math.round(customPoints.guildMemberRemove / guildMember.guild.memberCount);
+  
+  if (gaveToId !== "") {
+    reputationPoints[guildMember.guild.id][gaveToId].points = -1;
+  }
 
   delete globalPoints[guildMember.guild.id][guildMember.id];
   delete reputationPoints[guildMember.guild.id][guildMember.id];
 
-  for(const id in globalPoints[guildMember.guild.id]) {
-    const otherGuildMember = guildMember.guild.members.cache.get(id);
+  for(const guildMemberId in globalPoints[guildMember.guild.id]) {
+    const otherGuildMember = guildMember.guild.members.cache.get(guildMemberId);
 
-    guildMember.client.emit("activity", otherGuildMember, customPoints.guildMemberRemove);
+    guildMember.client.emit("activity", otherGuildMember, penaltyPoints);
   }
 
   embedMessage
@@ -28,7 +34,8 @@ const guildMemberRemove = async (guildMember) => {
     .setTimestamp()
     .setColor("DarkRed");
 
-  customChannel.send({ embeds: [embedMessage] });
+  channel.send({ embeds: [embedMessage] });
 };
 
 export { guildMemberRemove };
+

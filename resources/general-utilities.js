@@ -26,17 +26,22 @@ const getCustomRole = (guildMember) => {
 /**
  * @param { String } path
  * @returns { JSON }  
- */ 
+ */
 const loadFile = async (path) => {
   const data = fs.readFileSync(path);
 
   return JSON.parse(data);
 };
 
+
 const saveFile = async (path, data) => {
   const rawData = JSON.stringify(data);
-  
-  fs.writeFileSync(path, rawData);
+
+  fs.writeFile(path, rawData, (error) => {
+    if (error) {
+      console.error(error);
+    }
+  });
 };
 
 /**

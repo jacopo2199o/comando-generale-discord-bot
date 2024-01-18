@@ -1,7 +1,8 @@
 import { EmbedBuilder } from "discord.js";
 import { customChannels } from "../resources/custom-channels.js";
-import { customPoints } from "../resources/custom-points.js";
+import { customPoints, getCalculatedPoints } from "../resources/custom-points.js";
 import { getCustomRole } from "../resources/general-utilities.js";
+import { reputationPoints } from "./ready.js";
 
 /**
  * @param { import("discord.js").MessageReaction } messageReaction
@@ -10,58 +11,81 @@ import { getCustomRole } from "../resources/general-utilities.js";
 const messageReactionAdd = async (messageReaction, user) => {
   if (user.id !== messageReaction.message.author.id && !messageReaction.message.author.bot) {
     const embedMessage = new EmbedBuilder();
-    const guildMemberMaker = messageReaction.message.guild.members.cache.get(user.id);
-    const guildMemberTaker = messageReaction.message.guild.members.cache.get(messageReaction.message.author.id);
-    const customRoleMaker = getCustomRole(
-      messageReaction.message.guild.members.cache.get(user.id)
-    );
-    const customRoleTaker = getCustomRole(
-      messageReaction.message.guild.members.cache.get(messageReaction.message.author.id)
-    );
+    const embedMessage2 = new EmbedBuilder();
+    const maker = messageReaction.message.guild.members.cache.get(user.id);
+    const taker = messageReaction.message.guild.members.cache.get(messageReaction.message.author.id);
+
+    let makerPoints = undefined;
+    let makerRole = undefined;
+    let takerPoints = undefined;
+    let takerRole = undefined;
+
+    if (maker !== undefined) {
+      makerPoints = getCalculatedPoints(
+        customPoints.messageReactionAdd.maker,
+        reputationPoints[maker.guild.id][maker.id].points
+      );
+      makerRole = getCustomRole(maker);
+    }
+
+    if (taker !== undefined) {
+      takerPoints = getCalculatedPoints(
+        customPoints.messageReactionAdd.taker,
+        reputationPoints[taker.guild.id][taker.id].points
+      );
+      takerRole = getCustomRole(taker);
+    }
 
     if (messageReaction.emoji.name === "⚠️") {
       const customChannel = messageReaction.message.guild.channels.cache.find((channel) => channel.name === customChannels.private);
-      const penaltyPoints = -customPoints.messageReactionAdd.taker;
 
       embedMessage
         .setTitle("⚠️ potential violation")
-        .setDescription(`${customRoleMaker} *${guildMemberMaker}* spotted a messagge sent by ${customRoleTaker} *${guildMemberTaker}* in *${messageReaction.message.channel.name}*`)
+        .setDescription(`${makerRole} *${maker}* spotted a messagge sent by ${takerRole} *${taker}* in *${messageReaction.message.channel.name}*`)
         .addFields({ name: "content", value: `${messageReaction.message.content}`, inline: false })
-        .addFields({ name: "promotion points", value: `${penaltyPoints} ⭐`, inline: true })
-        .addFields({ name: "to", value: `${guildMemberTaker}`, inline: true })
-        .setThumbnail(guildMemberTaker.displayAvatarURL({ dynamic: true }))
-        .setFooter({ text: `${customPoints.messageReactionAdd.maker} ⭐ to ${guildMemberMaker.displayName}`, iconURL: `${guildMemberMaker.displayAvatarURL()}` })
+        .addFields({ name: "promotion points", value: `${-takerPoints} ⭐`, inline: true })
+        .addFields({ name: "to", value: `${taker}`, inline: true })
+        .setThumbnail(taker.displayAvatarURL({ dynamic: true }))
+        .setFooter({ text: `${makerPoints} ⭐ to ${maker.displayName}`, iconURL: `${maker.displayAvatarURL()}` })
         .setTimestamp()
-        .setColor(customRoleMaker.color);
+        .setColor(makerRole.color);
 
       customChannel.send({ embeds: [embedMessage] });
     } else {
       const customChannel = messageReaction.message.guild.channels.cache.find((channel) => channel.name === customChannels.public);
 
-      messageReaction.client.emit("activity", guildMemberMaker, customPoints.messageReactionAdd.maker);
-      messageReaction.client.emit("activity", guildMemberTaker, customPoints.messageReactionAdd.taker);
+      messageReaction.client.emit("activity", maker, makerPoints);
+      messageReaction.client.emit("activity", taker, takerPoints);
 
       embedMessage
         .setTitle("🧸 reaction")
-        .setDescription(`${customRoleMaker} *${guildMemberMaker}* reacted ${messageReaction.emoji} to message sent by ${customRoleTaker} *${guildMemberTaker}* in *${messageReaction.message.channel.name}*`)
-        .addFields({ name: "promotion points", value: `${customPoints.messageReactionAdd.taker} ⭐`, inline: true })
-        .addFields({ name: "to", value: `${guildMemberTaker}`, inline: true })
-        .setThumbnail(guildMemberTaker.displayAvatarURL({ dynamic: true }))
-        .setFooter({ text: `${customPoints.messageReactionAdd.maker} ⭐ to ${guildMemberMaker.displayName}`, iconURL: `${guildMemberMaker.displayAvatarURL()}` })
+        .setDescription(`${makerRole} *${maker}* reacted ${messageReaction.emoji} to message sent by ${takerRole} *${taker}* in *${messageReaction.message.channel.name}*`)
+        .addFields({ name: "promotion points", value: `${takerPoints} ⭐`, inline: true })
+        .addFields({ name: "to", value: `${taker}`, inline: true })
+        .setThumbnail(taker.displayAvatarURL({ dynamic: true }))
+        .setFooter({ text: `${makerPoints} ⭐ to ${maker.displayName}`, iconURL: `${maker.displayAvatarURL()}` })
         .setTimestamp()
-        .setColor(customRoleMaker.color);
+        .setColor(makerRole.color);
 
       customChannel.send({ embeds: [embedMessage] });
     }
 
     if (messageReaction.emoji.name === "☕") {
-      embedMessage
-        .setDescription(`${customRoleMaker} *${guildMemberMaker}* offered a ${messageReaction.emoji} to ${customRoleTaker} *${guildMemberTaker}* in *${messageReaction.message.channel.name}*`)
-        .setFooter({ text: `${customPoints.messageReactionAdd.taker} ⭐ to ${guildMemberTaker.displayName}`, iconURL: `${guildMemberTaker.displayAvatarURL()}` })
+      embedMessage2
+        .setDescription(`🧸 ${makerRole} *${maker}* offered a ${messageReaction.emoji} coffe to ${takerRole} *${taker}* in *${messageReaction.message.channel.name}*`)
+        .setFooter({ text: `${takerPoints} ⭐ to ${taker.displayName}`, iconURL: `${taker.displayAvatarURL()}` })
         .setTimestamp()
-        .setColor(customRoleMaker.color);
+        .setColor(makerRole.color);
 
-      messageReaction.message.channel.send({ embeds: [embedMessage] });
+      messageReaction.message.channel.send({ embeds: [embedMessage2] });
+    } else if (messageReaction.emoji.name === "🍸") {
+      embedMessage2
+        .setDescription(`🧸 ${makerRole} *${maker}* offered a ${messageReaction.emoji} drink to ${takerRole} *${taker}* in *${messageReaction.message.channel.name}*`)
+        .setFooter({ text: `${takerPoints} ⭐ to ${taker.displayName}`, iconURL: `${taker.displayAvatarURL()}` })
+        .setTimestamp()
+        .setColor(makerRole.color);
+
+      messageReaction.message.channel.send({ embeds: [embedMessage2] });
     }
   }
 };

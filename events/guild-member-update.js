@@ -7,7 +7,7 @@ import { getCustomRole } from "../resources/general-utilities.js";
  * @param { import("discord.js").GuildMember } oldMember
  */
 const guildMemberUpdate = async (oldMember, newMember) => {
-  const customChannel = newMember.guild.channels.cache.find((channel) => channel.name === customChannels.activity);
+  const channel = newMember.guild.channels.cache.find((channel) => channel.name === customChannels.activity);
   const embedMessage = new EmbedBuilder();
 
   if (oldMember.roles.cache.size > newMember.roles.cache.size) {
@@ -19,7 +19,7 @@ const guildMemberUpdate = async (oldMember, newMember) => {
           .setTimestamp()
           .setColor("DarkRed");
 
-        customChannel.send({ embeds: [embedMessage] });
+        channel.send({ embeds: [embedMessage] });
       }
     });
   } else if (oldMember.roles.cache.size < newMember.roles.cache.size) {
@@ -31,21 +31,22 @@ const guildMemberUpdate = async (oldMember, newMember) => {
           .setTimestamp()
           .setColor("DarkGreen");
 
-        customChannel.send({ embeds: [embedMessage] });
+        channel.send({ embeds: [embedMessage] });
       }
     });
   } else if (oldMember.nickname !== newMember.nickname) {
-    const customRole = getCustomRole(newMember);
+    const makerRole = getCustomRole(newMember);
 
     embedMessage
       .setTitle("🪪 new nickname")
-      .setDescription(`${customRole} *${oldMember}* changed his nickname in ${newMember}`)
+      .setDescription(`${makerRole} *${oldMember}* changed his nickname in ${newMember}`)
       .setThumbnail(newMember.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
-      .setColor(customRole.color);
+      .setColor(makerRole.color);
 
-    customChannel.send({ embeds: [embedMessage] });
+    channel.send({ embeds: [embedMessage] });
   }
 };
 
 export { guildMemberUpdate };
+

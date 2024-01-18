@@ -9,32 +9,40 @@ const viewReputationPoints = async (interaction) => {
   const embedMessage = new EmbedBuilder();
   const guildMembers = await interaction.guild.members.fetch();
   const userOption = interaction.options.getUser("member");
+  
+  let target = undefined;
+  let targetRole = undefined;
+
+  if (guildMembers !== undefined) {
+    if (userOption !== null){
+      target = guildMembers.get(userOption.id);    
+    } else {
+      target = guildMembers.get(interaction.member.id);
+    }
+
+    if (target !== undefined) {
+      targetRole = getCustomRole(target);
+    }
+  }
 
   await interaction.deferReply();
 
-  if (userOption) {
-    const customRole = getCustomRole(
-      guildMembers.get(userOption.id)
-    );
-    const guildMember = guildMembers.get(userOption.id);
-
+  if (userOption !== null) {
     embedMessage
       .setTitle("🏵 reputation points")
-      .setDescription(`*${guildMember}* have ${reputationPoints[guildMember.id].points} *reputation points*\n`)
-      .setThumbnail(guildMember.displayAvatarURL({ dynamic: true }))
+      .setDescription(`${targetRole} *${target}* have ${reputationPoints[target.guild.id][target.id].points} *reputation points*\n`)
+      .setThumbnail(target.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
-      .setColor(customRole.color);
+      .setColor(targetRole.color);
 
     await interaction.editReply({ embeds: [embedMessage] });
   } else {
-    const customRole = getCustomRole(interaction.member);
-
     embedMessage
       .setTitle("🏵 reputation points")
-      .setDescription(`you have ${reputationPoints[interaction.member.id].points} *reputation points*\n`)
-      .setThumbnail(interaction.member.displayAvatarURL({ dynamic: true }))
+      .setDescription(`you have ${reputationPoints[target.guild.id][target.id].points} *reputation points*\n`)
+      .setThumbnail(target.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
-      .setColor(customRole.color);
+      .setColor(targetRole.color);
 
     await interaction.editReply({ embeds: [embedMessage] });
   }

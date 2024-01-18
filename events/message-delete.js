@@ -1,39 +1,67 @@
 import { AuditLogEvent, EmbedBuilder } from "discord.js";
 import { customChannels } from "../resources/custom-channels.js";
-import { customPoints } from "../resources/custom-points.js";
+import { customPoints, getCalculatedPoints } from "../resources/custom-points.js";
 import { getCustomRole } from "../resources/general-utilities.js";
+import { reputationPoints } from "./ready.js";
 
 /**
  * @param { import("discord.js").Message } message
 */
 const messageDelete = async (message) => {
   const auditLog = await message.guild.fetchAuditLogs({ type: AuditLogEvent.MessageDelete, limit: 1 });
-  const auditLogFirstEntry = auditLog.entries.first();
-  const customChannel = message.guild.channels.cache.find((channel) => channel.name === customChannels.private);
+  const channel = message.guild.channels.cache.find((channel) => channel.name === customChannels.private);
   const embedMessage = new EmbedBuilder();
-  const guildMemberAuthor = message.guild.members.cache.get(auditLogFirstEntry.targetId);
-  const guildMemberExecutor = message.guild.members.cache.get(auditLogFirstEntry.executorId);
-  
-  if (guildMemberExecutor.id !== guildMemberAuthor.id && !guildMemberAuthor.user.bot) {
-    const customRoleAuthor = getCustomRole(guildMemberAuthor);
-    const customRoleExecutor = getCustomRole(guildMemberExecutor);
 
-    message.client.emit("activity", guildMemberExecutor, customPoints.messageDelete.executor);
-    message.client.emit("activity", guildMemberAuthor, customPoints.messageDelete.author);
+  let auditLogFirstEntry = undefined;
+  let authorRole = undefined;
+  let executorRole = undefined;
+  let author = undefined;
+  let authorPoints = undefined;
+  let executor = undefined;
+  let executorPoints = undefined;
+
+  if (auditLog !== undefined) {
+    auditLogFirstEntry = auditLog.entries.first();
+
+    if (auditLogFirstEntry !== undefined) {
+      author = message.guild.members.cache.get(auditLogFirstEntry.targetId);
+      executor = message.guild.members.cache.get(auditLogFirstEntry.executorId);
+
+      if (author !== undefined) {
+        authorRole = getCustomRole(author);
+        authorPoints = getCalculatedPoints(
+          customPoints.messageDelete.author,
+          reputationPoints[author.guild.id][author.id].points
+        );
+      }
+
+      if (executor !== undefined) {
+        executorRole = getCustomRole(executor);
+        executorPoints = getCalculatedPoints(
+          customPoints.messageDelete.executor,
+          reputationPoints[executor.guild.id][executor.id].points
+        );
+      }
+    }
+  }
+
+  if (executor.id !== author.id && !author.user.bot) {
+    message.client.emit("activity", author, authorPoints);
+    message.client.emit("activity", executor, executorPoints);
 
     embedMessage
       .setTitle("🛡️ moderation")
-      .setDescription(`${customRoleExecutor} *${guildMemberExecutor.displayName}* deleted a message in *${message.channel.name}*\n`)
-      .addFields({ name: "author", value: `${customRoleAuthor} *${guildMemberAuthor}*`, inline: false })
+      .setDescription(`${executorRole} *${executor.displayName}* deleted a message in *${message.channel.name}*\n`)
+      .addFields({ name: "author", value: `${authorRole} *${author}*`, inline: false })
       .addFields({ name: "content", value: `${message.content}`, inline: false })
-      .addFields({ name: "promotion points", value: `${customPoints.messageDelete.author} ⭐`, inline: true })
-      .addFields({ name: "to", value: `${guildMemberAuthor} ⭐`, inline: true })
-      .setThumbnail(guildMemberAuthor.displayAvatarURL({ dynamic: true }))
-      .setFooter({ text: `${customPoints.messageDelete.executer} ⭐ to ${guildMemberExecutor.displayName}`, iconURL: `${guildMemberExecutor.displayAvatarURL()}` })
+      .addFields({ name: "promotion points", value: `${authorPoints} ⭐`, inline: true })
+      .addFields({ name: "to", value: `${author} ⭐`, inline: true })
+      .setThumbnail(author.displayAvatarURL({ dynamic: true }))
+      .setFooter({ text: `${executorPoints} ⭐ to ${executor.displayName}`, iconURL: `${executor.displayAvatarURL()}` })
       .setTimestamp()
       .setColor("DarkBlue");
 
-    customChannel.send({ embeds: [embedMessage] });
+    channel.send({ embeds: [embedMessage] });
   }
 };
 

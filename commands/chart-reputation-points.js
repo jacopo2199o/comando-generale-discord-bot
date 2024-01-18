@@ -1,12 +1,11 @@
 import { EmbedBuilder } from "discord.js";
-import { globalPoints } from "../events/ready.js";
-import { customPoints } from "../resources/custom-points.js";
+import { reputationPoints } from "../events/ready.js";
 import { getCustomRole } from "../resources/general-utilities.js";
 
 /**
- * @param {import("discord.js").Interaction} interaction 
+ * @param {import("discord.js")} interaction 
  */
-const chartPromotionPoints = async (interaction) => {
+const chartReputationPoints = async (interaction) => {
   const chart = [];
   const embedMessage = new EmbedBuilder();
 
@@ -15,14 +14,14 @@ const chartPromotionPoints = async (interaction) => {
 
   await interaction.deferReply();
 
-  for (const id in globalPoints[interaction.guild.id]) {
+  for (const id in reputationPoints[interaction.guild.id]) {
     const guildMember = interaction.guild.members.cache.get(id);
 
     if (interaction.guild.ownerId !== id) {
       chart.push({
         guildMember,
         role: getCustomRole(guildMember),
-        points: globalPoints[interaction.guild.id][id] % customPoints.promotionPoints
+        points: reputationPoints[interaction.guild.id][id].points
       });
     }
   }
@@ -32,13 +31,13 @@ const chartPromotionPoints = async (interaction) => {
     .slice(0, 10);
 
   sortedChart.forEach((element, index) => {
-    chartRow += `${index + 1}: ${element.role} *${element.guildMember}* ${element.points} ⭐\n`;
+    chartRow += `${index + 1}: ${element.role} *${element.guildMember}* ${element.points} 🏵\n`;
   });
 
   embedMessage
-    .setTitle("🏆⭐ promotion points chart")
-    .setDescription(`based on real server activities like: messages, reactions, threads, invites, reputation and many others\n\n${chartRow}`)
-    .addFields({ name: "\u200b", value: `*automatic rank up every ${customPoints.promotionPoints} points*`, inline: false })
+    .setTitle("🏆🏵 reputation points chart")
+    .setDescription(`based on voluntary reputation exchange between members\n\n${chartRow}`)
+    .addFields({ name: "\u200b", value: "*use __/give-reputation-point__ to boost your favourite member*", inline: false })
     .setFooter({ text: `${interaction.member.displayName}`, iconURL: `${interaction.member.displayAvatarURL()}` })
     .setTimestamp()
     .setColor("DarkGreen");
@@ -46,5 +45,5 @@ const chartPromotionPoints = async (interaction) => {
   await interaction.editReply({ embeds: [embedMessage] });
 };
 
-export { chartPromotionPoints };
+export { chartReputationPoints };
 

@@ -6,7 +6,6 @@ import { loadFile, saveFile } from "../resources/general-utilities.js";
 const globalPoints = {};
 const reputationPoints = {};
 const referrals = {};
-let isBotReady = false;
 
 /**
  * @param { import("discord.js").Client } client
@@ -58,9 +57,14 @@ const ready = async (client) => {
 
         guildMembers.forEach((guildMember) => {
           if (reputationPoints[guild.id][guildMember.id] === undefined) {
-            reputationPoints[guild.id][guildMember.id] = customPoints.start;
+            reputationPoints[guild.id][guildMember.id] = {
+              points: 0,
+              gaveTo: ""
+            };
           }
         });
+
+        await saveFile(`./resources/database/reputation-${guild.id}.json`, reputationPoints[guild.id]);
       } else if (guildMembers.size < Object.keys(reputationPoints[guild.id]).length) {
         console.log(`guildMember size ${guildMembers.size} < saved reputations ${Object.keys(reputationPoints[guild.id]).length}`);
 
@@ -99,14 +103,11 @@ const ready = async (client) => {
     }]
   });
 
-  isBotReady = true;
-
   console.log(`bot ready as ${client.user.username}`);
 };
 
 export {
   globalPoints,
-  isBotReady,
   ready,
   referrals,
   reputationPoints

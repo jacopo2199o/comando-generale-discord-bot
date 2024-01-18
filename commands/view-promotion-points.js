@@ -8,34 +8,42 @@ import { getCustomRole } from "../resources/general-utilities.js";
  */
 const viewPromotionPoints = async (interaction) => {
   const embedMessage = new EmbedBuilder();
-  const userOption = interaction.options.getUser("member");
   const guildMembers = await interaction.guild.members.fetch();
+  const userOption = interaction.options.getUser("member");
+
+  let target = undefined;
+  let targetRole = undefined;
+
+  if (guildMembers !== undefined) {
+    if (userOption !== null){
+      target = guildMembers.get(userOption.id);    
+    } else {
+      target = guildMembers.get(interaction.member.id);
+    }
+
+    if (target !== undefined) {
+      targetRole = getCustomRole(target);
+    }
+  }
 
   await interaction.deferReply();
 
-  if (userOption) {
-    const customRole = getCustomRole(
-      guildMembers.get(userOption.id)
-    );
-    const guildMember = guildMembers.get(userOption.id);
-
+  if (userOption !== null) {
     embedMessage
       .setTitle("⭐ promotion points")
-      .setDescription(`*${guildMember}* have ${globalPoints[guildMember.guild.id][guildMember.id] % customPoints.promotionPoints}/${customPoints.promotionPoints} *promotion points*\n`)
-      .setThumbnail(guildMember.displayAvatarURL({ dynamic: true }))
+      .setDescription(`${targetRole} *${target}* have ${globalPoints[target.guild.id][target.id] % customPoints.promotionPoints}/${customPoints.promotionPoints} *promotion points*\n`)
+      .setThumbnail(target.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
-      .setColor(customRole.color);
+      .setColor(targetRole.color);
 
     await interaction.editReply({ embeds: [embedMessage] });
   } else {
-    const customRole = getCustomRole(interaction.member);
-
     embedMessage
       .setTitle("⭐ promotion points")
-      .setDescription(`you have ${globalPoints[interaction.guild.id][interaction.member.id]}/${customPoints.promotionPoints} *promotion points*\n`)
+      .setDescription(`you have ${globalPoints[target.guild.id][target.id]}/${customPoints.promotionPoints} *promotion points*\n`)
       .setThumbnail(interaction.member.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
-      .setColor(customRole.color);
+      .setColor(targetRole.color);
 
     await interaction.editReply({ embeds: [embedMessage] });
   }
