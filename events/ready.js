@@ -27,6 +27,8 @@ const ready = async (client) => {
             globalPoints[guild.id][guildMember.id] = customPoints.start;
           }
         });
+
+        await saveFile(`./resources/database/points-${guild.id}.json`, globalPoints[guild.id]);
       } else if (guildMembers.size < Object.keys(globalPoints[guild.id]).length) {
         console.log(`guildMember size ${guildMembers.size} < saved points ${Object.keys(globalPoints[guild.id]).length}`);
 

@@ -11,7 +11,8 @@ import { globalPoints, reputationPoints } from "./ready.js";
  * @param { Number } points
  */
 const activity = async (guildMember, points) => {
-  const channel = guildMember.guild.channels.cache.find((channel) => channel.name === customChannels.activity);
+  const channel = guildMember.guild.channels.cache.find((channel) => channel.name === customChannels.activity)
+    || guildMember.guild.channels.cache.get(guildMember.guild.publicUpdatesChannelId);
   const embedMessage = new EmbedBuilder();
   const ringPoints = (globalPoints[guildMember.guild.id][guildMember.id] % customPoints.promotionPoints) + points;
 

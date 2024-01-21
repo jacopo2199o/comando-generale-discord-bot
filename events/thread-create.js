@@ -9,7 +9,8 @@ import { reputationPoints } from "./ready.js";
  * @param { Boolean } newlyCreated
  */
 const threadCreate = async (thread, newlyCreated) => {
-  const channel = thread.guild.channels.cache.find((channel) => channel.name === customChannels.welcome);
+  const channel = thread.guild.channels.cache.find((channel) => channel.name === customChannels.welcome)
+    || thread.guild.channels.cache.get(thread.guild.publicUpdatesChannelId);
   const embedMessage = new EmbedBuilder();
   const threadOwner = await thread.fetchOwner();
 

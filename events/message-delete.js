@@ -9,7 +9,8 @@ import { reputationPoints } from "./ready.js";
 */
 const messageDelete = async (message) => {
   const auditLog = await message.guild.fetchAuditLogs({ type: AuditLogEvent.MessageDelete, limit: 1 });
-  const channel = message.guild.channels.cache.find((channel) => channel.name === customChannels.private);
+  const channel = message.guild.channels.cache.find((channel) => channel.name === customChannels.private)
+    || message.guild.channels.cache.get(message.guild.publicUpdatesChannelId);
   const embedMessage = new EmbedBuilder();
 
   let auditLogFirstEntry = undefined;

@@ -8,10 +8,11 @@ import { getCustomRole, saveFile } from "../resources/general-utilities.js";
  * @param {import("discord.js").Interaction} interaction
  */
 const giveReputationPoint = async (interaction) => {
-  const channel = interaction.guild.channels.cache.find((channel) => channel.name === customChannels.internal);
+  const channel = interaction.guild.channels.cache.find((channel) => channel.name === customChannels.public)
+    || interaction.guild.channels.cache.get(interaction.guild.publicUpdatesChannelId);
   const embedMessage1 = new EmbedBuilder();
-  const embedMessage3 = new EmbedBuilder();
   const embedMessage2 = new EmbedBuilder();
+  const embedMessage3 = new EmbedBuilder();
   const guildMembers = await interaction.guild.members.fetch();
 
   let maker = undefined;
@@ -54,7 +55,7 @@ const giveReputationPoint = async (interaction) => {
 
   if (taker.id === interaction.member.id) {
     await interaction.editReply("you can not select yourself");
-  } else if (taker.id === interaction.guild.ownerId){
+  } else if (taker.id === interaction.guild.ownerId) {
     await interaction.editReply("you can not select the server owner");
   } else if (userOption.bot) {
     await interaction.editReply("you can not select a bot");

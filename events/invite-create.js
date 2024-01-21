@@ -8,19 +8,25 @@ import { referrals, reputationPoints } from "./ready.js";
  * @param { import("discord.js").Invite } invite
  */
 const inviteCreate = async (invite) => {
-  const channel = invite.guild.channels.cache.find((channel) => channel.name === customChannels.activity);
+  const channel = invite.guild.channels.cache.find((channel) => channel.name === customChannels.activity)
+    || invite.guild.channels.cache.get(invite.guild.publicUpdatesChannelId);
   const embedMessage = new EmbedBuilder();
-  const maker = invite.guild.members.cache.get(invite.inviter.id);
+  const guildMembers = await invite.guild.members.fetch();
 
+  let maker = undefined;
   let makerPoints = undefined;
   let makerRole = undefined;
 
-  if (maker !== undefined) {
-    makerPoints = getCalculatedPoints(
-      customPoints.inviteCreate,
-      reputationPoints[maker.guild.id][maker.id].points
-    );
-    makerRole = getCustomRole(maker);
+  if (guildMembers !== undefined) {
+    maker = guildMembers.get(invite.inviter.id);
+
+    if (maker !== undefined) {
+      makerPoints = getCalculatedPoints(
+        customPoints.inviteCreate,
+        reputationPoints[maker.guild.id][maker.id].points
+      );
+      makerRole = getCustomRole(maker);
+    }
   }
 
   referrals[invite.code] = invite.uses;

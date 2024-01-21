@@ -10,6 +10,10 @@ import { reputationPoints } from "./ready.js";
  */
 const messageReactionAdd = async (messageReaction, user) => {
   if (user.id !== messageReaction.message.author.id && !messageReaction.message.author.bot) {
+    const channelPrivate = messageReaction.message.guild.channels.cache.find((channel) => channel.name === customChannels.private)
+      || messageReaction.message.guild.channels.cache.get(messageReaction.message.guild.publicUpdatesChannelId);
+    const channelPublic = messageReaction.message.guild.channels.cache.find((channel) => channel.name === customChannels.public)
+      || messageReaction.message.guild.channels.cache.get(messageReaction.message.guild.publicUpdatesChannelId);
     const embedMessage = new EmbedBuilder();
     const embedMessage2 = new EmbedBuilder();
     const maker = messageReaction.message.guild.members.cache.get(user.id);
@@ -34,11 +38,11 @@ const messageReactionAdd = async (messageReaction, user) => {
         reputationPoints[taker.guild.id][taker.id].points
       );
       takerRole = getCustomRole(taker);
+    } else {
+      return;
     }
 
     if (messageReaction.emoji.name === "⚠️") {
-      const customChannel = messageReaction.message.guild.channels.cache.find((channel) => channel.name === customChannels.private);
-
       embedMessage
         .setTitle("⚠️ potential violation")
         .setDescription(`${makerRole} *${maker}* spotted a messagge sent by ${takerRole} *${taker}* in *${messageReaction.message.channel.name}*`)
@@ -50,10 +54,8 @@ const messageReactionAdd = async (messageReaction, user) => {
         .setTimestamp()
         .setColor(makerRole.color);
 
-      customChannel.send({ embeds: [embedMessage] });
+      channelPrivate.send({ embeds: [embedMessage] });
     } else {
-      const customChannel = messageReaction.message.guild.channels.cache.find((channel) => channel.name === customChannels.public);
-
       messageReaction.client.emit("activity", maker, makerPoints);
       messageReaction.client.emit("activity", taker, takerPoints);
 
@@ -67,7 +69,7 @@ const messageReactionAdd = async (messageReaction, user) => {
         .setTimestamp()
         .setColor(makerRole.color);
 
-      customChannel.send({ embeds: [embedMessage] });
+      channelPublic.send({ embeds: [embedMessage] });
     }
 
     if (messageReaction.emoji.name === "☕") {

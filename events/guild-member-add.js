@@ -7,7 +7,8 @@ import { globalPoints, referrals, reputationPoints } from "./ready.js";
   * @param { import("discord.js").GuildMember } guildMember
 */
 const guildMemberAdd = async (guildMember) => {
-  const channel = guildMember.guild.channels.cache.find((channel) => channel.name === customChannels.welcome);
+  const channel = guildMember.guild.channels.cache.find((channel) => channel.name === customChannels.activity)
+    || guildMember.guild.channels.cache.get(guildMember.guild.publicUpdatesChannelId);
   const embedMessage = new EmbedBuilder();
   const invites = await guildMember.guild.invites.fetch();
 

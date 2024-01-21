@@ -1,15 +1,17 @@
 import { EmbedBuilder } from "discord.js";
 import { customChannels } from "../resources/custom-channels.js";
-import { customPoints, getCalculatedPoints } from "../resources/custom-points.js";
+import { customPoints, drops, getCalculatedPoints } from "../resources/custom-points.js";
 import { getCustomRole } from "../resources/general-utilities.js";
 import { reputationPoints } from "./ready.js";
 
+let dropCount = 0;
 /**
  * @param { import("discord.js").Message } message
  */
 const messageCreate = async (message) => {
   if (!message.author.bot) {
-    const customChannel = message.guild.channels.cache.find((channel) => channel.name === customChannels.public);
+    const channel = message.guild.channels.cache.find((channel) => channel.name === customChannels.public)
+      || message.guild.channels.cache.get(message.guild.publicUpdatesChannelId);
     const embedMessage = new EmbedBuilder();
     const maker = message.guild.members.cache.get(message.author.id);
 
@@ -24,17 +26,22 @@ const messageCreate = async (message) => {
       makerRole = getCustomRole(maker);
     }
 
-    await message.channel.fetch();
-
     message.client.emit("activity", maker, makerPoints);
 
+    dropCount++;
+
+    if (dropCount > drops.promotionPoints) {
+      dropCount = 0;
+      message.client.emit("drop", message.channel);
+    }
+
     embedMessage
-      .setDescription(`💬 ${makerRole} *${maker}* sended a new message in *${message.channel.name}*\n`)
+      .setDescription(`💬 ${makerRole} *${maker}* sended a new message in *${message.channel.name}*`)
       .setFooter({ text: `${makerPoints} ⭐ to ${maker.displayName}`, iconURL: `${maker.displayAvatarURL()}` })
       .setTimestamp()
       .setColor(makerRole.color);
 
-    customChannel.send({ embeds: [embedMessage] });
+    channel.send({ embeds: [embedMessage] });
   }
 };
 

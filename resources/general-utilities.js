@@ -33,7 +33,9 @@ const loadFile = async (path) => {
   return JSON.parse(data);
 };
 
-
+/**
+ * @param { String } path
+ */
 const saveFile = async (path, data) => {
   const rawData = JSON.stringify(data);
 

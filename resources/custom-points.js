@@ -22,6 +22,10 @@ const customPoints = {
   threadCreate: 100
 };
 
+const drops = {
+  promotionPoints: 100
+};
+
 const getCalculatedPoints = (customPoints, reputationPoints) => {
   const reputationFactor = (reputationPoints / 10) + 1;
 
@@ -29,6 +33,8 @@ const getCalculatedPoints = (customPoints, reputationPoints) => {
 };
 
 export {
-  customPoints, getCalculatedPoints
+  customPoints,
+  drops,
+  getCalculatedPoints
 };
 

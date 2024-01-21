@@ -13,13 +13,15 @@ import { customChannels } from "../resources/custom-channels.js";
 import { customPoints, getCalculatedPoints } from "../resources/custom-points.js";
 import { getCustomRole } from "../resources/general-utilities.js";
 import { reputationPoints } from "./ready.js";
+import { takePromotionPoints } from "./take-promotion-points.js";
 
 /**
  * @param {import("discord.js").Interaction} interaction
  */
 const interactionCreate = async (interaction) => {
   if (interaction.isChatInputCommand()) {
-    const channel = interaction.guild.channels.cache.find((channel) => channel.name === customChannels.public);
+    const channel = interaction.guild.channels.cache.find((channel) => channel.name === customChannels.public)
+      || interaction.guild.channels.cache.get(interaction.guild.publicUpdatesChannelId);
     const embedMessage = new EmbedBuilder();
     const makerRole = getCustomRole(interaction.member);
     const makerPoints = getCalculatedPoints(
@@ -76,6 +78,10 @@ const interactionCreate = async (interaction) => {
         .setColor(makerRole.color);
 
       channel.send({ embeds: [embedMessage] });
+    }
+  } else if (interaction.isButton()) {
+    if (interaction.component.customId === "take") {
+      takePromotionPoints(interaction);
     }
   }
 };
