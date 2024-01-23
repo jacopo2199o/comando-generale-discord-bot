@@ -59,6 +59,8 @@ const giveReputationPoint = async (interaction) => {
     await interaction.editReply("you can not select the server owner");
   } else if (userOption.bot) {
     await interaction.editReply("you can not select a bot");
+  }else if (reputationPoints[interaction.guild.id][maker.id].gaveTo == taker.id){
+    await interaction.editReply(`you already give a reputation points to ${taker}`);
   } else {
     if (reputationPoints[interaction.guild.id][maker.id].gaveTo === "") {
       reputationPoints[interaction.guild.id][maker.id].gaveTo = taker.id;
@@ -69,7 +71,7 @@ const giveReputationPoint = async (interaction) => {
 
       message1
         .setTitle("🏵 reputation points")
-        .setDescription(`${makerRole} *${interaction.member}* give 1 *reputation point* to ${takerRole} *${taker}*`)
+        .setDescription(`${makerRole} *${interaction.member}* gave 1 *reputation point* to ${takerRole} *${taker}*`)
         .addFields({ name: "promotion points", value: `${takerPoints} ⭐`, inline: true })
         .addFields({ name: "to", value: `${taker}`, inline: true })
         .setThumbnail(taker.displayAvatarURL({ dynamic: true }))
@@ -102,7 +104,7 @@ const giveReputationPoint = async (interaction) => {
 
       message1
         .setTitle("🏵 reputation points")
-        .setDescription(`${makerRole} *${interaction.member}* gives 1 *reputation point* to ${takerRole} *${taker}*`)
+        .setDescription(`${makerRole} *${interaction.member}* gave 1 *reputation point* to ${takerRole} *${taker}*`)
         .addFields({ name: "promotion points", value: `${takerPoints} ⭐`, inline: true })
         .addFields({ name: "to", value: `${taker}`, inline: true })
         .setThumbnail(taker.displayAvatarURL({ dynamic: true }))
@@ -121,9 +123,9 @@ const giveReputationPoint = async (interaction) => {
       await interaction.editReply({ embeds: [message1, message2] });
     }
 
-    if (interaction.channelId !== channel.id) {
+    if (interaction.channel.id !== channel.id) {
       message3
-        .setTitle("🏵 reputation points")
+        .setTitle("🏵 reputation points 🏵")
         .setDescription(`${makerRole} *${interaction.member}* gave 1 *reputation point* to ${takerRole} *${taker}*`)
         .addFields({ name: "promotion points", value: `${customPoints.reputationPoints.taker} ⭐`, inline: true })
         .addFields({ name: "to", value: `${taker}`, inline: true })

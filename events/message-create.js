@@ -12,8 +12,6 @@ const messageCreate = async (message) => {
   if (!message.author.bot) {
     const channelPublic = message.guild.channels.cache.find((channel) => channel.name === customChannels.public)
       || message.guild.channels.cache.get(message.guild.publicUpdatesChannelId);
-    const channelWelcome = message.guild.channels.cache.find((channel) => channel.name === customChannels.welcome)
-      || message.guild.channels.cache.get(message.guild.publicUpdatesChannelId);
     const embedMessage = new EmbedBuilder();
     const maker = message.guild.members.cache.get(message.author.id);
 
@@ -39,11 +37,7 @@ const messageCreate = async (message) => {
     if (dropPromotionPointsCounter > drops.promotionPoints) {
       dropPromotionPointsCounter = 0;
 
-      if (message.channelId === "1196117308708507818") { // temporaneo
-        message.client.emit("dropPromotionPoints", channelWelcome);
-      } else {
-        message.client.emit("dropPromotionPoints", message.channel);
-      }
+      message.client.emit("dropPromotionPoints", message.channel);
     }
 
     embedMessage

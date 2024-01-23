@@ -12,6 +12,8 @@ const messageReactionRemove = async (messageReaction, user) => {
   if (user.id !== messageReaction.message.author.id && !messageReaction.message.author.bot) {
     const channel = messageReaction.message.guild.channels.cache.find((channel) => channel.name === customChannels.public)
       || messageReaction.message.guild.channels.cache.get(messageReaction.message.guild.publicUpdatesChannelId);
+    const channelPrivate = messageReaction.message.guild.channels.cache.find((channel) => channel.name === customChannels.private)
+    || messageReaction.message.guild.channels.cache.get(messageReaction.message.guild.publicUpdatesChannelId);
     const message = new EmbedBuilder();
     const maker = messageReaction.message.guild.members.cache.get(user.id);
     const taker = messageReaction.message.guild.members.cache.get(messageReaction.message.author.id);
@@ -41,20 +43,37 @@ const messageReactionRemove = async (messageReaction, user) => {
       return;
     }
 
-    user.client.emit("activity", maker, -makerPoints);
-    user.client.emit("activity", taker, -takerPoints);
+    if (messageReaction.emoji.name === "⚠️") {
+      user.client.emit("activity", maker, -makerPoints);
+      user.client.emit("activity", taker, takerPoints);
 
-    message
-      .setTitle("🧸 reaction")
-      .setDescription(`${makerRole} *${maker}* removed ${messageReaction.emoji} to message sent by ${takerRole} *${taker}* in *${messageReaction.message.channel.name}*`)
-      .addFields({ name: "promotion points", value: `${-takerPoints} ⭐`, inline: true })
-      .addFields({ name: "to", value: `${taker}`, inline: true })
-      .setThumbnail(taker.displayAvatarURL({ dynamic: true }))
-      .setFooter({ text: `${-makerPoints} ⭐ to ${maker.displayName}`, iconURL: `${maker.displayAvatarURL()}` })
-      .setTimestamp()
-      .setColor(makerRole.color);
-
-    channel.send({ embeds: [message] });
+      message
+        .setTitle("⚠️ warn removed")
+        .setDescription(`${makerRole} *${maker}* removed a potential violation of ${takerRole} *${taker}* in *${messageReaction.message.channel.name}*`)
+        .addFields({ name: "promotion points", value: `${-takerPoints} ⭐`, inline: true })
+        .addFields({ name: "to", value: `${taker}`, inline: true })
+        .setThumbnail(taker.displayAvatarURL({ dynamic: true }))
+        .setFooter({ text: `${makerPoints} ⭐ to ${maker.displayName}`, iconURL: `${maker.displayAvatarURL()}` })
+        .setTimestamp()
+        .setColor("DarkGreen");
+  
+      channelPrivate.send({ embeds: [message] });
+    } else {
+      user.client.emit("activity", maker, -makerPoints);
+      user.client.emit("activity", taker, -takerPoints);
+  
+      message
+        .setTitle("🧸 reaction")
+        .setDescription(`${makerRole} *${maker}* removed ${messageReaction.emoji} to message sent by ${takerRole} *${taker}* in *${messageReaction.message.channel.name}*`)
+        .addFields({ name: "promotion points", value: `${-takerPoints} ⭐`, inline: true })
+        .addFields({ name: "to", value: `${taker}`, inline: true })
+        .setThumbnail(taker.displayAvatarURL({ dynamic: true }))
+        .setFooter({ text: `${-makerPoints} ⭐ to ${maker.displayName}`, iconURL: `${maker.displayAvatarURL()}` })
+        .setTimestamp()
+        .setColor(makerRole.color);
+  
+      channel.send({ embeds: [message] });
+    }
   }
 };
 

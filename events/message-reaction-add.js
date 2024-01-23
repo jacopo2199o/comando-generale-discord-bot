@@ -45,21 +45,27 @@ const messageReactionAdd = async (messageReaction, user) => {
     }
 
     if (messageReaction.emoji.name === "⚠️") {
-      user.client.emit("activity", maker, makerPoints);
-      user.client.emit("activity", taker, -takerPoints);
-
-      messagePublic
-        .setTitle("⚠️ potential violation")
-        .setDescription(`${makerRole} *${maker}* spotted a messagge sent by ${takerRole} *${taker}* in *${messageReaction.message.channel.name}*`)
-        .addFields({ name: "content", value: `${messageReaction.message.content}`, inline: false })
-        .addFields({ name: "promotion points", value: `${-takerPoints} ⭐`, inline: true })
-        .addFields({ name: "to", value: `${taker}`, inline: true })
-        .setThumbnail(taker.displayAvatarURL({ dynamic: true }))
-        .setFooter({ text: `${makerPoints} ⭐ to ${maker.displayName}`, iconURL: `${maker.displayAvatarURL()}` })
-        .setTimestamp()
-        .setColor(makerRole.color);
-
-      channelPrivate.send({ embeds: [messagePublic] });
+      if(makerRole.name === "ministro"
+      || makerRole.name === "senatore"
+      || makerRole.name === "governatore"
+      || makerRole.name === "responsabile"
+      ){
+        user.client.emit("activity", maker, makerPoints);
+        user.client.emit("activity", taker, -takerPoints);
+  
+        messagePublic
+          .setTitle("⚠️ potential violation")
+          .setDescription(`${makerRole} *${maker}* spotted a messagge sent by ${takerRole} *${taker}* in *${messageReaction.message.channel.name}*`)
+          .addFields({ name: "content", value: `${messageReaction.message.content}`, inline: false })
+          .addFields({ name: "promotion points", value: `${-takerPoints} ⭐`, inline: true })
+          .addFields({ name: "to", value: `${taker}`, inline: true })
+          .setThumbnail(taker.displayAvatarURL({ dynamic: true }))
+          .setFooter({ text: `${makerPoints} ⭐ to ${maker.displayName}`, iconURL: `${maker.displayAvatarURL()}` })
+          .setTimestamp()
+          .setColor(makerRole.color);
+  
+        channelPrivate.send({ embeds: [messagePublic] });
+      }
     } else {
       user.client.emit("activity", maker, makerPoints);
       user.client.emit("activity", taker, takerPoints);
