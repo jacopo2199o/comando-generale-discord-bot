@@ -14,20 +14,20 @@ const messageDelete = async (message) => {
   const embedMessage = new EmbedBuilder();
   const content = message.content || "n.a.";
 
-  let auditLogFirstEntry = undefined;
-  let authorRole = undefined;
-  let executorRole = undefined;
   let author = undefined;
   let authorPoints = undefined;
+  let authorRole = undefined;
+  let entry = undefined;
   let executor = undefined;
   let executorPoints = undefined;
+  let executorRole = undefined;
 
   if (auditLog !== undefined) {
-    auditLogFirstEntry = auditLog.entries.first();
+    entry = auditLog.entries.first();
 
-    if (auditLogFirstEntry !== undefined) {
-      author = message.guild.members.cache.get(auditLogFirstEntry.targetId);
-      executor = message.guild.members.cache.get(auditLogFirstEntry.executorId);
+    if (entry !== undefined) {
+      author = message.guild.members.cache.get(entry.targetId);
+      executor = message.guild.members.cache.get(entry.executorId);
 
       if (author !== undefined) {
         authorRole = getCustomRole(author);

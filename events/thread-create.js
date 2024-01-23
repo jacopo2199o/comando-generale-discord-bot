@@ -11,7 +11,7 @@ import { reputationPoints } from "./ready.js";
 const threadCreate = async (thread, newlyCreated) => {
   const channel = thread.guild.channels.cache.find((channel) => channel.name === customChannels.welcome)
     || thread.guild.channels.cache.get(thread.guild.publicUpdatesChannelId);
-  const embedMessage = new EmbedBuilder();
+  const message = new EmbedBuilder();
   const threadOwner = await thread.fetchOwner();
 
   let maker = undefined;
@@ -30,10 +30,10 @@ const threadCreate = async (thread, newlyCreated) => {
     }
   }
 
-  if (newlyCreated) {
-    thread.client.emit("activity", threadOwner.guildMember, makerPoints);
+  if (newlyCreated === true) {
+    thread.client.emit("activity", maker, makerPoints);
 
-    embedMessage
+    message
       .setTitle("🧵 new thread")
       .setDescription(`${makerRole} *${maker}* created *${thread.name}* thread in *${thread.parent.name}*\n`)
       .addFields({ name: "promotion points", value: `${makerPoints} ⭐`, inline: true })
@@ -42,7 +42,7 @@ const threadCreate = async (thread, newlyCreated) => {
       .setTimestamp()
       .setColor(makerRole.color);
 
-    channel.send({ embeds: [embedMessage] });
+    channel.send({ embeds: [message] });
   }
 };
 

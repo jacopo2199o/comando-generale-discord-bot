@@ -11,14 +11,14 @@ const inviteCreate = async (invite) => {
   const channel = invite.guild.channels.cache.find((channel) => channel.name === customChannels.activity)
     || invite.guild.channels.cache.get(invite.guild.publicUpdatesChannelId);
   const embedMessage = new EmbedBuilder();
-  const guildMembers = await invite.guild.members.fetch();
+  const members = await invite.guild.members.fetch();
 
   let maker = undefined;
   let makerPoints = undefined;
   let makerRole = undefined;
 
-  if (guildMembers !== undefined) {
-    maker = guildMembers.get(invite.inviter.id);
+  if (members !== undefined) {
+    maker = members.get(invite.inviter.id);
 
     if (maker !== undefined) {
       makerPoints = getCalculatedPoints(

@@ -9,8 +9,8 @@ import { getCustomRole } from "../resources/general-utilities.js";
 const guildMemberUpdate = async (oldMember, newMember) => {
   const channel = newMember.guild.channels.cache.find((channel) => channel.name === customChannels.activity)
     || newMember.guild.channels.cache.get(newMember.guild.publicUpdatesChannelId);
-  const newMemberRole = getCustomRole(newMember);
   const message = new EmbedBuilder();
+  const newMemberRole = getCustomRole(newMember);
 
   if (oldMember.roles.cache.size > newMember.roles.cache.size) {
     oldMember.roles.cache.forEach(role => {

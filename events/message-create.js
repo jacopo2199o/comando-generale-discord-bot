@@ -10,7 +10,7 @@ let dropPromotionPointsCounter = 0;
  */
 const messageCreate = async (message) => {
   if (!message.author.bot) {
-    const channel = message.guild.channels.cache.find((channel) => channel.name === customChannels.public)
+    const channelPublic = message.guild.channels.cache.find((channel) => channel.name === customChannels.public)
       || message.guild.channels.cache.get(message.guild.publicUpdatesChannelId);
     const channelWelcome = message.guild.channels.cache.find((channel) => channel.name === customChannels.welcome)
       || message.guild.channels.cache.get(message.guild.publicUpdatesChannelId);
@@ -47,12 +47,12 @@ const messageCreate = async (message) => {
     }
 
     embedMessage
-      .setDescription(`${makerRole} *${maker}* sended a new message in *${message.channel.name}*`)
+      .setDescription(`💬 ${makerRole} *${maker}* sended a new message in *${message.channel.name}*`)
       .setFooter({ text: `${makerPoints} ⭐ to ${maker.displayName}`, iconURL: `${maker.displayAvatarURL()}` })
       .setTimestamp()
       .setColor(makerRole.color);
 
-    channel.send({ embeds: [embedMessage] });
+    channelPublic.send({ embeds: [embedMessage] });
   }
 };
 

@@ -14,9 +14,9 @@ const messageReactionAdd = async (messageReaction, user) => {
       || messageReaction.message.guild.channels.cache.get(messageReaction.message.guild.publicUpdatesChannelId);
     const channelPublic = messageReaction.message.guild.channels.cache.find((channel) => channel.name === customChannels.public)
       || messageReaction.message.guild.channels.cache.get(messageReaction.message.guild.publicUpdatesChannelId);
-    const embedMessageGlobal = new EmbedBuilder();
-    const embedMessageLocal = new EmbedBuilder();
     const maker = messageReaction.message.guild.members.cache.get(user.id);
+    const messageLocal = new EmbedBuilder();
+    const messagePublic = new EmbedBuilder();
     const taker = messageReaction.message.guild.members.cache.get(messageReaction.message.author.id);
 
     let makerPoints = undefined;
@@ -45,10 +45,10 @@ const messageReactionAdd = async (messageReaction, user) => {
     }
 
     if (messageReaction.emoji.name === "⚠️") {
-      messageReaction.client.emit("activity", maker, makerPoints);
-      messageReaction.client.emit("activity", taker, -takerPoints);
+      user.client.emit("activity", maker, makerPoints);
+      user.client.emit("activity", taker, -takerPoints);
 
-      embedMessageGlobal
+      messagePublic
         .setTitle("⚠️ potential violation")
         .setDescription(`${makerRole} *${maker}* spotted a messagge sent by ${takerRole} *${taker}* in *${messageReaction.message.channel.name}*`)
         .addFields({ name: "content", value: `${messageReaction.message.content}`, inline: false })
@@ -59,12 +59,12 @@ const messageReactionAdd = async (messageReaction, user) => {
         .setTimestamp()
         .setColor(makerRole.color);
 
-      channelPrivate.send({ embeds: [embedMessageGlobal] });
+      channelPrivate.send({ embeds: [messagePublic] });
     } else {
-      messageReaction.client.emit("activity", maker, makerPoints);
-      messageReaction.client.emit("activity", taker, takerPoints);
+      user.client.emit("activity", maker, makerPoints);
+      user.client.emit("activity", taker, takerPoints);
 
-      embedMessageGlobal
+      messagePublic
         .setTitle("🧸 reaction")
         .setDescription(`${makerRole} *${maker}* reacted ${messageReaction.emoji} to message sent by ${takerRole} *${taker}* in *${messageReaction.message.channel.name}*`)
         .addFields({ name: "promotion points", value: `${takerPoints} ⭐`, inline: true })
@@ -74,33 +74,33 @@ const messageReactionAdd = async (messageReaction, user) => {
         .setTimestamp()
         .setColor(makerRole.color);
 
-      channelPublic.send({ embeds: [embedMessageGlobal] });
+      channelPublic.send({ embeds: [messagePublic] });
     }
 
     if (messageReaction.emoji.name === "☕") {
-      embedMessageLocal
-        .setDescription(`${makerRole} *${maker}* offered a ${messageReaction.emoji} coffe to ${takerRole} *${taker}* in *${messageReaction.message.channel.name}*`)
+      messageLocal
+        .setDescription(`🧸 ${makerRole} *${maker}* offered a ${messageReaction.emoji} coffe to ${takerRole} *${taker}* in *${messageReaction.message.channel.name}*`)
         .setFooter({ text: `${takerPoints} ⭐ to ${taker.displayName}`, iconURL: `${taker.displayAvatarURL()}` })
         .setTimestamp()
         .setColor(makerRole.color);
 
-      messageReaction.message.channel.send({ embeds: [embedMessageLocal] });
+      messageReaction.message.channel.send({ embeds: [messageLocal] });
     } else if (messageReaction.emoji.name === "🍸") {
-      embedMessageLocal
-        .setDescription(`${makerRole} *${maker}* offered a ${messageReaction.emoji} drink to ${takerRole} *${taker}* in *${messageReaction.message.channel.name}*`)
+      messageLocal
+        .setDescription(`🧸 ${makerRole} *${maker}* offered a ${messageReaction.emoji} drink to ${takerRole} *${taker}* in *${messageReaction.message.channel.name}*`)
         .setFooter({ text: `${takerPoints} ⭐ to ${taker.displayName}`, iconURL: `${taker.displayAvatarURL()}` })
         .setTimestamp()
         .setColor(makerRole.color);
 
-      messageReaction.message.channel.send({ embeds: [embedMessageLocal] });
+      messageReaction.message.channel.send({ embeds: [messageLocal] });
     } else if (messageReaction.emoji.name === "🍷") {
-      embedMessageLocal
-        .setDescription(`${makerRole} *${maker}* offered some ${messageReaction.emoji} wine to ${takerRole} *${taker}* in *${messageReaction.message.channel.name}*`)
+      messageLocal
+        .setDescription(`🧸 ${makerRole} *${maker}* offered some ${messageReaction.emoji} wine to ${takerRole} *${taker}* in *${messageReaction.message.channel.name}*`)
         .setFooter({ text: `${takerPoints} ⭐ to ${taker.displayName}`, iconURL: `${taker.displayAvatarURL()}` })
         .setTimestamp()
         .setColor(makerRole.color);
 
-      messageReaction.message.channel.send({ embeds: [embedMessageLocal] });
+      messageReaction.message.channel.send({ embeds: [messageLocal] });
     }
   }
 };

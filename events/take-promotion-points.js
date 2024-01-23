@@ -8,17 +8,17 @@ import { getCustomRole } from "../resources/general-utilities.js";
 const takePromotionPoints = async (interaction) => {
   const takerRole = getCustomRole(interaction.member);
   let actionRow = new ActionRowBuilder();
-  let takeButton = new ButtonBuilder();
+  let button = new ButtonBuilder();
 
   interaction.client.emit("activity", interaction.member, drops.promotionPoints);
 
-  takeButton
-    .setCustomId("taken")
-    .setLabel("taken")
-    .setStyle(ButtonStyle.Danger)
-    .setDisabled(true);
-
-  actionRow.setComponents(takeButton);
+  actionRow.setComponents(
+    button
+      .setCustomId("taken")
+      .setLabel("taken")
+      .setStyle(ButtonStyle.Danger)
+      .setDisabled(true)
+  );
 
   interaction.update({
     content: `${takerRole} *${interaction.member}* took the drop`,
