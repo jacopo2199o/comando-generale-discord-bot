@@ -9,20 +9,18 @@ const viewReputationPoints = async (interaction) => {
   const embedMessage = new EmbedBuilder();
   const guildMembers = await interaction.guild.members.fetch();
   const userOption = interaction.options.getUser("member");
-  
+
   let target = undefined;
   let targetRole = undefined;
 
-  if (guildMembers !== undefined) {
-    if (userOption !== null){
-      target = guildMembers.get(userOption.id);    
-    } else {
-      target = guildMembers.get(interaction.member.id);
-    }
+  if (userOption !== null) {
+    target = guildMembers.get(userOption.id);
+  } else {
+    target = guildMembers.get(interaction.member.id);
+  }
 
-    if (target !== undefined) {
-      targetRole = getCustomRole(target);
-    }
+  if (target !== undefined) {
+    targetRole = getCustomRole(target);
   }
 
   await interaction.deferReply();

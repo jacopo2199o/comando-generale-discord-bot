@@ -1,7 +1,7 @@
 import { Client, GatewayIntentBits } from "discord.js";
 import dotenv from "dotenv";
 import { activity } from "./events/activity.js";
-import { drop } from "./events/drop.js";
+import { dropPromotionPoints } from "./events/drop-promotion-points.js";
 import { guildMemberAdd } from "./events/guild-member-add.js";
 import { guildMemberRemove } from "./events/guild-member-remove.js";
 import { guildMemberUpdate } from "./events/guild-member-update.js";
@@ -29,7 +29,7 @@ const client = new Client({
 
 client.once("ready", ready);
 client.on("activity", activity);
-client.on("drop", drop);
+client.on("dropPromotionPoints", dropPromotionPoints);
 client.on("interactionCreate", interactionCreate);
 client.on("inviteCreate", inviteCreate);
 client.on("guildMemberAdd", guildMemberAdd);

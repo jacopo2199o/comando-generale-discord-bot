@@ -10,7 +10,7 @@ const takePromotionPoints = async (interaction) => {
   let actionRow = new ActionRowBuilder();
   let takeButton = new ButtonBuilder();
 
-  interaction.client.emit("action", interaction.member, drops.promotionPoints);
+  interaction.client.emit("activity", interaction.member, drops.promotionPoints);
 
   takeButton
     .setCustomId("taken")

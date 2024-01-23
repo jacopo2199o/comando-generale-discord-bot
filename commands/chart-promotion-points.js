@@ -8,7 +8,7 @@ import { getCustomRole } from "../resources/general-utilities.js";
  */
 const chartPromotionPoints = async (interaction) => {
   const chart = [];
-  const embedMessage = new EmbedBuilder();
+  const message = new EmbedBuilder();
 
   let chartRow = "";
   let sortedChart = [];
@@ -16,12 +16,12 @@ const chartPromotionPoints = async (interaction) => {
   await interaction.deferReply();
 
   for (const id in globalPoints[interaction.guild.id]) {
-    const guildMember = interaction.guild.members.cache.get(id);
+    const member = interaction.guild.members.cache.get(id);
 
     if (interaction.guild.ownerId !== id) {
       chart.push({
-        guildMember,
-        role: getCustomRole(guildMember),
+        guildMember: member,
+        role: getCustomRole(member),
         points: globalPoints[interaction.guild.id][id] % customPoints.promotionPoints
       });
     }
@@ -35,7 +35,7 @@ const chartPromotionPoints = async (interaction) => {
     chartRow += `${index + 1}: ${element.role} *${element.guildMember}* ${element.points} ⭐\n`;
   });
 
-  embedMessage
+  message
     .setTitle("🏆⭐ promotion points chart")
     .setDescription(`based on real server activities like: messages, reactions, threads, invites, reputation and many others\n\n${chartRow}`)
     .addFields({ name: "\u200b", value: `*automatic rank up every ${customPoints.promotionPoints} points*`, inline: false })
@@ -43,7 +43,7 @@ const chartPromotionPoints = async (interaction) => {
     .setTimestamp()
     .setColor("DarkGreen");
 
-  await interaction.editReply({ embeds: [embedMessage] });
+  await interaction.editReply({ embeds: [message] });
 };
 
 export { chartPromotionPoints };

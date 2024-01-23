@@ -5,7 +5,7 @@ import { sendMesseges } from "../resources/general-utilities.js";
  * @param {import("discord.js").Interaction} interaction
  */
 const checkLanding = async (interaction) => {
-  const guildMembers = await interaction.guild.members.fetch();
+  const members = await interaction.guild.members.fetch();
   const channel = interaction.guild.channels.cache.find((channel) => channel.name === customChannels.internal)
     || interaction.guild.channels.cache.get(interaction.guild.publicUpdatesChannelId);
 
@@ -13,17 +13,17 @@ const checkLanding = async (interaction) => {
 
   await interaction.deferReply();
 
-  guildMembers.forEach((guildMember) => {
-    if (!guildMember.user.bot) {
-      if (!guildMember.roles.cache.some((role) => role.name === "italiano")) {
-        if (!guildMember.roles.cache.some((role) => role.name === "international")) {
-          messages.push(`member with missing language role: *${guildMember.displayName}, ${guildMember.nickname}, ${guildMember.user.username}*\n`);
+  members.forEach((member) => {
+    if (!member.user.bot) {
+      if (!member.roles.cache.some((role) => role.name === "italiano")) {
+        if (!member.roles.cache.some((role) => role.name === "international")) {
+          messages.push(`member with missing language role: *${member.displayName}, ${member.nickname}, ${member.user.username}*\n`);
         }
       }
 
-      if (guildMember.roles.cache.some((role) => role.name === "italiano")) {
-        if (guildMember.roles.cache.some((role) => role.name === "international")) {
-          messages.push(`member with *italiano* and *international* role: *${guildMember.displayName}, ${guildMember.nickname}, ${guildMember.user.username}*\n`);
+      if (member.roles.cache.some((role) => role.name === "italiano")) {
+        if (member.roles.cache.some((role) => role.name === "international")) {
+          messages.push(`member with *italiano* and *international* role: *${member.displayName}, ${member.nickname}, ${member.user.username}*\n`);
         }
       }
     }
@@ -33,7 +33,7 @@ const checkLanding = async (interaction) => {
     await interaction.editReply("all members registered");
   } else {
     sendMesseges(messages, channel);
-    await interaction.editReply("done");
+    await interaction.followUp("done");
   }
 };
 

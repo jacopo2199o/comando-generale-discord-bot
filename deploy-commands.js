@@ -10,15 +10,6 @@ dotenv.config();
 const rest = new REST().setToken(process.env.bot_token);
 const commands = [];
 
-// const about = new SlashCommandBuilder();
-// const clear = new SlashCommandBuilder();
-// const clear = new SlashCommandBuilder();
-// const clear = new SlashCommandBuilder();
-// const clear = new SlashCommandBuilder();
-// const clear = new SlashCommandBuilder();
-// const clear = new SlashCommandBuilder();
-// const clear = new SlashCommandBuilder();
-
 commands.push(new SlashCommandBuilder()
   .setName("about")
   .setDescription("about this channel"));
@@ -51,6 +42,10 @@ commands.push(new SlashCommandBuilder()
     .setDescription("member to give point")
     .setRequired(true)
   ));
+
+commands.push(new SlashCommandBuilder()
+  .setName("roll-dice")
+  .setDescription("roll dice 6"));
 
 commands.push(new SlashCommandBuilder()
   .setName("save")

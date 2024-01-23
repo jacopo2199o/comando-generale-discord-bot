@@ -10,9 +10,9 @@ import { reputationPoints } from "./ready.js";
  */
 const messageReactionRemove = async (messageReaction, user) => {
   if (user.id !== messageReaction.message.author.id && !messageReaction.message.author.bot) {
-    const channel = messageReaction.message.guild.channels.find((channel) => channel.id === customChannels.public)
+    const channel = messageReaction.message.guild.channels.cache.find((channel) => channel.name === customChannels.public)
       || messageReaction.message.guild.channels.cache.get(messageReaction.message.guild.publicUpdatesChannelId);
-    const embedMessage = new EmbedBuilder();
+    const message = new EmbedBuilder();
     const maker = messageReaction.message.guild.members.cache.get(user.id);
     const taker = messageReaction.message.guild.members.cache.get(messageReaction.message.author.id);
 
@@ -27,6 +27,8 @@ const messageReactionRemove = async (messageReaction, user) => {
         reputationPoints[maker.guild.id][maker.id].points
       );
       makerRole = getCustomRole(maker);
+    } else {
+      return;
     }
 
     if (taker !== undefined) {
@@ -35,12 +37,14 @@ const messageReactionRemove = async (messageReaction, user) => {
         reputationPoints[taker.guild.id][taker.id].points
       );
       takerRole = getCustomRole(taker);
+    } else {
+      return;
     }
 
     user.client.emit("activity", maker, -makerPoints);
     user.client.emit("activity", taker, -takerPoints);
 
-    embedMessage
+    message
       .setTitle("🧸 reaction")
       .setDescription(`${makerRole} *${maker}* removed ${messageReaction.emoji} to message sent by ${takerRole} *${taker}* in *${messageReaction.message.channel.name}*`)
       .addFields({ name: "promotion points", value: `${-takerPoints} ⭐`, inline: true })
@@ -50,7 +54,7 @@ const messageReactionRemove = async (messageReaction, user) => {
       .setTimestamp()
       .setColor(makerRole.color);
 
-    channel.send({ embeds: [embedMessage] });
+    channel.send({ embeds: [message] });
   }
 };
 

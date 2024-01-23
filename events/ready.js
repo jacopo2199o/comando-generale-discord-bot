@@ -19,27 +19,19 @@ const ready = async (client) => {
     if (fs.existsSync(`./resources/database/points-${guild.id}.json`)) {
       globalPoints[guild.id] = await loadFile(`./resources/database/points-${guild.id}.json`);
 
-      if (guildMembers.size > Object.keys(globalPoints[guild.id]).length) {
-        console.log(`guildMember size ${guildMembers.size} > saved points ${Object.keys(globalPoints[guild.id]).length}`);
-
-        guildMembers.forEach((guildMember) => {
-          if (globalPoints[guild.id][guildMember.id] === undefined) {
-            globalPoints[guild.id][guildMember.id] = customPoints.start;
-          }
-        });
-
-        await saveFile(`./resources/database/points-${guild.id}.json`, globalPoints[guild.id]);
-      } else if (guildMembers.size < Object.keys(globalPoints[guild.id]).length) {
-        console.log(`guildMember size ${guildMembers.size} < saved points ${Object.keys(globalPoints[guild.id]).length}`);
-
-        for (const id in globalPoints[guild.id]) {
-          if (guildMembers.get(id) === undefined) {
-            delete globalPoints[guild.id][id];
-          }
+      guildMembers.forEach((guildMember) => {
+        if (globalPoints[guild.id][guildMember.id] === undefined) {
+          globalPoints[guild.id][guildMember.id] = customPoints.start;
         }
+      });
 
-        await saveFile(`./resources/database/points-${guild.id}.json`, globalPoints[guild.id]);
+      for (const memberId in globalPoints[guild.id]) {
+        if (guildMembers.get(memberId) === undefined) {
+          delete globalPoints[guild.id][memberId];
+        }
       }
+
+      await saveFile(`./resources/database/points-${guild.id}.json`, globalPoints[guild.id]);
     } else {
       globalPoints[guild.id] = {};
 
@@ -54,30 +46,22 @@ const ready = async (client) => {
     if (fs.existsSync(`./resources/database/reputation-${guild.id}.json`)) {
       reputationPoints[guild.id] = await loadFile(`./resources/database/reputation-${guild.id}.json`);
 
-      if (guildMembers.size > Object.keys(reputationPoints[guild.id]).length) {
-        console.log(`guildMember size ${guildMembers.size} > saved reputations ${Object.keys(reputationPoints[guild.id]).length}`);
-
-        guildMembers.forEach((guildMember) => {
-          if (reputationPoints[guild.id][guildMember.id] === undefined) {
-            reputationPoints[guild.id][guildMember.id] = {
-              points: 0,
-              gaveTo: ""
-            };
-          }
-        });
-
-        await saveFile(`./resources/database/reputation-${guild.id}.json`, reputationPoints[guild.id]);
-      } else if (guildMembers.size < Object.keys(reputationPoints[guild.id]).length) {
-        console.log(`guildMember size ${guildMembers.size} < saved reputations ${Object.keys(reputationPoints[guild.id]).length}`);
-
-        for (const id in reputationPoints[guild.id]) {
-          if (guildMembers.get(id) === undefined) {
-            delete reputationPoints[guild.id][id];
-          }
+      guildMembers.forEach((guildMember) => {
+        if (reputationPoints[guild.id][guildMember.id] === undefined) {
+          reputationPoints[guild.id][guildMember.id] = {
+            points: 0,
+            gaveTo: ""
+          };
         }
+      });
 
-        await saveFile(`./resources/database/reputation-${guild.id}.json`, reputationPoints[guild.id]);
+      for (const memberId in reputationPoints[guild.id]) {
+        if (guildMembers.get(memberId) === undefined) {
+          delete reputationPoints[guild.id][memberId];
+        }
       }
+
+      await saveFile(`./resources/database/reputation-${guild.id}.json`, reputationPoints[guild.id]);
     } else {
       reputationPoints[guild.id] = {};
 

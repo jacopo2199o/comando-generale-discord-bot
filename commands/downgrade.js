@@ -6,16 +6,16 @@ import { customRoles } from "../resources/custom-roles.js";
  * @param {import("discord.js").Interaction} interaction
  */
 const downgrade = async (interaction) => {
-  const guildMembers = await interaction.guild.members.fetch();
+  const members = await interaction.guild.members.fetch();
   
   let isDowngrading = false;
 
   await interaction.deferReply();
 
-  guildMembers.forEach((guildMember) => {
-    globalPoints[guildMember.guild.id][guildMember.id] = customPoints.start;
+  members.forEach((member) => {
+    globalPoints[member.guild.id][member.id] = customPoints.start;
 
-    guildMember.roles.cache.forEach(async (role) => {
+    member.roles.cache.forEach(async (role) => {
       const customRoleIndex = customRoles.findIndex((customRole) => customRole === role.name);
 
       if (customRoleIndex !== -1) {
@@ -28,8 +28,8 @@ const downgrade = async (interaction) => {
           const oldRole = interaction.guild.roles.cache.find((role) => role.name === oldCustomRole);
           const newRole = interaction.guild.roles.cache.find((role) => role.name === newCustomRole);
 
-          await guildMember.roles.remove(oldRole.id);
-          await guildMember.roles.add(newRole.id);
+          await member.roles.remove(oldRole.id);
+          await member.roles.add(newRole.id);
         }
       }
     });

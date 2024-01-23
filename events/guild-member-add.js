@@ -4,13 +4,13 @@ import { customPoints, getCalculatedPoints } from "../resources/custom-points.js
 import { globalPoints, referrals, reputationPoints } from "./ready.js";
 
 /**
-  * @param { import("discord.js").GuildMember } guildMember
+  * @param { import("discord.js").GuildMember } newMember
 */
-const guildMemberAdd = async (guildMember) => {
-  const channel = guildMember.guild.channels.cache.find((channel) => channel.name === customChannels.activity)
-    || guildMember.guild.channels.cache.get(guildMember.guild.publicUpdatesChannelId);
-  const embedMessage = new EmbedBuilder();
-  const invites = await guildMember.guild.invites.fetch();
+const guildMemberAdd = async (newMember) => {
+  const channel = newMember.guild.channels.cache.find((channel) => channel.name === customChannels.activity)
+    || newMember.guild.channels.cache.get(newMember.guild.publicUpdatesChannelId);
+  const message = new EmbedBuilder();
+  const invites = await newMember.guild.invites.fetch();
 
   /**
    * @type { import("discord.js").GuildMember }
@@ -19,47 +19,50 @@ const guildMemberAdd = async (guildMember) => {
   let inviterPoints = undefined;
   let inviteUses = undefined;
 
-  globalPoints[guildMember.guild.id][guildMember.id] = customPoints.start;
-  reputationPoints[guildMember.guild.id][guildMember.id] = {
+  globalPoints[newMember.guild.id][newMember.id] = customPoints.start;
+  reputationPoints[newMember.guild.id][newMember.id] = {
     points: 0,
     gaveTo: ""
   };
 
   invites.forEach((invite) => {
     if (invite.uses !== referrals[invite.code]) {
+      referrals[invite.code] = invite.uses;
+
       inviter = invite.guild.members.cache.get(invite.inviter.id);
-      inviterPoints = getCalculatedPoints(
-        customPoints.guildMemberAdd,
-        reputationPoints[inviter.guild.id][inviter.id].points
-      );
       inviteUses = invite.uses;
 
-      referrals[invite.code] = invite.uses;
+      if (inviter !== undefined) {
+        inviterPoints = getCalculatedPoints(
+          customPoints.guildMemberAdd,
+          reputationPoints[inviter.guild.id][inviter.id].points
+        );
+      }
     }
   });
 
   if (inviter !== undefined) {
-    guildMember.client.emit("activity", inviter, inviterPoints);
+    newMember.client.emit("activity", inviter, inviterPoints);
 
-    embedMessage
+    message
       .setTitle("🌱 new member")
-      .setDescription(`*${guildMember}*, joined *comando generale*`)
+      .setDescription(`*${newMember}*, joined *comando generale*`)
       .addFields({ name: "inviter", value: `*${inviter}*`, inline: true })
       .addFields({ name: "uses", value: `${inviteUses}`, inline: true })
-      .setThumbnail(guildMember.displayAvatarURL({ dynamic: true }))
+      .setThumbnail(newMember.displayAvatarURL({ dynamic: true }))
       .setFooter({ text: `${inviterPoints} ⭐ to ${inviter.displayName}`, iconURL: `${inviter.displayAvatarURL()}` })
       .setTimestamp()
       .setColor("DarkGreen");
   } else {
-    embedMessage
+    message
       .setTitle("🌱 new member")
-      .setDescription(`*${guildMember}*, joined *comando generale*`)
-      .setThumbnail(guildMember.displayAvatarURL({ dynamic: true }))
+      .setDescription(`*${newMember}*, joined *comando generale*`)
+      .setThumbnail(newMember.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor("DarkBlue");
   }
 
-  channel.send({ embeds: [embedMessage] });
+  channel.send({ embeds: [message] });
 };
 
 export { guildMemberAdd };

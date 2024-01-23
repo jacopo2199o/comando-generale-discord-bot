@@ -7,7 +7,7 @@ import { getCustomRole } from "../resources/general-utilities.js";
  */
 const chartReputationPoints = async (interaction) => {
   const chart = [];
-  const embedMessage = new EmbedBuilder();
+  const message = new EmbedBuilder();
 
   let chartRow = "";
   let sortedChart = [];
@@ -15,12 +15,12 @@ const chartReputationPoints = async (interaction) => {
   await interaction.deferReply();
 
   for (const id in reputationPoints[interaction.guild.id]) {
-    const guildMember = interaction.guild.members.cache.get(id);
+    const member = interaction.guild.members.cache.get(id);
 
     if (interaction.guild.ownerId !== id) {
       chart.push({
-        guildMember,
-        role: getCustomRole(guildMember),
+        guildMember: member,
+        role: getCustomRole(member),
         points: reputationPoints[interaction.guild.id][id].points
       });
     }
@@ -34,7 +34,7 @@ const chartReputationPoints = async (interaction) => {
     chartRow += `${index + 1}: ${element.role} *${element.guildMember}* ${element.points} 🏵\n`;
   });
 
-  embedMessage
+  message
     .setTitle("🏆🏵 reputation points chart")
     .setDescription(`based on voluntary reputation exchange between members\n\n${chartRow}`)
     .addFields({ name: "\u200b", value: "*use __/give-reputation-point__ to boost your favourite member*", inline: false })
@@ -42,7 +42,7 @@ const chartReputationPoints = async (interaction) => {
     .setTimestamp()
     .setColor("DarkGreen");
 
-  await interaction.editReply({ embeds: [embedMessage] });
+  await interaction.editReply({ embeds: [message] });
 };
 
 export { chartReputationPoints };

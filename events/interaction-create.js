@@ -6,6 +6,7 @@ import { checkLanding } from "../commands/check-landing.js";
 import { clear } from "../commands/clear.js";
 import { downgrade } from "../commands/downgrade.js";
 import { giveReputationPoint } from "../commands/give-reputation-point.js";
+import { rollDice } from "../commands/roll-dice.js";
 import { save } from "../commands/save.js";
 import { viewPromotionPoints } from "../commands/view-promotion-points.js";
 import { viewReputationPoints } from "../commands/view-reputation-points.js";
@@ -22,7 +23,7 @@ const interactionCreate = async (interaction) => {
   if (interaction.isChatInputCommand()) {
     const channel = interaction.guild.channels.cache.find((channel) => channel.name === customChannels.public)
       || interaction.guild.channels.cache.get(interaction.guild.publicUpdatesChannelId);
-    const embedMessage = new EmbedBuilder();
+    const message = new EmbedBuilder();
     const makerRole = getCustomRole(interaction.member);
     const makerPoints = getCalculatedPoints(
       customPoints.interactionCreate,
@@ -53,6 +54,8 @@ const interactionCreate = async (interaction) => {
       downgrade(interaction);
     } else if (interaction.commandName === "give-reputation-point") {
       giveReputationPoint(interaction);
+    } else if (interaction.commandName === "roll-dice"){
+      rollDice(interaction);
     } else if (interaction.commandName === "save") {
       save(interaction);
     } else if (interaction.commandName === "view-promotion-points") {
@@ -68,7 +71,7 @@ const interactionCreate = async (interaction) => {
     if (isValidCommand) {
       interaction.client.emit("activity", interaction.member, makerPoints);
 
-      embedMessage
+      message
         .setTitle("⚙️ command")
         .setDescription(`${makerRole} *${interaction.member}* used */${interaction.commandName}* in *${interactionChannel}*`)
         .addFields({ name: "promotion points", value: `${makerPoints} ⭐`, inline: true })
@@ -77,7 +80,7 @@ const interactionCreate = async (interaction) => {
         .setTimestamp()
         .setColor(makerRole.color);
 
-      channel.send({ embeds: [embedMessage] });
+      channel.send({ embeds: [message] });
     }
   } else if (interaction.isButton()) {
     if (interaction.component.customId === "take") {

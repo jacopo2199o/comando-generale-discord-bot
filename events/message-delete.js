@@ -12,6 +12,7 @@ const messageDelete = async (message) => {
   const channel = message.guild.channels.cache.find((channel) => channel.name === customChannels.private)
     || message.guild.channels.cache.get(message.guild.publicUpdatesChannelId);
   const embedMessage = new EmbedBuilder();
+  const content = message.content || "n.a.";
 
   let auditLogFirstEntry = undefined;
   let authorRole = undefined;
@@ -34,6 +35,8 @@ const messageDelete = async (message) => {
           customPoints.messageDelete.author,
           reputationPoints[author.guild.id][author.id].points
         );
+      } else {
+        return;
       }
 
       if (executor !== undefined) {
@@ -42,8 +45,12 @@ const messageDelete = async (message) => {
           customPoints.messageDelete.executor,
           reputationPoints[executor.guild.id][executor.id].points
         );
+      } else {
+        return;
       }
     }
+  } else {
+    return;
   }
 
   if (executor.id !== author.id && !author.user.bot) {
@@ -54,7 +61,7 @@ const messageDelete = async (message) => {
       .setTitle("🛡️ moderation")
       .setDescription(`${executorRole} *${executor.displayName}* deleted a message in *${message.channel.name}*\n`)
       .addFields({ name: "author", value: `${authorRole} *${author}*`, inline: false })
-      .addFields({ name: "content", value: `${message.content}`, inline: false })
+      .addFields({ name: "content", value: `${content}`, inline: false })
       .addFields({ name: "promotion points", value: `${authorPoints} ⭐`, inline: true })
       .addFields({ name: "to", value: `${author} ⭐`, inline: true })
       .setThumbnail(author.displayAvatarURL({ dynamic: true }))

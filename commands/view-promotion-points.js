@@ -7,45 +7,43 @@ import { getCustomRole } from "../resources/general-utilities.js";
  * @param {import("discord.js").Interaction} interaction
  */
 const viewPromotionPoints = async (interaction) => {
-  const embedMessage = new EmbedBuilder();
-  const guildMembers = await interaction.guild.members.fetch();
+  const message = new EmbedBuilder();
+  const members = await interaction.guild.members.fetch();
   const userOption = interaction.options.getUser("member");
 
   let target = undefined;
   let targetRole = undefined;
 
-  if (guildMembers !== undefined) {
-    if (userOption !== null){
-      target = guildMembers.get(userOption.id);    
-    } else {
-      target = guildMembers.get(interaction.member.id);
-    }
+  if (userOption !== null) {
+    target = members.get(userOption.id);
+  } else {
+    target = members.get(interaction.member.id);
+  }
 
-    if (target !== undefined) {
-      targetRole = getCustomRole(target);
-    }
+  if (target !== undefined) {
+    targetRole = getCustomRole(target);
   }
 
   await interaction.deferReply();
 
   if (userOption !== null) {
-    embedMessage
+    message
       .setTitle("⭐ promotion points")
       .setDescription(`${targetRole} *${target}* have ${globalPoints[target.guild.id][target.id] % customPoints.promotionPoints}/${customPoints.promotionPoints} *promotion points*\n`)
       .setThumbnail(target.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(targetRole.color);
 
-    await interaction.editReply({ embeds: [embedMessage] });
+    await interaction.editReply({ embeds: [message] });
   } else {
-    embedMessage
+    message
       .setTitle("⭐ promotion points")
       .setDescription(`you have ${globalPoints[target.guild.id][target.id]}/${customPoints.promotionPoints} *promotion points*\n`)
       .setThumbnail(interaction.member.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
       .setColor(targetRole.color);
 
-    await interaction.editReply({ embeds: [embedMessage] });
+    await interaction.editReply({ embeds: [message] });
   }
 };
 

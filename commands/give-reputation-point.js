@@ -10,10 +10,10 @@ import { getCustomRole, saveFile } from "../resources/general-utilities.js";
 const giveReputationPoint = async (interaction) => {
   const channel = interaction.guild.channels.cache.find((channel) => channel.name === customChannels.public)
     || interaction.guild.channels.cache.get(interaction.guild.publicUpdatesChannelId);
-  const embedMessage1 = new EmbedBuilder();
-  const embedMessage2 = new EmbedBuilder();
-  const embedMessage3 = new EmbedBuilder();
-  const guildMembers = await interaction.guild.members.fetch();
+  const message1 = new EmbedBuilder();
+  const message2 = new EmbedBuilder();
+  const message3 = new EmbedBuilder();
+  const members = await interaction.guild.members.fetch();
 
   let maker = undefined;
   let makerPoints = undefined;
@@ -26,12 +26,12 @@ const giveReputationPoint = async (interaction) => {
    */
   let userOption = undefined;
 
-  if (guildMembers !== undefined) {
+  if (members !== undefined) {
     userOption = interaction.options.getUser("member");
-    maker = guildMembers.get(interaction.member.id);
+    maker = members.get(interaction.member.id);
 
     if (userOption !== null) {
-      taker = guildMembers.get(userOption.id);
+      taker = members.get(userOption.id);
 
       if (taker !== undefined) {
         takerPoints = getCalculatedPoints(
@@ -67,7 +67,7 @@ const giveReputationPoint = async (interaction) => {
       interaction.client.emit("activity", maker, makerPoints);
       interaction.client.emit("activity", taker, takerPoints);
 
-      embedMessage1
+      message1
         .setTitle("🏵 reputation points")
         .setDescription(`${makerRole} *${interaction.member}* give 1 *reputation point* to ${takerRole} *${taker}*`)
         .addFields({ name: "promotion points", value: `${takerPoints} ⭐`, inline: true })
@@ -77,9 +77,9 @@ const giveReputationPoint = async (interaction) => {
         .setTimestamp()
         .setColor(makerRole.color);
 
-      await interaction.editReply({ embeds: [embedMessage1] });
+      await interaction.editReply({ embeds: [message1] });
     } else {
-      const previousTaker = guildMembers.get(reputationPoints[interaction.guild.id][maker.id].gaveTo);
+      const previousTaker = members.get(reputationPoints[interaction.guild.id][maker.id].gaveTo);
 
       let previousTakerPoints = undefined;
       let previousTakerRole = undefined;
@@ -100,7 +100,7 @@ const giveReputationPoint = async (interaction) => {
       interaction.client.emit("activity", taker, takerPoints);
       interaction.client.emit("activity", previousTaker, -previousTakerPoints);
 
-      embedMessage1
+      message1
         .setTitle("🏵 reputation points")
         .setDescription(`${makerRole} *${interaction.member}* gives 1 *reputation point* to ${takerRole} *${taker}*`)
         .addFields({ name: "promotion points", value: `${takerPoints} ⭐`, inline: true })
@@ -109,7 +109,7 @@ const giveReputationPoint = async (interaction) => {
         .setFooter({ text: `${makerPoints} ⭐ to ${maker.displayName}`, iconURL: `${maker.displayAvatarURL()}` })
         .setTimestamp()
         .setColor(makerRole.color);
-      embedMessage2
+      message2
         .setTitle("🏵 reputation points")
         .setDescription(`${previousTakerRole} *${previousTaker}* lost 1 *reputation point*`)
         .addFields({ name: "promotion points", value: `${-previousTakerPoints} ⭐`, inline: true })
@@ -118,13 +118,13 @@ const giveReputationPoint = async (interaction) => {
         .setTimestamp()
         .setColor(previousTakerRole.color);
 
-      await interaction.editReply({ embeds: [embedMessage1, embedMessage2] });
+      await interaction.editReply({ embeds: [message1, message2] });
     }
 
     if (interaction.channelId !== channel.id) {
-      embedMessage3
+      message3
         .setTitle("🏵 reputation points")
-        .setDescription(`${makerRole} *${interaction.member}* give 1 *reputation point* to ${takerRole} *${taker}*`)
+        .setDescription(`${makerRole} *${interaction.member}* gave 1 *reputation point* to ${takerRole} *${taker}*`)
         .addFields({ name: "promotion points", value: `${customPoints.reputationPoints.taker} ⭐`, inline: true })
         .addFields({ name: "to", value: `${taker}`, inline: true })
         .setThumbnail(taker.displayAvatarURL({ dynamic: true }))
@@ -132,7 +132,7 @@ const giveReputationPoint = async (interaction) => {
         .setTimestamp()
         .setColor(makerRole.color);
 
-      channel.send({ embeds: [embedMessage3] });
+      channel.send({ embeds: [message3] });
     }
 
     await saveFile(`./resources/database/reputation-${interaction.guild.id}.json`, reputationPoints[interaction.guild.id]);
