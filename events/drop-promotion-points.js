@@ -13,12 +13,11 @@ const dropPromotionPoints = async (dropChannel) => {
   const message1 = new EmbedBuilder();
   const message2 = new EmbedBuilder();
 
-  actionRow.addComponents(
-    button
+  actionRow
+    .addComponents(button
       .setCustomId("take")
       .setLabel("take")
-      .setStyle(ButtonStyle.Success)
-  );
+      .setStyle(ButtonStyle.Success));
   message1
     .setTitle("📦⭐ new drop")
     .setDescription("based on messages sent globally in this server. take it pressing the button below")

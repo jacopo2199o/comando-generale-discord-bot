@@ -58,6 +58,7 @@ const sendMesseges = async (messages, channel) => {
 
     for (let i = 0; i < messages.length; i++) {
       characters += messages[i].length;
+
       if (characters < size) {
         chunk += messages[i];
       } else {

@@ -7,20 +7,26 @@ import { getCustomRole } from "../resources/general-utilities.js";
  * @param {import("discord.js").Interaction} interaction 
  */
 const rollDice = async (interaction) => {
+  const roll = () => {
+    let result = Math.random() * 10;
+
+    if (result > 1 && result < 6) {
+      return Math.round(result);
+    } else {
+      return roll();
+    }
+  };
+
+  const maker = interaction.member;
   const message = new EmbedBuilder();
 
-  let maker = interaction.member;
-  let makerPoints = getCalculatedPoints(
-    customPoints.interactionCreate,
-    reputationPoints[interaction.guild.id][maker.id].points
-  );
-  let makerRole = getCustomRole(interaction.member);
-  let result = Math.round(Math.random() * 10);
+  let makerPoints = undefined;
+  let makerRole = undefined;
+  let result = roll();
 
-  if (result < 1) {
-    result = 1;
-  } else if (result > 6) {
-    result = 6;
+  if (maker !== undefined) {
+    makerPoints = getCalculatedPoints(customPoints.interactionCreate, reputationPoints[maker.guild.id][maker.id].points);
+    makerRole = getCustomRole(maker);
   }
 
   await interaction.deferReply();
@@ -32,7 +38,7 @@ const rollDice = async (interaction) => {
     .setFooter({ text: `${makerPoints} ⭐ to ${maker.displayName}`, iconURL: `${maker.displayAvatarURL()}` })
     .setColor(makerRole.color);
 
-  await interaction.editReply({embeds: [message]});
+  await interaction.editReply({ embeds: [message] });
 };
 
 export { rollDice };
