@@ -7,9 +7,15 @@ import { saveFile } from "../resources/general-utilities.js";
 const save = async (interaction) => {
   await interaction.deferReply();
 
-  await saveFile(`./resources/database/points-${interaction.guild.id}-backup.json`, globalPoints[interaction.guild.id]);
-  await saveFile(`./resources/database/points-${interaction.guild.id}-backup.json`, reputationPoints[interaction.guild.id]);
-  
+  await Promise.all(
+    interaction.client.guilds.cache.map(
+      async (guild) => {
+        await saveFile(`./resources/backups/points-${guild.id}-backup.json`, globalPoints[guild.id]);
+        await saveFile(`./resources/backups/reputation-${guild.id}-backup.json`, reputationPoints[guild.id]);
+      }
+    )
+  );
+
   await interaction.editReply("saved");
 };
 

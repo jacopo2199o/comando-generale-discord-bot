@@ -1,5 +1,6 @@
 import { EmbedBuilder } from "discord.js";
 import { about } from "../commands/about.js";
+import { chartGlobalPoints } from "../commands/chart-global-points.js";
 import { chartPromotionPoints } from "../commands/chart-promotion-points.js";
 import { chartReputationPoints } from "../commands/chart-reputation-points.js";
 import { checkLanding } from "../commands/check-landing.js";
@@ -51,6 +52,8 @@ const interactionCreate = async (interaction) => {
       chartPromotionPoints(interaction);
     } else if (interaction.commandName === "chart-reputation-points") {
       chartReputationPoints(interaction);
+    } else if (interaction.commandName === "chart-global-points"){
+      chartGlobalPoints(interaction);
     } else if (interaction.commandName === "check-landing") {
       checkLanding(interaction);
     } else if (interaction.commandName === "clear") {

@@ -4,9 +4,9 @@ import { customPoints } from "../resources/custom-points.js";
 import { getCustomRole } from "../resources/general-utilities.js";
 
 /**
- * @param {import("discord.js").Interaction} interaction 
+ * @param {import("discord.js").Interaction} interaction
  */
-const chartPromotionPoints = async (interaction) => {
+const chartGlobalPoints = async (interaction) => {
   const chart = [];
   const message = new EmbedBuilder();
 
@@ -15,16 +15,16 @@ const chartPromotionPoints = async (interaction) => {
 
   await interaction.deferReply();
 
-  for (const id in globalPoints[interaction.guild.id]) {
-    const member = interaction.guild.members.cache.get(id);
+  for (const memberId in globalPoints[interaction.guild.id]) {
+    const member = interaction.guild.members.cache.get(memberId);
     const level = Math.floor(globalPoints[member.guild.id][member.id] / customPoints.promotionPoints) + 1;
 
-    if (interaction.guild.ownerId !== id) {
+    if (interaction.guild.ownerId !== memberId) {
       chart.push({
         level,
         member,
         role: getCustomRole(member),
-        points: globalPoints[interaction.guild.id][id] % customPoints.promotionPoints
+        points: globalPoints[interaction.guild.id][memberId]
       });
     }
   }
@@ -40,12 +40,8 @@ const chartPromotionPoints = async (interaction) => {
   );
 
   message
-    .setTitle("🏆🔰 promotion points chart")
-    .setDescription(`registered activity to next promotion. automatic rank-up every ${customPoints.promotionPoints} points\n\n${chartRow}`)
-    .addFields({
-      name: "\u200b",
-      value: "*use __/view-promotions-point__ to see yours*"
-    })
+    .setTitle("🏆⭐ global points chart")
+    .setDescription(`registered activity since a user become a member\n\n${chartRow}`)
     .setFooter({
       text: `${interaction.member.displayName}`,
       iconURL: `${interaction.member.displayAvatarURL()}`
@@ -56,5 +52,5 @@ const chartPromotionPoints = async (interaction) => {
   await interaction.editReply({ embeds: [message] });
 };
 
-export { chartPromotionPoints };
+export { chartGlobalPoints };
 

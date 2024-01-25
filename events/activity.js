@@ -6,76 +6,97 @@ import { saveFile } from "../resources/general-utilities.js";
 import { globalPoints, reputationPoints } from "./ready.js";
 
 /**
- * @param { import("discord.js").GuildMember } guildMember
+ * @param { import("discord.js").GuildMember } member
  * @param { Number } points
  */
-const activity = async (guildMember, points) => {
-  const channel = guildMember.guild.channels.cache.find((channel) => channel.name === customChannels.activity)
-    || guildMember.guild.channels.cache.get(guildMember.guild.publicUpdatesChannelId);
+const activity = async (member, points) => {
+  const channel = member.guild.channels.cache.find((channel) => channel.name === customChannels.activity)
+    || member.guild.channels.cache.get(member.guild.publicUpdatesChannelId);
+  const memberlevel = Math.floor(globalPoints[member.guild.id][member.id] / customPoints.promotionPoints) + 1;
   const message = new EmbedBuilder();
-  const pointsRing = (globalPoints[guildMember.guild.id][guildMember.id] % customPoints.promotionPoints) + points;
+  const pointsRing = (globalPoints[member.guild.id][member.id] % customPoints.promotionPoints) + points;
 
-  globalPoints[guildMember.guild.id][guildMember.id] += points;
+  globalPoints[member.guild.id][member.id] += points;
 
-  if (pointsRing >= customPoints.promotionPoints && guildMember.id !== guildMember.guild.ownerId) {
-    guildMember.roles.cache.forEach(async (role) => {
-      const customRoleIndex = customRoles.findIndex((customRole) => customRole === role.name);
+  if (member.id === member.guild.ownerId) return;
 
-      if (customRoleIndex !== -1) {
-        const newCustomRole = customRoles[customRoleIndex - 1];
-        const oldCustomRole = customRoles[customRoleIndex];
+  if (pointsRing >= customPoints.promotionPoints) {
+    member.roles.cache.forEach(
+      async (role) => {
+        const customRoleIndex = customRoles.findIndex((customRole) => customRole === role.name);
 
-        if (newCustomRole !== undefined && oldCustomRole !== undefined) {
-          if (newCustomRole !== "presidente") {
-            const newRole = guildMember.guild.roles.cache.find((role) => role.name === newCustomRole);
-            const oldRole = guildMember.guild.roles.cache.find((role) => role.name === oldCustomRole);
-  
-            if (newRole !== undefined && oldRole !== undefined) {
-              await guildMember.roles.remove(oldRole.id);
-              await guildMember.roles.add(newRole.id);
-  
-              message
-                .setTitle("🎖️ promotion")
-                .setDescription(`*${guildMember}* reached ${customPoints.promotionPoints} *promotion points*`)
-                .addFields({ name: "old role", value: `${oldRole}`, inline: true })
-                .addFields({ name: "new role", value: `${newRole}`, inline: true })
-                .setThumbnail(guildMember.displayAvatarURL({ dynamic: true }))
-                .setTimestamp()
-                .setColor(newRole.color);
-  
-              channel.send({ embeds: [message] });
+        if (customRoleIndex !== -1) {
+          const newRoleName = customRoles[customRoleIndex - 1];
+          const oldRoleName = customRoles[customRoleIndex];
+
+          if (newRoleName !== undefined && oldRoleName !== undefined) {
+            if (newRoleName !== "presidente") {
+              const newRole = member.guild.roles.cache.find((role) => role.name === newRoleName);
+              const oldRole = member.guild.roles.cache.find((role) => role.name === oldRoleName);
+
+              if (newRole !== undefined && oldRole !== undefined) {
+                await member.roles.remove(oldRole.id);
+                await member.roles.add(newRole.id);
+
+                message
+                  .setTitle("🎖️ promotion")
+                  .setDescription(`*${member}* reached ${customPoints.promotionPoints} *promotion points*`)
+                  .addFields({
+                    name: "old role",
+                    value: `${oldRole}`,
+                    inline: true
+                  })
+                  .addFields({
+                    name: "new role",
+                    value: `${newRole}`,
+                    inline: true
+                  })
+                  .setThumbnail(member.displayAvatarURL({ dynamic: true }))
+                  .setTimestamp()
+                  .setColor(newRole.color);
+
+                channel.send({ embeds: [message] });
+              }
             }
           }
         }
       }
-    });
-  } else if (pointsRing < 0 && guildMember.id !== guildMember.guild.ownerId) {
-    guildMember.roles.cache.forEach(async (role) => {
-      const customRoleIndex = customRoles.findIndex((rank) => rank === role.name);
+    );
+  } else if (pointsRing < 0 && memberlevel < 24) {
+    member.roles.cache.forEach(
+      async (role) => {
+        const customRoleIndex = customRoles.findIndex((rank) => rank === role.name);
 
-      if (customRoleIndex !== -1) {
-        const newCustomRole = customRoles[customRoleIndex + 1];
-        const oldCustomRole = customRoles[customRoleIndex];
+        if (customRoleIndex !== -1) {
+          const newRoleName = customRoles[customRoleIndex + 1];
+          const oldRoleName = customRoles[customRoleIndex];
 
-        if (newCustomRole !== undefined && oldCustomRole !== undefined) {
-          const newRole = guildMember.guild.roles.cache.find((role) => role.name === newCustomRole);
-          const oldRole = guildMember.guild.roles.cache.find((role) => role.name === oldCustomRole);
+          if (newRoleName !== undefined && oldRoleName !== undefined) {
+            const newRole = member.guild.roles.cache.find((role) => role.name === newRoleName);
+            const oldRole = member.guild.roles.cache.find((role) => role.name === oldRoleName);
 
-          if (newRole !== undefined && oldRole !== undefined) {
-            await guildMember.roles.remove(oldRole.id);
-            await guildMember.roles.add(newRole.id);
+            if (newRole !== undefined && oldRole !== undefined) {
+              await member.roles.remove(oldRole.id);
+              await member.roles.add(newRole.id);
+            }
           }
         }
       }
-    });
+    );
   }
 
-  if (globalPoints[guildMember.guild.id][guildMember.id] < 0) {
-    globalPoints[guildMember.guild.id][guildMember.id] = 0;
+  if (globalPoints[member.guild.id][member.id] < 0) {
+    globalPoints[member.guild.id][member.id] = 0;
   }
 
-  await saveFile(`./resources/database/points-${guildMember.guild.id}.json`, globalPoints[guildMember.guild.id]);
-  await saveFile(`./resources/database/reputation-${guildMember.guild.id}.json`, reputationPoints[guildMember.guild.id]);
+  await saveFile(
+    `./resources/database/points-${member.guild.id}.json`,
+    globalPoints[member.guild.id]
+  );
+  await saveFile(
+    `./resources/database/reputation-${member.guild.id}.json`,
+    reputationPoints[member.guild.id]
+  );
 };
 
 export { activity };

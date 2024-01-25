@@ -23,16 +23,20 @@ commands.push(new SlashCommandBuilder()
   .setDescription("downgrade one rank all members"));
 
 commands.push(new SlashCommandBuilder()
+  .setName("chart-global-points")
+  .setDescription("global points chart of top 10 members"));
+
+commands.push(new SlashCommandBuilder()
   .setName("chart-promotion-points")
-  .setDescription("chart promotion point top 10 members"));
+  .setDescription("promotion points chart of top 10 members"));
 
 commands.push(new SlashCommandBuilder()
   .setName("chart-reputation-points")
-  .setDescription("chart reputation point top 10 members"));
+  .setDescription("reputation points chart of top 10 members"));
 
 commands.push(new SlashCommandBuilder()
   .setName("check-landing")
-  .setDescription("check landing for missing or wrong base roles"));
+  .setDescription("landing check for missing or wrong base roles"));
 
 commands.push(new SlashCommandBuilder()
   .setName("give-reputation-point")

@@ -25,10 +25,7 @@ const messageReactionRemove = async (messageReaction, user) => {
     let takerRole = undefined;
 
     if (maker !== undefined) {
-      makerPoints = getCalculatedPoints(
-        customPoints.messageReactionAdd.maker,
-        reputationPoints[maker.guild.id][maker.id].points
-      );
+      makerPoints = getCalculatedPoints(customPoints.messageReactionAdd.maker, reputationPoints[maker.guild.id][maker.id].points);
       makerRole = getCustomRole(maker);
       isResponsabile = maker.roles.cache.find((role) => role.name === "responsabile");
     } else {
