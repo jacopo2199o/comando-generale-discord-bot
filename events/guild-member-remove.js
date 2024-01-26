@@ -11,13 +11,10 @@ const guildMemberRemove = async (oldMember) => {
   const channel = oldMember.guild.channels.cache.find((channel) => channel.name === customChannels.private)
     || oldMember.guild.channels.cache.get(oldMember.guild.publicUpdatesChannelId);
   const comandoGeneraleRole = oldMember.roles.cache.find((role) => role.name === "compagnia comando generale");
-  const oldMemberRole = getCustomRole(oldMember)
-    || getCustomRole(oldMember.guild.members.cache.get(oldMember.id));
+  const oldMemberRole = getCustomRole(oldMember.guild.members.cache.get(oldMember.id));
   const message = new EmbedBuilder();
   const gaveToId = reputationPoints[oldMember.guild.id][oldMember.id].gaveTo;
   const penaltyPoints = Math.round(customPoints.guildMemberRemove / oldMember.guild.memberCount);
-
-  console.log(getCustomRole(oldMember), getCustomRole(oldMember.guild.members.cache.get(oldMember.id)));
 
   if (gaveToId !== "") {
     reputationPoints[oldMember.guild.id][gaveToId].points = -1;
@@ -26,8 +23,8 @@ const guildMemberRemove = async (oldMember) => {
   delete globalPoints[oldMember.guild.id][oldMember.id];
   delete reputationPoints[oldMember.guild.id][oldMember.id];
 
-  for (const id in globalPoints[oldMember.guild.id]) {
-    const member = oldMember.guild.members.cache.get(id);
+  for (const memberId in globalPoints[oldMember.guild.id]) {
+    const member = oldMember.guild.members.cache.get(memberId);
 
     oldMember.client.emit("activity", member, penaltyPoints);
   }

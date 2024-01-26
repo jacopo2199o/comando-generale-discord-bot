@@ -1,4 +1,4 @@
-import { globalPoints, reputationPoints } from "../events/ready.js";
+import { globalPoints, reputationPoints, seniority } from "../events/ready.js";
 import { saveFile } from "../resources/general-utilities.js";
 
 /** 
@@ -12,6 +12,7 @@ const save = async (interaction) => {
       async (guild) => {
         await saveFile(`./resources/backups/points-${guild.id}-backup.json`, globalPoints[guild.id]);
         await saveFile(`./resources/backups/reputation-${guild.id}-backup.json`, reputationPoints[guild.id]);
+        await saveFile(`./resources/backups/seniority-${guild.id}-backup.json`, seniority[guild.id]);
       }
     )
   );

@@ -18,8 +18,6 @@ const messageCreate = async (message) => {
     let makerPoints = undefined;
     let makerRole = undefined;
 
-    //console.log(Math.round((new Date().getTime() - message.member.joinedAt.getTime()) / (1000 * 60 * 60 * 24)));
-
     if (maker !== undefined) {
       makerPoints = getCalculatedPoints(
         customPoints.messageCreate,
