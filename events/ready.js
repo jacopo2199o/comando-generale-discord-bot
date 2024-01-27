@@ -14,7 +14,7 @@ const seniority = {};
 const ready = async (client) => {
   //const checkInterval = 1000 * 60;
 
-  //let startHour = new Date().getHours();
+  //let startHour = new Date().getMinutes();
 
   await Promise.all(
     client.guilds.cache.map(
@@ -156,28 +156,24 @@ const ready = async (client) => {
     }]
   });
 
-  /*setInterval(
-    () => {
-      const actualHour = new Date().getHours();
+  // setTimeout(
+  //   () => {
+  //     const actualHour = new Date().getMinutes();
 
-      if (startHour !== actualHour) {
-        console.log("a new hour started");
+  //     if (startHour !== actualHour) {
+  //       console.log("a new hour started");
 
-        client.guilds.cache.forEach(
-          (guild) => {
-            for (const memberId in globalPoints[guild.id]) {
-              const member = guild.members.cache.get(memberId);
+  //       client.guilds.cache.forEach(
+  //         (guild) => {
+  //           client.emit("pointsDecay", guild, -1);
+  //         }
+  //       );
 
-              client.emit("activity", member, -1);
-            }
-          }
-        );
-
-        startHour = actualHour;
-      }
-    },
-    checkInterval
-  );*/
+  //       startHour = actualHour;
+  //     }
+  //   },
+  //   checkInterval
+  // );
 
   console.log(`bot ready as ${client.user.username}`);
 };

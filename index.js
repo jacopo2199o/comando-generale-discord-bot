@@ -11,6 +11,7 @@ import { messageCreate } from "./events/message-create.js";
 import { messageDelete } from "./events/message-delete.js";
 import { messageReactionAdd } from "./events/message-reaction-add.js";
 import { messageReactionRemove } from "./events/message-reaction-remove.js";
+import { pointsDecay } from "./events/points-decay.js";
 import { ready } from "./events/ready.js";
 import { threadCreate } from "./events/thread-create.js";
 
@@ -39,5 +40,6 @@ client.on("messageCreate", messageCreate);
 client.on("messageDelete", messageDelete);
 client.on("messageReactionAdd", messageReactionAdd);
 client.on("messageReactionRemove", messageReactionRemove);
+client.on("pointsDecay", pointsDecay);
 client.on("threadCreate", threadCreate);
 client.login(process.env.bot_token);
