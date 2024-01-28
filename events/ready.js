@@ -12,9 +12,9 @@ const seniority = {};
  * @param { import("discord.js").Client } client
  */
 const ready = async (client) => {
-  //const checkInterval = 1000 * 60;
+  const checkInterval = 1000 * 60;
 
-  //let startHour = new Date().getMinutes();
+  let startHour = new Date().getHours();
 
   await Promise.all(
     client.guilds.cache.map(
@@ -40,10 +40,7 @@ const ready = async (client) => {
             }
           }
 
-          await saveFile(
-            `./resources/database/points-${guild.id}.json`,
-            globalPoints[guild.id]
-          );
+          await saveFile(`./resources/database/points-${guild.id}.json`, globalPoints[guild.id]);
         } else {
           globalPoints[guild.id] = {};
 
@@ -53,10 +50,7 @@ const ready = async (client) => {
             }
           );
 
-          await saveFile(
-            `./resources/database/points-${guild.id}.json`,
-            globalPoints[guild.id]
-          );
+          await saveFile(`./resources/database/points-${guild.id}.json`, globalPoints[guild.id]);
         }
 
         // reputation points
@@ -78,10 +72,7 @@ const ready = async (client) => {
             }
           }
 
-          await saveFile(
-            `./resources/database/reputation-${guild.id}.json`,
-            reputationPoints[guild.id]
-          );
+          await saveFile(`./resources/database/reputation-${guild.id}.json`, reputationPoints[guild.id]);
         } else {
           reputationPoints[guild.id] = {};
 
@@ -94,10 +85,7 @@ const ready = async (client) => {
             }
           );
 
-          await saveFile(
-            `./resources/database/reputation-${guild.id}.json`,
-            reputationPoints[guild.id]
-          );
+          await saveFile(`./resources/database/reputation-${guild.id}.json`, reputationPoints[guild.id]);
         }
 
         // seniority
@@ -119,10 +107,7 @@ const ready = async (client) => {
             }
           }
 
-          await saveFile(
-            `./resources/database/seniority-${guild.id}.json`,
-            seniority[guild.id]
-          );
+          await saveFile(`./resources/database/seniority-${guild.id}.json`, seniority[guild.id]);
           //await saveFile(`./resources/database/points-${guild.id}.json`, globalPoints[guild.id]);
         } else {
           seniority[guild.id] = {};
@@ -133,10 +118,7 @@ const ready = async (client) => {
             }
           );
 
-          await saveFile(
-            `./resources/database/seniority-${guild.id}.json`,
-            seniority[guild.id]
-          );
+          await saveFile(`./resources/database/seniority-${guild.id}.json`, seniority[guild.id]);
         }
 
         // referrals
@@ -156,24 +138,38 @@ const ready = async (client) => {
     }]
   });
 
-  // setTimeout(
-  //   () => {
-  //     const actualHour = new Date().getMinutes();
+  setInterval(
+    () => {
+      const actualHour = new Date().getHours();
 
-  //     if (startHour !== actualHour) {
-  //       console.log("a new hour started");
+      if (startHour !== actualHour) {
+        console.log("a new hour started");
 
-  //       client.guilds.cache.forEach(
-  //         (guild) => {
-  //           client.emit("pointsDecay", guild, -1);
-  //         }
-  //       );
+        client.guilds.cache.forEach(
+          (guild) => {
+            client.emit("pointsDecay", guild, -1);
+          }
+        );
 
-  //       startHour = actualHour;
-  //     }
-  //   },
-  //   checkInterval
-  // );
+        startHour = actualHour;
+      }
+    },
+    checkInterval
+  );
+
+  setInterval(
+    async () => {
+      await Promise.all(
+        client.guilds.cache.map(
+          async (guild) => {
+            await saveFile(`./resources/database/points-${guild.id}.json`, globalPoints[guild.id]);
+            await saveFile(`./resources/database/reputation-${guild.id}.json`, reputationPoints[guild.id]);
+          }
+        )
+      );
+    },
+    2000
+  );
 
   console.log(`bot ready as ${client.user.username}`);
 };

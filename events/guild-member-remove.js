@@ -10,11 +10,13 @@ import { globalPoints, reputationPoints } from "./ready.js";
 const guildMemberRemove = async (oldMember) => {
   const channel = oldMember.guild.channels.cache.find((channel) => channel.name === customChannels.private)
     || oldMember.guild.channels.cache.get(oldMember.guild.publicUpdatesChannelId);
-  const comandoGeneraleRole = oldMember.roles.cache.find((role) => role.name === "compagnia comando generale");
-  const oldMemberRole = getCustomRole(oldMember.guild.members.cache.get(oldMember.id));
-  const message = new EmbedBuilder();
   const gaveToId = reputationPoints[oldMember.guild.id][oldMember.id].gaveTo;
+  const oldMemberRole = getCustomRole(oldMember)
+    || getCustomRole(oldMember.guild.members.cache.get(oldMember.id))
+    || "n.a.";
+  const message = new EmbedBuilder();
   const penaltyPoints = Math.round(customPoints.guildMemberRemove / oldMember.guild.memberCount);
+  const roleComandoGenerale = oldMember.roles.cache.find((role) => role.name === "compagnia comando generale");
 
   if (gaveToId !== "") {
     reputationPoints[oldMember.guild.id][gaveToId].points = -1;
@@ -30,11 +32,11 @@ const guildMemberRemove = async (oldMember) => {
   }
 
   if (oldMemberRole !== undefined) {
-    if (comandoGeneraleRole !== undefined) {
+    if (roleComandoGenerale !== undefined) {
       message
         .setTitle("🍂 member lost")
         .setDescription(`${oldMemberRole} *${oldMember.displayName}* left *comando generale*`)
-        .addFields({ name: "notes", value: `he had *${comandoGeneraleRole}* role, remove him from alliance too`, inline: true })
+        .addFields({ name: "notes", value: `he had *${roleComandoGenerale}* role, remove him from alliance too`, inline: true })
         .addFields({ name: "promotion points", value: `${penaltyPoints} ⭐`, inline: true })
         .addFields({ name: "to", value: `${oldMember.guild.roles.everyone}`, inline: true })
         .setThumbnail(oldMember.user.displayAvatarURL({ dynamic: true }))

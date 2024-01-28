@@ -9,7 +9,7 @@ import { reputationPoints } from "./ready.js";
  * @param { Boolean } newlyCreated
  */
 const threadCreate = async (thread, newlyCreated) => {
-  const channel = thread.guild.channels.cache.find((channel) => channel.name === customChannels.welcome)
+  const channel = thread.guild.channels.cache.find((channel) => channel.name === customChannels.activity)
     || thread.guild.channels.cache.get(thread.guild.publicUpdatesChannelId);
   const message = new EmbedBuilder();
   const threadOwner = await thread.fetchOwner();
@@ -23,10 +23,7 @@ const threadCreate = async (thread, newlyCreated) => {
 
     if (maker !== undefined) {
       makerRole = getCustomRole(maker);
-      makerPoints = getCalculatedPoints(
-        customPoints.threadCreate,
-        reputationPoints[maker.guild.id][maker.id].points
-      );
+      makerPoints = getCalculatedPoints(customPoints.threadCreate, reputationPoints[maker.guild.id][maker.id].points);
     }
   }
 
@@ -35,7 +32,7 @@ const threadCreate = async (thread, newlyCreated) => {
 
     message
       .setTitle("🧵 new thread")
-      .setDescription(`${makerRole} *${maker}* created *${thread.name}* thread in *${thread.parent.name}*\n`)
+      .setDescription(`${makerRole} *${maker}* created *${thread.name}* thread in *${thread.parent.name}*`)
       .addFields({ name: "promotion points", value: `${makerPoints} ⭐`, inline: true })
       .addFields({ name: "to", value: `${maker}`, inline: true })
       .setThumbnail(threadOwner.guildMember.displayAvatarURL({ dynamic: true }))
