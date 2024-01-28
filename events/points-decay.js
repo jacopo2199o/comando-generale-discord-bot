@@ -52,7 +52,7 @@ const pointsDecay = async (guild, points) => {
           channelActivity.send({ embeds: [message] });
         }
       } else {
-        globalPoints[guild.id][memberId] += points;
+        globalPoints[guild.id][memberId] = customPoints.promotionPoints + pointsRing;
       }
     } else {
       globalPoints[guild.id][memberId] += points;

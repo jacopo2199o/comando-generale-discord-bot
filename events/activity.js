@@ -53,7 +53,7 @@ const activity = async (member, points) => {
         channel.send({ embeds: [message] });
       }
     } else {
-      globalPoints[member.guild.id][member.id] += points;
+      globalPoints[member.guild.id][member.id] = customPoints.promotionPoints + pointsRing;
     }
   } else {
     if (pointsRing >= customPoints.promotionPoints) {
