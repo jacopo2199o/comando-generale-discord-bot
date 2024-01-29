@@ -1,3 +1,5 @@
+import { globalPoints } from "../events/ready.js";
+
 const customPoints = {
   guildMemberAdd: 1000,
   guildMemberRemove: -1000,
@@ -32,9 +34,18 @@ const getCalculatedPoints = (customPoints, reputationPoints) => {
   return Math.round(customPoints * reputationFactor);
 };
 
+/**
+ * @param {import("discord.js").GuildMember} member
+ * @returns {Number}
+ */
+const getLevel = (member) => {
+  return Math.floor(globalPoints[member.guild.id][member.id] / customPoints.promotionPoints) + 1;
+};
+
 export {
   customPoints,
   drops,
-  getCalculatedPoints
+  getCalculatedPoints,
+  getLevel
 };
 

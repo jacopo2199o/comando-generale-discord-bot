@@ -32,6 +32,8 @@ const activity = async (member, points) => {
 
       downgradeResult = downgrade(member);
 
+      console.log("downgradeResult: ", downgradeResult);
+
       if (downgradeResult !== undefined) {
         message
           .setTitle("🔰 downgrade")
@@ -58,6 +60,8 @@ const activity = async (member, points) => {
   } else {
     if (pointsRing >= customPoints.promotionPoints) {
       upgradeResult = upgrade(member);
+
+      console.log("upgradeResult: ", upgradeResult);
 
       if (upgradeResult !== undefined) {
         message

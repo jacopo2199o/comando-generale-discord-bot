@@ -1,27 +1,4 @@
 import fs from "node:fs";
-import { customRoles } from "./custom-roles.js";
-
-/**
-* @param {import("discord.js").GuildMember} guildMember 
-* @returns {import("discord.js").Role}
-*/
-const getCustomRole = (guildMember) => {
-  let customRole = undefined;
-
-  guildMember.roles.cache.forEach((role) => {
-    const customRoleIndex = customRoles.findIndex((customRole) => customRole === role.name);
-
-    if (customRoleIndex !== -1) {
-      customRole = role;
-    }
-  });
-
-  if (customRole) {
-    return customRole;
-  } else {
-    return `error at ${guildMember}`;
-  }
-};
 
 /**
  * @param { String } path
@@ -85,7 +62,6 @@ const sendMesseges = async (messages, channel) => {
 };
 
 export {
-  getCustomRole,
   loadFile,
   saveFile,
   sendMesseges

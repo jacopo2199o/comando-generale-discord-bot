@@ -1,7 +1,7 @@
 import { EmbedBuilder } from "discord.js";
 import { customChannels } from "../resources/custom-channels.js";
 import { customPoints, drops, getCalculatedPoints } from "../resources/custom-points.js";
-import { getCustomRole } from "../resources/general-utilities.js";
+import { getCustomRole } from "../resources/custom-roles.js";
 import { reputationPoints } from "./ready.js";
 
 let dropPromotionPointsCounter = 0;
@@ -9,7 +9,7 @@ let dropPromotionPointsCounter = 0;
  * @param { import("discord.js").Message } message
  */
 const messageCreate = async (message) => {
-  if (!message.author.bot) {
+  if (!message.author.bot && message.channel.type !== "dm") {
     const channelPublic = message.guild.channels.cache.find((channel) => channel.name === customChannels.public)
       || message.guild.channels.cache.get(message.guild.publicUpdatesChannelId);
     const embedMessage = new EmbedBuilder();

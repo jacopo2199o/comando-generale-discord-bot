@@ -2,7 +2,7 @@ import { EmbedBuilder } from "discord.js";
 import { reputationPoints } from "../events/ready.js";
 import { customChannels } from "../resources/custom-channels.js";
 import { customPoints, getCalculatedPoints } from "../resources/custom-points.js";
-import { getCustomRole, saveFile } from "../resources/general-utilities.js";
+import { getCustomRole } from "../resources/custom-roles.js";
 
 /**
  * @param {import("discord.js").Interaction} interaction
@@ -136,8 +136,6 @@ const giveReputationPoint = async (interaction) => {
 
       channel.send({ embeds: [message3] });
     }
-
-    await saveFile(`./resources/database/reputation-${interaction.guild.id}.json`, reputationPoints[interaction.guild.id]);
   }
 };
 

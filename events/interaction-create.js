@@ -3,7 +3,7 @@ import { about } from "../commands/about.js";
 import { chartGlobalPoints } from "../commands/chart-global-points.js";
 import { chartPromotionPoints } from "../commands/chart-promotion-points.js";
 import { chartReputationPoints } from "../commands/chart-reputation-points.js";
-import { checkLanding } from "../commands/check-landing.js";
+import { checkMembers } from "../commands/check-members.js";
 import { clear } from "../commands/clear.js";
 import { downgrade } from "../commands/downgrade.js";
 import { giveReputationPoint } from "../commands/give-reputation-point.js";
@@ -13,7 +13,7 @@ import { viewPromotionPoints } from "../commands/view-promotion-points.js";
 import { viewReputationPoints } from "../commands/view-reputation-points.js";
 import { customChannels } from "../resources/custom-channels.js";
 import { customPoints, getCalculatedPoints } from "../resources/custom-points.js";
-import { getCustomRole } from "../resources/general-utilities.js";
+import { getCustomRole } from "../resources/custom-roles.js";
 import { reputationPoints } from "./ready.js";
 import { takePromotionPoints } from "./take-promotion-points.js";
 
@@ -21,6 +21,14 @@ import { takePromotionPoints } from "./take-promotion-points.js";
  * @param {import("discord.js").Interaction} interaction
  */
 const interactionCreate = async (interaction) => {
+  if (interaction.guild === null) {
+    const inviteLink = "https://discord.com/api/oauth2/authorize?client_id=1149977789496311888&permissions=8&scope=bot";
+
+    await interaction.deferReply();
+    await interaction.editReply(`my commands work only into servers - invite link: ${inviteLink}`);
+    return;
+  }
+
   if (interaction.isChatInputCommand()) {
     const channel = interaction.guild.channels.cache.find((channel) => channel.name === customChannels.public)
       || interaction.guild.channels.cache.get(interaction.guild.publicUpdatesChannelId);
@@ -54,8 +62,8 @@ const interactionCreate = async (interaction) => {
       chartReputationPoints(interaction);
     } else if (interaction.commandName === "chart-global-points"){
       chartGlobalPoints(interaction);
-    } else if (interaction.commandName === "check-landing") {
-      checkLanding(interaction);
+    } else if (interaction.commandName === "check-members") {
+      checkMembers(interaction);
     } else if (interaction.commandName === "clear") {
       clear(interaction);
     } else if (interaction.commandName === "downgrade") {

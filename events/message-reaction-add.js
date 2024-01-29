@@ -1,7 +1,7 @@
 import { EmbedBuilder } from "discord.js";
 import { customChannels } from "../resources/custom-channels.js";
 import { customPoints, getCalculatedPoints } from "../resources/custom-points.js";
-import { getCustomRole } from "../resources/general-utilities.js";
+import { getCustomRole } from "../resources/custom-roles.js";
 import { reputationPoints } from "./ready.js";
 
 /**

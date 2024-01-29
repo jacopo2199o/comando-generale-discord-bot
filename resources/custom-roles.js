@@ -25,6 +25,8 @@ const customRoles = [
   "membro"
 ];
 
+Object.freeze(customRoles);
+
 /**
  * @param {import("discord.js").GuildMember} member 
  */
@@ -40,7 +42,7 @@ const downgrade = (member) => {
 
   member.roles.cache.forEach(
     async (role) => {
-      const customRoleIndex = customRoles.findIndex((rank) => rank === role.name);
+      const customRoleIndex = customRoles.findIndex((customRole) => customRole === role.name);
 
       if (customRoleIndex !== -1) {
         const newRoleName = customRoles[customRoleIndex + 1];
@@ -67,6 +69,26 @@ const downgrade = (member) => {
   } else {
     return undefined;
   }
+};
+
+/**
+* @param {import("discord.js").GuildMember} member 
+* @returns {import("discord.js").Role}
+*/
+const getCustomRole = (member) => {
+  let customRole = undefined;
+
+  member.roles.cache.forEach(
+    (role) => {
+      const customRoleIndex = customRoles.findIndex((customRole) => customRole === role.name);
+
+      if (customRoleIndex !== -1) {
+        customRole = role;
+      }
+    }
+  );
+
+  return customRole;
 };
 
 /**
@@ -105,7 +127,7 @@ const upgrade = (member) => {
     }
   );
 
-  if (newRole !== undefined) {
+  if (newRole !== undefined && oldRole !== undefined) {
     return {
       newRole,
       oldRole
@@ -118,6 +140,7 @@ const upgrade = (member) => {
 export {
   customRoles,
   downgrade,
+  getCustomRole,
   upgrade
 };
 

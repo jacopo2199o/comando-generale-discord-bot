@@ -1,7 +1,7 @@
 import { AuditLogEvent, EmbedBuilder } from "discord.js";
 import { customChannels } from "../resources/custom-channels.js";
 import { customPoints, getCalculatedPoints } from "../resources/custom-points.js";
-import { getCustomRole } from "../resources/general-utilities.js";
+import { getCustomRole } from "../resources/custom-roles.js";
 import { reputationPoints } from "./ready.js";
 
 /**
@@ -13,6 +13,7 @@ const messageDelete = async (message) => {
     || message.guild.channels.cache.get(message.guild.publicUpdatesChannelId);
   const embedMessage = new EmbedBuilder();
   const content = message.content || "n.a.";
+  const cachedMessage = message.channel.messages.cache.get(message.id);
 
   let author = undefined;
   let authorPoints = undefined;
@@ -21,6 +22,8 @@ const messageDelete = async (message) => {
   let executor = undefined;
   let executorPoints = undefined;
   let executorRole = undefined;
+
+  console.log("fix this entry author ", entry, cachedMessage);
 
   if (auditLog !== undefined) {
     entry = auditLog.entries.first();
@@ -31,10 +34,7 @@ const messageDelete = async (message) => {
 
       if (author !== undefined) {
         authorRole = getCustomRole(author);
-        authorPoints = getCalculatedPoints(
-          customPoints.messageDelete.author,
-          reputationPoints[author.guild.id][author.id].points
-        );
+        authorPoints = getCalculatedPoints(customPoints.messageDelete.author, reputationPoints[author.guild.id][author.id].points);
       } else {
         return;
       }
@@ -53,7 +53,7 @@ const messageDelete = async (message) => {
     return;
   }
 
-  if (executor.id !== author.id && !author.user.bot) {
+  if (executor.id !== author.id && author.user.bot === false) {
     message.client.emit("activity", author, authorPoints);
     message.client.emit("activity", executor, executorPoints);
 

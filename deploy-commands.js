@@ -35,8 +35,8 @@ commands.push(new SlashCommandBuilder()
   .setDescription("reputation points chart of top 10 members"));
 
 commands.push(new SlashCommandBuilder()
-  .setName("check-landing")
-  .setDescription("landing check for missing or wrong base roles"));
+  .setName("check-members")
+  .setDescription("check members for general problems"));
 
 commands.push(new SlashCommandBuilder()
   .setName("give-reputation-point")
