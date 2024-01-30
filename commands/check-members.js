@@ -16,7 +16,7 @@ const checkMembers = async (interaction) => {
   await interaction.deferReply();
 
   members.forEach((member) => {
-    if (!member.user.bot) {
+    if (member.user.bot === false) {
       if (!member.roles.cache.some((role) => role.name === "italiano")) {
         if (!member.roles.cache.some((role) => role.name === "international")) {
           messages.push(`member with missing language role: *${member.displayName}, ${member.nickname}, ${member.user.username}*\n`);

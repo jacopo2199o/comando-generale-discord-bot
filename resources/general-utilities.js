@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import { globalPoints, reputationPoints, seniority } from "../events/ready.js";
 
 /**
  * @param { String } path
@@ -8,6 +9,15 @@ const loadFile = async (path) => {
   const data = fs.readFileSync(path);
 
   return JSON.parse(data);
+};
+
+/**
+ * @param {import("discord.js").GuildMember} member 
+ */
+const removeMember = (member) => {
+  delete globalPoints[member.guild.id][member.id];
+  delete reputationPoints[member.guild.id][member.id];
+  delete seniority[member.guild.id][member.id];
 };
 
 /**
@@ -56,13 +66,17 @@ const sendMesseges = async (messages, channel) => {
     let parts = splitMessages(messages, 2000);
 
     for (let part of parts) {
-      await channel.send({ content: part, flags: [4096] });
+      await channel.send({
+        content: part,
+        flags: [4096]
+      });
     }
   }
 };
 
 export {
   loadFile,
+  removeMember,
   saveFile,
   sendMesseges
 };

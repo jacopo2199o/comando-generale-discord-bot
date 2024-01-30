@@ -19,7 +19,7 @@ const guildMemberAdd = async (newMember) => {
   let inviterPoints = undefined;
   let inviteUses = undefined;
 
-  globalPoints[newMember.guild.id][newMember.id] = customPoints.start;
+  globalPoints[newMember.guild.id][newMember.id] = 0;
   reputationPoints[newMember.guild.id][newMember.id] = {
     points: 0,
     gaveTo: ""

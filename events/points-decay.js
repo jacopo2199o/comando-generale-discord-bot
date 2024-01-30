@@ -1,82 +1,75 @@
 import { EmbedBuilder } from "discord.js";
 import { customChannels } from "../resources/custom-channels.js";
 import { customPoints } from "../resources/custom-points.js";
-import { downgrade } from "../resources/custom-roles.js";
+import { addCustomBaseRoles, downgrade, getCustomRole } from "../resources/custom-roles.js";
+import { removeMember } from "../resources/general-utilities.js";
 import { globalPoints } from "./ready.js";
 
 /**
  * @param {import("discord.js").Guild} guild
  */
 const pointsDecay = async (guild, points) => {
-  const channelPublic = guild.channels.cache.find((channel) => channel.name === customChannels.public)
-    || guild.channels.cache.get(guild.publicUpdatesChannelId);
-  const channelActivity = guild.channels.cache.find((channel) => channel.name === customChannels.activity)
-    || guild.channels.cache.get(guild.publicUpdatesChannelId);
-  const message = new EmbedBuilder();
-
   for (const memberId in globalPoints[guild.id]) {
     const member = guild.members.cache.get(memberId);
-    const memberLevel = Math.floor(globalPoints[guild.id][memberId] / customPoints.promotionPoints) + 1;
-    const pointsRing = (globalPoints[guild.id][memberId] % customPoints.promotionPoints) + points;
 
-    let downgradeResult = undefined;
+    if (member !== undefined) {
+      const level = Math.floor(globalPoints[guild.id][member.id] / customPoints.promotionPoints) + 1;
+      const pointsRing = (globalPoints[guild.id][member.id] % customPoints.promotionPoints) + points;
+      const role = getCustomRole(member);
 
-    if (pointsRing < 0) {
-      if (memberLevel < 24) {
-        if (memberLevel > 1) {
-          globalPoints[guild.id][memberId] = customPoints.promotionPoints + pointsRing;
+      if (role !== undefined) {
+        if (pointsRing < 0) {
+          if (level < 24) {
+            if (role.name !== "membro") {
+              globalPoints[guild.id][member.id] = customPoints.promotionPoints + pointsRing;
+            } else {
+              globalPoints[guild.id][member.id] = 0;
+            }
+
+            let downgradeResult = downgrade(member);
+
+            if (downgradeResult !== undefined) {
+              const messagePublic = new EmbedBuilder();
+              messagePublic.setTitle("🔰 downgrade");
+              messagePublic.setDescription(`*${member}* lost ${customPoints.promotionPoints} *promotion points*`);
+              messagePublic.addFields({ name: "old role", value: `${downgradeResult.oldRole}`, inline: true });
+              messagePublic.addFields({ name: "new role", value: `${downgradeResult.newRole}`, inline: true });
+              messagePublic.setThumbnail(member.displayAvatarURL({ dynamic: true }));
+              messagePublic.setTimestamp();
+              messagePublic.setColor("DarkRed");
+
+              const channelActivity = guild.channels.cache.find((channel) => channel.name === customChannels.activity)
+                || guild.channels.cache.get(guild.publicUpdatesChannelId);
+              channelActivity.send({ embeds: [messagePublic] });
+            }
+          } else {
+            globalPoints[guild.id][member.id] = customPoints.promotionPoints + pointsRing;
+          }
         } else {
-          globalPoints[guild.id][memberId] = 0;
-        }
-
-        downgradeResult = downgrade(member);
-
-        if (downgradeResult !== undefined) {
-          message
-            .setTitle("🔰 downgrade")
-            .setDescription(`*${member}* lost ${customPoints.promotionPoints} *promotion points*`)
-            .addFields({
-              name: "old role",
-              value: `${downgradeResult.oldRole}`,
-              inline: true
-            })
-            .addFields({
-              name: "new role",
-              value: `${downgradeResult.newRole}`,
-              inline: true
-            })
-            .setThumbnail(member.displayAvatarURL({ dynamic: true }))
-            .setTimestamp()
-            .setColor("DarkRed");
-
-          channelActivity.send({ embeds: [message] });
+          globalPoints[guild.id][member.id] += points;
         }
       } else {
-        globalPoints[guild.id][memberId] = customPoints.promotionPoints + pointsRing;
+        addCustomBaseRoles(member);
+        console.error(`member ${memberId} has no custom roles: added base ones`);
       }
     } else {
-      globalPoints[guild.id][memberId] += points;
+      removeMember(member);
+      console.error(`member ${memberId} not found in cache: removed`);
     }
   }
 
-  message
-    .setTitle("🕯 points decay")
-    .setDescription("hourly points decay balancing")
-    .addFields({
-      name: "promotion points",
-      value: `${points} ⭐`,
-      inline: true
-    })
-    .addFields({
-      name: "to",
-      value: `${guild.roles.everyone}`,
-      inline: true
-    })
-    .setThumbnail(guild.client.user.displayAvatarURL({ dynamic: true }))
-    .setTimestamp()
-    .setColor("DarkRed");
+  const messageActivity = new EmbedBuilder();
+  messageActivity.setTitle("🕯 points decay");
+  messageActivity.setDescription("hourly points decay balancing");
+  messageActivity.addFields({ name: "promotion points", value: `${points} ⭐`, inline: true });
+  messageActivity.addFields({ name: "to", value: `${guild.roles.everyone}`, inline: true });
+  messageActivity.setThumbnail(guild.client.user.displayAvatarURL({ dynamic: true }));
+  messageActivity.setTimestamp();
+  messageActivity.setColor("DarkRed");
 
-  channelPublic.send({ embeds: [message] });
+  const channelPublic = guild.channels.cache.find((channel) => channel.name === customChannels.public)
+    || guild.channels.cache.get(guild.publicUpdatesChannelId);
+  channelPublic.send({ embeds: [messageActivity] });
 };
 
 export { pointsDecay };

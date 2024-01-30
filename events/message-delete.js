@@ -23,23 +23,23 @@ const messageDelete = async (message) => {
   let executorPoints = undefined;
   let executorRole = undefined;
 
-  console.log("fix this entry author ", entry, cachedMessage);
-
   if (auditLog !== undefined) {
     entry = auditLog.entries.first();
+
+    console.log("fix this entry author ", cachedMessage);
 
     if (entry !== undefined) {
       author = message.guild.members.cache.get(entry.targetId);
       executor = message.guild.members.cache.get(entry.executorId);
 
-      if (author !== undefined) {
+      if (author !== undefined && author.user.bot !== false) {
         authorRole = getCustomRole(author);
         authorPoints = getCalculatedPoints(customPoints.messageDelete.author, reputationPoints[author.guild.id][author.id].points);
       } else {
         return;
       }
 
-      if (executor !== undefined) {
+      if (executor !== undefined && executor.user.bot !== false) {
         executorRole = getCustomRole(executor);
         executorPoints = getCalculatedPoints(
           customPoints.messageDelete.executor,

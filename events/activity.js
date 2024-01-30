@@ -1,7 +1,7 @@
 import { EmbedBuilder } from "discord.js";
 import { customChannels } from "../resources/custom-channels.js";
 import { customPoints } from "../resources/custom-points.js";
-import { downgrade, upgrade } from "../resources/custom-roles.js";
+import { downgrade, getCustomRole, upgrade } from "../resources/custom-roles.js";
 import { globalPoints } from "./ready.js";
 
 /**
@@ -12,8 +12,10 @@ const activity = async (member, points) => {
   const channel = member.guild.channels.cache.find((channel) => channel.name === customChannels.activity)
     || member.guild.channels.cache.get(member.guild.publicUpdatesChannelId);
   const memberLevel = Math.floor(globalPoints[member.guild.id][member.id] / customPoints.promotionPoints) + 1;
-  const message = new EmbedBuilder();
+  const message1 = new EmbedBuilder();
+  const message2 = new EmbedBuilder();
   const pointsRing = (globalPoints[member.guild.id][member.id] % customPoints.promotionPoints) + points;
+  const role = getCustomRole(member);
 
   let downgradeResult = undefined;
   let upgradeResult = undefined;
@@ -24,7 +26,7 @@ const activity = async (member, points) => {
 
   if (pointsRing < 0) {
     if (memberLevel < 24) {
-      if (memberLevel > 1) {
+      if (role.name !== "membro") {
         globalPoints[member.guild.id][member.id] = customPoints.promotionPoints + pointsRing;
       } else {
         globalPoints[member.guild.id][member.id] = 0;
@@ -32,10 +34,8 @@ const activity = async (member, points) => {
 
       downgradeResult = downgrade(member);
 
-      console.log("downgradeResult: ", downgradeResult);
-
       if (downgradeResult !== undefined) {
-        message
+        message1
           .setTitle("🔰 downgrade")
           .setDescription(`*${member}* lost ${customPoints.promotionPoints} *promotion points*`)
           .addFields({
@@ -52,7 +52,7 @@ const activity = async (member, points) => {
           .setTimestamp()
           .setColor("DarkRed");
 
-        channel.send({ embeds: [message] });
+        channel.send({ embeds: [message1] });
       }
     } else {
       globalPoints[member.guild.id][member.id] = customPoints.promotionPoints + pointsRing;
@@ -61,10 +61,8 @@ const activity = async (member, points) => {
     if (pointsRing >= customPoints.promotionPoints) {
       upgradeResult = upgrade(member);
 
-      console.log("upgradeResult: ", upgradeResult);
-
       if (upgradeResult !== undefined) {
-        message
+        message2
           .setTitle("🔰 promotion")
           .setDescription(`*${member}* reached ${customPoints.promotionPoints} *promotion points*`)
           .addFields({
@@ -81,7 +79,7 @@ const activity = async (member, points) => {
           .setTimestamp()
           .setColor("DarkGreen");
 
-        channel.send({ embeds: [message] });
+        channel.send({ embeds: [message2] });
       }
     }
 

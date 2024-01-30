@@ -19,10 +19,6 @@ commands.push(new SlashCommandBuilder()
   .setDescription("clear channel from last 100 messages"));
 
 commands.push(new SlashCommandBuilder()
-  .setName("downgrade")
-  .setDescription("downgrade one rank all members"));
-
-commands.push(new SlashCommandBuilder()
   .setName("chart-global-points")
   .setDescription("global points chart of top 10 members"));
 
@@ -73,10 +69,14 @@ commands.push(new SlashCommandBuilder()
     .setRequired(false)
   ));
 
-for (const command of commands) { command.toJSON(); }
+for (const command of commands) {
+  command.toJSON();
+}
 
 try {
   const data = await rest.put(Routes.applicationCommands(process.env.client_id), { body: commands });
 
   console.log(`successfully reloaded ${data.length} application slash commands`);
-} catch (error) { console.error(error); }
+} catch (error) {
+  console.error(error);
+}

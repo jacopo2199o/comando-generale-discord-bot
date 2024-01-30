@@ -9,37 +9,31 @@ import { reputationPoints } from "./ready.js";
  * @param { Boolean } newlyCreated
  */
 const threadCreate = async (thread, newlyCreated) => {
-  const channel = thread.guild.channels.cache.find((channel) => channel.name === customChannels.activity)
-    || thread.guild.channels.cache.get(thread.guild.publicUpdatesChannelId);
-  const message = new EmbedBuilder();
-  const threadOwner = await thread.fetchOwner();
-
-  let maker = undefined;
-  let makerPoints = undefined;
-  let makerRole = undefined;
-
-  if (threadOwner !== undefined) {
-    maker = threadOwner.guildMember;
+  if (newlyCreated === true) {
+    const maker = thread.guild.members.cache.get(thread.ownerId);
 
     if (maker !== undefined) {
-      makerRole = getCustomRole(maker);
-      makerPoints = getCalculatedPoints(customPoints.threadCreate, reputationPoints[maker.guild.id][maker.id].points);
+      const points = getCalculatedPoints(customPoints.threadCreate, reputationPoints[maker.guild.id][maker.id].points);
+
+      const role = getCustomRole(maker);
+
+      const message = new EmbedBuilder();
+      message.setTitle("🧵 new thread");
+      message.setDescription(`${role} *${maker}* created *${thread.name}* thread in *${thread.parent.name}*`);
+      message.addFields({ name: "promotion points", value: `${points} ⭐`, inline: true });
+      message.addFields({ name: "to", value: `${maker}`, inline: true });
+      message.setThumbnail(maker.displayAvatarURL({ dynamic: true }));
+      message.setTimestamp();
+      message.setColor(role.color);
+
+      const channel = thread.guild.channels.cache.find((channel) => channel.name === customChannels.activity)
+        || thread.guild.channels.cache.get(thread.guild.publicUpdatesChannelId);
+      channel.send({ embeds: [message] });
+
+      thread.client.emit("activity", maker, points);
+    } else {
+      console.error("maker not found");
     }
-  }
-
-  if (newlyCreated === true) {
-    thread.client.emit("activity", maker, makerPoints);
-
-    message
-      .setTitle("🧵 new thread")
-      .setDescription(`${makerRole} *${maker}* created *${thread.name}* thread in *${thread.parent.name}*`)
-      .addFields({ name: "promotion points", value: `${makerPoints} ⭐`, inline: true })
-      .addFields({ name: "to", value: `${maker}`, inline: true })
-      .setThumbnail(threadOwner.guildMember.displayAvatarURL({ dynamic: true }))
-      .setTimestamp()
-      .setColor(makerRole.color);
-
-    channel.send({ embeds: [message] });
   }
 };
 

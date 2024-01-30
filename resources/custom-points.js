@@ -3,7 +3,6 @@ import { globalPoints } from "../events/ready.js";
 const customPoints = {
   guildMemberAdd: 1000,
   guildMemberRemove: -1000,
-  start: 10,
   interactionCreate: 2,
   inviteCreate: 10,
   messageCreate: 1,

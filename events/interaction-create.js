@@ -5,7 +5,6 @@ import { chartPromotionPoints } from "../commands/chart-promotion-points.js";
 import { chartReputationPoints } from "../commands/chart-reputation-points.js";
 import { checkMembers } from "../commands/check-members.js";
 import { clear } from "../commands/clear.js";
-import { downgrade } from "../commands/downgrade.js";
 import { giveReputationPoint } from "../commands/give-reputation-point.js";
 import { rollDice } from "../commands/roll-dice.js";
 import { save } from "../commands/save.js";
@@ -66,8 +65,6 @@ const interactionCreate = async (interaction) => {
       checkMembers(interaction);
     } else if (interaction.commandName === "clear") {
       clear(interaction);
-    } else if (interaction.commandName === "downgrade") {
-      downgrade(interaction);
     } else if (interaction.commandName === "give-reputation-point") {
       giveReputationPoint(interaction);
     } else if (interaction.commandName === "roll-dice") {

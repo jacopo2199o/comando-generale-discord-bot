@@ -9,7 +9,7 @@ let dropPromotionPointsCounter = 0;
  * @param { import("discord.js").Message } message
  */
 const messageCreate = async (message) => {
-  if (!message.author.bot && message.channel.type !== "dm") {
+  if (!message.author.bot) {
     const channelPublic = message.guild.channels.cache.find((channel) => channel.name === customChannels.public)
       || message.guild.channels.cache.get(message.guild.publicUpdatesChannelId);
     const embedMessage = new EmbedBuilder();
@@ -17,6 +17,8 @@ const messageCreate = async (message) => {
 
     let makerPoints = undefined;
     let makerRole = undefined;
+
+    await message.fetch();
 
     if (maker !== undefined) {
       makerPoints = getCalculatedPoints(

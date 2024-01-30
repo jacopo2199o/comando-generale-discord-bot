@@ -2,6 +2,7 @@ import { EmbedBuilder } from "discord.js";
 import { customChannels } from "../resources/custom-channels.js";
 import { customPoints } from "../resources/custom-points.js";
 import { getCustomRole } from "../resources/custom-roles.js";
+import { removeMember } from "../resources/general-utilities.js";
 import { globalPoints, reputationPoints } from "./ready.js";
 
 /**
@@ -15,20 +16,19 @@ const guildMemberRemove = async (oldMember) => {
     || getCustomRole(oldMember.guild.members.cache.get(oldMember.id))
     || "n.a.";
   const message = new EmbedBuilder();
-  const penaltyPoints = Math.round(customPoints.guildMemberRemove / oldMember.guild.memberCount);
+  const pointsPenalty = Math.round(customPoints.guildMemberRemove / oldMember.guild.memberCount);
   const roleComandoGenerale = oldMember.roles.cache.find((role) => role.name === "compagnia comando generale");
+
+  removeMember(oldMember);
 
   if (gaveToId !== "") {
     reputationPoints[oldMember.guild.id][gaveToId].points = -1;
   }
 
-  delete globalPoints[oldMember.guild.id][oldMember.id];
-  delete reputationPoints[oldMember.guild.id][oldMember.id];
-
   for (const memberId in globalPoints[oldMember.guild.id]) {
     const member = oldMember.guild.members.cache.get(memberId);
 
-    oldMember.client.emit("activity", member, penaltyPoints);
+    oldMember.client.emit("activity", member, pointsPenalty);
   }
 
   if (oldMemberRole !== undefined) {
@@ -37,7 +37,7 @@ const guildMemberRemove = async (oldMember) => {
         .setTitle("🍂 member lost")
         .setDescription(`${oldMemberRole} *${oldMember.displayName}* left *comando generale*`)
         .addFields({ name: "notes", value: `he had *${roleComandoGenerale}* role, remove him from alliance too`, inline: true })
-        .addFields({ name: "promotion points", value: `${penaltyPoints} ⭐`, inline: true })
+        .addFields({ name: "promotion points", value: `${pointsPenalty} ⭐`, inline: true })
         .addFields({ name: "to", value: `${oldMember.guild.roles.everyone}`, inline: true })
         .setThumbnail(oldMember.user.displayAvatarURL({ dynamic: true }))
         .setTimestamp()
@@ -46,7 +46,7 @@ const guildMemberRemove = async (oldMember) => {
       message
         .setTitle("🍂 member lost")
         .setDescription(`${oldMemberRole} *${oldMember.displayName}* left *comando generale*`)
-        .addFields({ name: "promotion points", value: `${penaltyPoints} ⭐`, inline: true })
+        .addFields({ name: "promotion points", value: `${pointsPenalty} ⭐`, inline: true })
         .addFields({ name: "to", value: `${oldMember.guild.roles.everyone}`, inline: true })
         .setThumbnail(oldMember.user.displayAvatarURL({ dynamic: true }))
         .setTimestamp()
@@ -56,7 +56,7 @@ const guildMemberRemove = async (oldMember) => {
     message
       .setTitle("🍂 member lost")
       .setDescription(`*${oldMember.displayName}* left *comando generale*\n`)
-      .addFields({ name: "promotion points", value: `${penaltyPoints} ⭐`, inline: true })
+      .addFields({ name: "promotion points", value: `${pointsPenalty} ⭐`, inline: true })
       .addFields({ name: "to", value: `${oldMember.guild.roles.everyone}`, inline: true })
       .setThumbnail(oldMember.user.displayAvatarURL({ dynamic: true }))
       .setTimestamp()
