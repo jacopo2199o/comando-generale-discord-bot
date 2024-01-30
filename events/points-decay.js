@@ -48,7 +48,7 @@ const pointsDecay = async (guild, points) => {
         } else {
           globalPoints[guild.id][member.id] += points;
         }
-      } else {
+      } else if (member.user.bot === false) {
         addCustomBaseRoles(member);
         console.error(`member ${memberId} has no custom roles: added base ones`);
       }
