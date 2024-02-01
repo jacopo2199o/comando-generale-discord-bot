@@ -69,9 +69,9 @@ const messageReactionAdd = async (reaction, user) => {
     channel.send({ embeds: [message] });
   }
 
-  const validChannel = reaction.message.guild.channels.cache.find((channel) => channel.name === "☕bar-garibaldi");
+  const isValidChannel = reaction.message.guild.channels.cache.find((channel) => channel.name === "☕bar-garibaldi");
   
-  if (reaction.message.channelId === validChannel.id) {
+  if (reaction.message.channelId === isValidChannel.id) {
     if (reaction.emoji.name === "☕") {
       const message = new EmbedBuilder();
       message.setDescription(`🧸 ${makerRole} *${maker}* offered a ${reaction.emoji} coffe to ${takerRole} *${taker}* in *${reaction.message.channel.name}*`);

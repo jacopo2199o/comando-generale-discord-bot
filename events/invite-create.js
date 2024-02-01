@@ -9,8 +9,9 @@ import { referrals, reputationPoints } from "./ready.js";
  */
 const inviteCreate = async (invite) => {
   referrals[invite.code] = invite.uses;
-  const members = await invite.guild.members.fetch();
-  const maker = members.get(invite.inviter.id);
+  //const members = await invite.guild.members.fetch();
+  //const maker = members.get(invite.inviter.id);
+  const maker = invite.guild.members.cache.get(invite.inviter.id);
 
   if (maker === undefined) {
     return console.error(maker);

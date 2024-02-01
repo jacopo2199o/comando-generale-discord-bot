@@ -7,6 +7,8 @@ import { getCustomRole } from "../resources/custom-roles.js";
  * @param {import("discord.js").Interaction} interaction 
  */
 const rollDice = async (interaction) => {
+  await interaction.deferReply();
+
   const roll = () => {
     let result = Math.random() * 10;
 
@@ -18,26 +20,20 @@ const rollDice = async (interaction) => {
   };
 
   const maker = interaction.member;
-  const message = new EmbedBuilder();
 
-  let makerPoints = undefined;
-  let makerRole = undefined;
-  let result = roll();
-
-  if (maker !== undefined) {
-    makerPoints = getCalculatedPoints(customPoints.interactionCreate, reputationPoints[maker.guild.id][maker.id].points);
-    makerRole = getCustomRole(maker);
+  if (maker === undefined) {
+    return console.error(maker);
   }
 
-  await interaction.deferReply();
-
-  message
-    .setDescription(`${makerRole} *${maker}* rolled a dice`)
-    .addFields({ name: "result", value: `${result} 🎲`, inline: true })
-    .setTimestamp()
-    .setFooter({ text: `${makerPoints} ⭐ to ${maker.displayName}`, iconURL: `${maker.displayAvatarURL()}` })
-    .setColor(makerRole.color);
-
+  const points = getCalculatedPoints(customPoints.interactionCreate, reputationPoints[maker.guild.id][maker.id].points);
+  const role = getCustomRole(maker);
+  const result = roll();
+  const message = new EmbedBuilder();
+  message.setDescription(`${role} *${maker}* rolled a dice`);
+  message.addFields({ name: "result", value: `${result} 🎲`});
+  message.setTimestamp();
+  message.setFooter({ text: `${points} ⭐ to ${maker.displayName}`, iconURL: `${maker.displayAvatarURL()}` });
+  message.setColor(role.color);
   await interaction.editReply({ embeds: [message] });
 };
 

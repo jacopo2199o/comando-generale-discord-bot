@@ -28,17 +28,17 @@ const pointsDecay = async (guild, points) => {
             let downgradeResult = downgrade(member);
 
             if (downgradeResult !== undefined) {
-              const messagePublic = new EmbedBuilder();
-              messagePublic.setTitle("🔰 downgrade");
-              messagePublic.setDescription(`*${member}* lost ${customPoints.promotionPoints} *promotion points*`);
-              messagePublic.addFields({ name: "old role", value: `${downgradeResult.oldRole}`, inline: true });
-              messagePublic.addFields({ name: "new role", value: `${downgradeResult.newRole}`, inline: true });
-              messagePublic.setThumbnail(member.displayAvatarURL({ dynamic: true }));
-              messagePublic.setTimestamp();
-              messagePublic.setColor("DarkRed");
-              const channelActivity = guild.channels.cache.find((channel) => channel.name === customChannels.activity)
+              const message = new EmbedBuilder();
+              message.setTitle("🔰 downgrade");
+              message.setDescription(`*${member}* lost ${customPoints.promotionPoints} *promotion points*`);
+              message.addFields({ name: "old role", value: `${downgradeResult.oldRole}`, inline: true });
+              message.addFields({ name: "new role", value: `${downgradeResult.newRole}`, inline: true });
+              message.setThumbnail(member.displayAvatarURL({ dynamic: true }));
+              message.setTimestamp();
+              message.setColor("DarkRed");
+              const channel = guild.channels.cache.find((channel) => channel.name === customChannels.activity)
                 || guild.channels.cache.get(guild.publicUpdatesChannelId);
-              channelActivity.send({ embeds: [messagePublic] });
+              channel.send({ embeds: [message] });
             }
           } else {
             globalPoints[guild.id][member.id] = customPoints.promotionPoints + pointsRing;
@@ -53,17 +53,17 @@ const pointsDecay = async (guild, points) => {
     }
   });
 
-  const messageActivity = new EmbedBuilder();
-  messageActivity.setTitle("🕯 points decay");
-  messageActivity.setDescription("hourly points decay balancing");
-  messageActivity.addFields({ name: "promotion points", value: `${points} ⭐`, inline: true });
-  messageActivity.addFields({ name: "to", value: `${guild.roles.everyone}`, inline: true });
-  messageActivity.setThumbnail(guild.client.user.displayAvatarURL({ dynamic: true }));
-  messageActivity.setTimestamp();
-  messageActivity.setColor("DarkRed");
-  const channelPublic = guild.channels.cache.find((channel) => channel.name === customChannels.public)
+  const message = new EmbedBuilder();
+  message.setTitle("🕯 points decay");
+  message.setDescription("hourly points decay balancing");
+  message.addFields({ name: "promotion points", value: `${points} ⭐`, inline: true });
+  message.addFields({ name: "to", value: `${guild.roles.everyone}`, inline: true });
+  message.setThumbnail(guild.client.user.displayAvatarURL({ dynamic: true }));
+  message.setTimestamp();
+  message.setColor("DarkRed");
+  const channel = guild.channels.cache.find((channel) => channel.name === customChannels.public)
     || guild.channels.cache.get(guild.publicUpdatesChannelId);
-  channelPublic.send({ embeds: [messageActivity] });
+  channel.send({ embeds: [message] });
 };
 
 export { pointsDecay };

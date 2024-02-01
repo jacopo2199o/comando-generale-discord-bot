@@ -94,7 +94,7 @@ const interactionCreate = async (interaction) => {
       channel.send({ embeds: [message] });
     }
   } else if (interaction.isButton()) {
-    if (interaction.component.customId === "take") {
+    if (interaction.component.customId === "takePromotionPoints") {
       takePromotionPoints(interaction);
     }
   }

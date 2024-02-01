@@ -10,11 +10,12 @@ let dropPromotionPointsCounter = 0;
  * @param { import("discord.js").Message } newMessage
  */
 const messageCreate = async (newMessage) => {
+  await newMessage.fetch();
+  
   if (newMessage.author.bot) {
     return;
   }
 
-  await newMessage.fetch();
   const maker = newMessage.guild.members.cache.get(newMessage.author.id);
 
   if (maker === undefined) {

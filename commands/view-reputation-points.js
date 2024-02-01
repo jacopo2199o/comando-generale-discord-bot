@@ -6,43 +6,42 @@ import { getCustomRole } from "../resources/custom-roles.js";
  * @param {import("discord.js").Interaction} interaction
  */
 const viewReputationPoints = async (interaction) => {
-  const embedMessage = new EmbedBuilder();
-  const guildMembers = await interaction.guild.members.fetch();
-  const userOption = interaction.options.getUser("member");
-
-  let target = undefined;
-  let targetRole = undefined;
-
-  if (userOption !== null) {
-    target = guildMembers.get(userOption.id);
-  } else {
-    target = guildMembers.get(interaction.member.id);
-  }
-
-  if (target !== undefined) {
-    targetRole = getCustomRole(target);
-  }
-
   await interaction.deferReply();
-
-  if (userOption !== null) {
-    embedMessage
-      .setTitle("🏵 reputation points")
-      .setDescription(`${targetRole} *${target}* have ${reputationPoints[target.guild.id][target.id].points} *reputation points*\n`)
-      .setThumbnail(target.displayAvatarURL({ dynamic: true }))
-      .setTimestamp()
-      .setColor(targetRole.color);
-
-    await interaction.editReply({ embeds: [embedMessage] });
+  const user = interaction.options.getUser("member");
+  let member = undefined;
+  
+  if (user !== null) {
+    member = interaction.guild.members.cache.get(user.id);
   } else {
-    embedMessage
-      .setTitle("🏵 reputation points")
-      .setDescription(`you have ${reputationPoints[target.guild.id][target.id].points} *reputation points*\n`)
-      .setThumbnail(target.displayAvatarURL({ dynamic: true }))
-      .setTimestamp()
-      .setColor(targetRole.color);
+    member = interaction.guild.members.cache.get(interaction.member.id);
+  }
 
-    await interaction.editReply({ embeds: [embedMessage] });
+  if (member === undefined) {
+    return console.error(member);
+  }
+
+  const role = getCustomRole(member);
+
+  if (role === undefined) {
+    return console.error(role);
+  }
+
+  if (user !== null) {
+    const message = new EmbedBuilder();
+    message.setTitle("🏵 reputation points");
+    message.setDescription(`${role} *${member}* have ${reputationPoints[member.guild.id][member.id].points} *reputation points*`);
+    message.setThumbnail(member.displayAvatarURL({ dynamic: true }));
+    message.setTimestamp();
+    message.setColor(role.color);
+    await interaction.editReply({ embeds: [message] });
+  } else {
+    const message = new EmbedBuilder();
+    message.setTitle("🏵 reputation points");
+    message.setDescription(`you have ${reputationPoints[member.guild.id][member.id].points} *reputation points*`);
+    message.setThumbnail(member.displayAvatarURL({ dynamic: true }));
+    message.setTimestamp();
+    message.setColor(role.color);
+    await interaction.editReply({ embeds: [message] });
   }
 };
 

@@ -6,7 +6,7 @@ import { drops } from "../resources/custom-points.js";
  */
 const takePromotionPoints = async (interaction) => {
   const button = new ButtonBuilder();
-  button.setCustomId("taken");
+  button.setCustomId("takenPromotionPoints");
   button.setLabel("taken");
   button.setStyle(ButtonStyle.Danger);
   button.setDisabled(true);

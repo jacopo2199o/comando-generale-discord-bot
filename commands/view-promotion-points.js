@@ -7,46 +7,44 @@ import { getCustomRole } from "../resources/custom-roles.js";
  * @param {import("discord.js").Interaction} interaction
  */
 const viewPromotionPoints = async (interaction) => {
-  const message = new EmbedBuilder();
-  const members = await interaction.guild.members.fetch();
-  const userOption = interaction.options.getUser("member");
+  await interaction.deferReply();
+  const user = interaction.options.getUser("member");
+  let member = undefined;
 
-  let target = undefined;
-  let targetLevel = undefined;
-  let targetPoints = undefined;
-  let targetRole = undefined;
-
-  if (userOption !== null) {
-    target = members.get(userOption.id);
+  if (user !== null) {
+    member = interaction.guild.members.cache.get(user.id);
   } else {
-    target = members.get(interaction.member.id);
+    member = interaction.guild.members.cache.get(interaction.member.id);
   }
 
-  if (target === undefined) { return; }
+  if (member === undefined) {
+    return console.error(member);
+  }
 
-  targetLevel = getLevel(target);
-  targetPoints = globalPoints[target.guild.id][target.id] % customPoints.promotionPoints;
-  targetRole = getCustomRole(target);
+  const role = getCustomRole(member);
 
-  await interaction.deferReply();
+  if (role === undefined) {
+    return console.error(role);
+  }
 
-  if (userOption !== null) {
-    message
-      .setTitle("⭐ promotion points")
-      .setDescription(`${targetRole} *${target}* have ${targetPoints}/${customPoints.promotionPoints} (lvl. ${targetLevel}) *promotion points*`)
-      .setThumbnail(target.displayAvatarURL({ dynamic: true }))
-      .setTimestamp()
-      .setColor(targetRole.color);
+  const level = getLevel(member);
+  const points = globalPoints[member.guild.id][member.id] % customPoints.promotionPoints;
 
+  if (user !== null) {
+    const message = new EmbedBuilder();
+    message.setTitle("⭐ promotion points");
+    message.setDescription(`${role} *${member}* have ${points}/${customPoints.promotionPoints} (lvl. ${level}) *promotion points*`);
+    message.setThumbnail(member.displayAvatarURL({ dynamic: true }));
+    message.setTimestamp();
+    message.setColor(role.color);
     await interaction.editReply({ embeds: [message] });
   } else {
-    message
-      .setTitle("⭐ promotion points")
-      .setDescription(`you have ${targetPoints}/${customPoints.promotionPoints} *promotion points*`)
-      .setThumbnail(interaction.member.displayAvatarURL({ dynamic: true }))
-      .setTimestamp()
-      .setColor(targetRole.color);
-
+    const message = new EmbedBuilder();
+    message.setTitle("⭐ promotion points");
+    message.setDescription(`you have ${points}/${customPoints.promotionPoints} *promotion points*`);
+    message.setThumbnail(interaction.member.displayAvatarURL({ dynamic: true }));
+    message.setTimestamp();
+    message.setColor(role.color);
     await interaction.editReply({ embeds: [message] });
   }
 };

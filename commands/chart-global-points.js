@@ -7,16 +7,16 @@ import { getCustomRole } from "../resources/custom-roles.js";
  * @param {import("discord.js").Interaction} interaction
  */
 const chartGlobalPoints = async (interaction) => {
-  const chart = [];
-  const message = new EmbedBuilder();
-
-  let chartRow = "";
-  let sortedChart = [];
-
   await interaction.deferReply();
+  const chart = [];
 
   for (const memberId in globalPoints[interaction.guild.id]) {
     const member = interaction.guild.members.cache.get(memberId);
+
+    if (member === undefined) {
+      return console.error(member);
+    }
+
     const level = Math.floor(globalPoints[member.guild.id][member.id] / customPoints.promotionPoints) + 1;
 
     if (interaction.guild.ownerId !== memberId) {
@@ -29,26 +29,18 @@ const chartGlobalPoints = async (interaction) => {
     }
   }
 
-  sortedChart = [...chart]
-    .sort((a, b) => b.points - a.points)
-    .slice(0, 10);
-
-  sortedChart.forEach(
-    (element, index) => {
-      chartRow += `${index + 1}: ${element.role} *${element.member}* ${element.points} (lvl. ${element.level}) ⭐\n`;
-    }
-  );
-
-  message
-    .setTitle("🏆⭐ global points chart")
-    .setDescription(`registered activity since a user become a member\n\n${chartRow}`)
-    .setFooter({
-      text: `${interaction.member.displayName}`,
-      iconURL: `${interaction.member.displayAvatarURL()}`
-    })
-    .setTimestamp()
-    .setColor("DarkGreen");
-
+  chart.sort((a, b) => b.points - a.points);
+  const sortedChart = chart.slice(0, 10);
+  let chartRow = "";
+  sortedChart.forEach((element, index) => {
+    chartRow += `${index + 1}: ${element.role} *${element.member}* ${element.points} (lvl. ${element.level}) ⭐\n`;
+  });
+  const message = new EmbedBuilder();
+  message.setTitle("🏆⭐ global points chart");
+  message.setDescription(`registered activity since a user become a member\n\n${chartRow}`);
+  message.setFooter({ text: `${interaction.member.displayName}`, iconURL: `${interaction.member.displayAvatarURL()}` });
+  message.setTimestamp();
+  message.setColor("DarkGreen");
   await interaction.editReply({ embeds: [message] });
 };
 

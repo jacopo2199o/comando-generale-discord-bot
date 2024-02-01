@@ -13,21 +13,22 @@ const messageDelete = async (deletedMessage) => {
   if (audits === undefined) {
     return console.error(audits);
   }
-
+  
   const audit = audits.entries.first();
-
+  
   if (audit === undefined) {
     return console.error(audit);
   }
-
-  const author = deletedMessage.guild.members.cache.get(audit.targetId);
+  
+  const author = deletedMessage.author;
   const executor = deletedMessage.guild.members.cache.get(audit.executorId);
+  console.log("controlla chi elimina il messaggio ", executor);
   
   if (author === undefined || executor === undefined) {
     return console.error(author, executor);
   }
 
-  if (author.user.bot === true || executor.user.bot === true) {
+  if (author.bot === true || executor.user.bot === true) {
     return;
   }
 
