@@ -18,7 +18,6 @@ const ready = async (client) => {
     // global points
     if (fs.existsSync(`./resources/database/points-${guild.id}.json`)) {
       globalPoints[guild.id] = await loadFile(`./resources/database/points-${guild.id}.json`);
-
       members.forEach((member) => {
         if (globalPoints[guild.id][member.id] === undefined) {
           globalPoints[guild.id][member.id] = 0;
@@ -34,7 +33,6 @@ const ready = async (client) => {
       await saveFile(`./resources/database/points-${guild.id}.json`, globalPoints[guild.id]);
     } else {
       globalPoints[guild.id] = {};
-
       members.forEach((member) => {
         globalPoints[guild.id][member.id] = 0;
       });
@@ -45,7 +43,6 @@ const ready = async (client) => {
     // reputation points
     if (fs.existsSync(`./resources/database/reputation-${guild.id}.json`)) {
       reputationPoints[guild.id] = await loadFile(`./resources/database/reputation-${guild.id}.json`);
-
       members.forEach((member) => {
         if (reputationPoints[guild.id][member.id] === undefined) {
           reputationPoints[guild.id][member.id] = { points: 0, gaveTo: "" };
@@ -61,7 +58,6 @@ const ready = async (client) => {
       await saveFile(`./resources/database/reputation-${guild.id}.json`, reputationPoints[guild.id]);
     } else {
       reputationPoints[guild.id] = {};
-
       members.forEach((member) => {
         reputationPoints[guild.id][member.id] = { points: 0, gaveTo: "" };
       });
@@ -72,7 +68,6 @@ const ready = async (client) => {
     // seniority
     if (fs.existsSync(`./resources/database/seniority-${guild.id}.json`)) {
       seniority[guild.id] = await loadFile(`./resources/database/seniority-${guild.id}.json`);
-
       members.forEach((member) => {
         if (seniority[guild.id][member.id] === undefined) {
           seniority[guild.id][member.id] = Math.round((new Date().getTime() - member.joinedAt.getTime()) / (1000 * 60 * 60 * 24));
@@ -90,21 +85,18 @@ const ready = async (client) => {
       //await saveFile(`./resources/database/points-${guild.id}.json`, globalPoints[guild.id]);
     } else {
       seniority[guild.id] = {};
-
       members.forEach((member) => {
         seniority[guild.id][member.id] = Math.round((new Date().getTime() - member.joinedAt.getTime()) / (1000 * 60 * 60 * 24));
       });
-
+      
       await saveFile(`./resources/database/seniority-${guild.id}.json`, seniority[guild.id]);
     }
 
     // referrals
     const invites = await guild.invites.fetch();
-
     invites.forEach((invite) => {
       referrals[invite.code] = invite.uses;
     });
-
     console.log(`legged in guild ${guild.name}`);
   }));
 
@@ -115,11 +107,9 @@ const ready = async (client) => {
 
     if (startHour !== actualHour) {
       console.log("a new hour started");
-
       client.guilds.cache.forEach((guild) => {
         client.emit("pointsDecay", guild, -1);
       });
-
       startHour = actualHour;
     }
   }, generalSettings.hourCheckInterval);
@@ -131,8 +121,7 @@ const ready = async (client) => {
     }));
   }, generalSettings.saveInterval);
 
-  client.user.setPresence({ activities: [{ name: "https://discord.gg/F7UTwWtwTV", type: ActivityType.Watching, }] });
-
+  client.user.setPresence({ activities: [{ name: "https://discord.gg/F7UTwWtwTV", type: ActivityType.Watching, }] }); 
   console.log(`bot ready as ${client.user.username}`);
 };
 

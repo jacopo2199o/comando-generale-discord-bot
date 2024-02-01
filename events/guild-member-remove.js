@@ -13,7 +13,6 @@ const guildMemberRemove = async (oldMember) => {
     || oldMember.guild.channels.cache.get(oldMember.guild.publicUpdatesChannelId);
   const gaveToId = reputationPoints[oldMember.guild.id][oldMember.id].gaveTo;
   const oldMemberRole = getCustomRole(oldMember)
-    || getCustomRole(oldMember.guild.members.cache.get(oldMember.id))
     || "n.a.";
   const message = new EmbedBuilder();
   const pointsPenalty = Math.round(customPoints.guildMemberRemove / oldMember.guild.memberCount);
@@ -28,7 +27,9 @@ const guildMemberRemove = async (oldMember) => {
   for (const memberId in globalPoints[oldMember.guild.id]) {
     const member = oldMember.guild.members.cache.get(memberId);
 
-    oldMember.client.emit("activity", member, pointsPenalty);
+    if (member.user.bot === false) {
+      oldMember.client.emit("activity", member, pointsPenalty);
+    }
   }
 
   if (oldMemberRole !== undefined) {

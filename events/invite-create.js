@@ -8,41 +8,33 @@ import { referrals, reputationPoints } from "./ready.js";
  * @param { import("discord.js").Invite } invite
  */
 const inviteCreate = async (invite) => {
-  const channel = invite.guild.channels.cache.find((channel) => channel.name === customChannels.activity)
-    || invite.guild.channels.cache.get(invite.guild.publicUpdatesChannelId);
-  const embedMessage = new EmbedBuilder();
+  referrals[invite.code] = invite.uses;
   const members = await invite.guild.members.fetch();
+  const maker = members.get(invite.inviter.id);
 
-  let maker = undefined;
-  let makerPoints = undefined;
-  let makerRole = undefined;
-
-  if (members !== undefined) {
-    maker = members.get(invite.inviter.id);
-
-    if (maker !== undefined) {
-      makerPoints = getCalculatedPoints(
-        customPoints.inviteCreate,
-        reputationPoints[maker.guild.id][maker.id].points
-      );
-      makerRole = getCustomRole(maker);
-    }
+  if (maker === undefined) {
+    return console.error(maker);
   }
 
-  referrals[invite.code] = invite.uses;
+  const makerRole = getCustomRole(maker);
 
+  if (makerRole === undefined) {
+    return console.error(makerRole);
+  }
+
+  const makerPoints = getCalculatedPoints(customPoints.inviteCreate, reputationPoints[maker.guild.id][maker.id].points);
   invite.client.emit("activity", maker, makerPoints);
-
-  embedMessage
-    .setTitle("🔗 new invite")
-    .setDescription(`${makerRole} *${maker}* created an invite`)
-    .addFields({ name: "promotion points", value: `${makerPoints} ⭐`, inline: true })
-    .addFields({ name: "to", value: `${maker}`, inline: true })
-    .setThumbnail(maker.displayAvatarURL({ dynamic: true }))
-    .setTimestamp()
-    .setColor(makerRole.color);
-
-  channel.send({ embeds: [embedMessage] });
+  const message = new EmbedBuilder();
+  message.setTitle("🔗 new invite");
+  message.setDescription(`${makerRole} *${maker}* created an invite`);
+  message.addFields({ name: "promotion points", value: `${makerPoints} ⭐`, inline: true });
+  message.addFields({ name: "to", value: `${maker}`, inline: true });
+  message.setThumbnail(maker.displayAvatarURL({ dynamic: true }));
+  message.setTimestamp();
+  message.setColor(makerRole.color);
+  const channel = invite.guild.channels.cache.find((channel) => channel.name === customChannels.activity)
+    || invite.guild.channels.cache.get(invite.guild.publicUpdatesChannelId);
+  channel.send({ embeds: [message] });
 };
 
 export { inviteCreate };

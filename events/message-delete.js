@@ -5,72 +5,59 @@ import { getCustomRole } from "../resources/custom-roles.js";
 import { reputationPoints } from "./ready.js";
 
 /**
- * @param { import("discord.js").Message } message
+ * @param { import("discord.js").Message } deletedMessage
 */
-const messageDelete = async (message) => {
-  const auditLog = await message.guild.fetchAuditLogs({ type: AuditLogEvent.MessageDelete, limit: 1 });
-  const channel = message.guild.channels.cache.find((channel) => channel.name === customChannels.private)
-    || message.guild.channels.cache.get(message.guild.publicUpdatesChannelId);
-  const embedMessage = new EmbedBuilder();
-  const content = message.content || "n.a.";
-  const cachedMessage = message.channel.messages.cache.get(message.id);
+const messageDelete = async (deletedMessage) => {
+  const audits = await deletedMessage.guild.fetchAuditLogs({ type: AuditLogEvent.MessageDelete, limit: 1 });
+  
+  if (audits === undefined) {
+    return console.error(audits);
+  }
 
-  let author = undefined;
-  let authorPoints = undefined;
-  let authorRole = undefined;
-  let entry = undefined;
-  let executor = undefined;
-  let executorPoints = undefined;
-  let executorRole = undefined;
+  const audit = audits.entries.first();
 
-  if (auditLog !== undefined) {
-    entry = auditLog.entries.first();
+  if (audit === undefined) {
+    return console.error(audit);
+  }
 
-    console.log("fix this entry author ", cachedMessage);
+  const author = deletedMessage.guild.members.cache.get(audit.targetId);
+  const executor = deletedMessage.guild.members.cache.get(audit.executorId);
+  
+  if (author === undefined || executor === undefined) {
+    return console.error(author, executor);
+  }
 
-    if (entry !== undefined) {
-      author = message.guild.members.cache.get(entry.targetId);
-      executor = message.guild.members.cache.get(entry.executorId);
-
-      if (author !== undefined && author.user.bot !== false) {
-        authorRole = getCustomRole(author);
-        authorPoints = getCalculatedPoints(customPoints.messageDelete.author, reputationPoints[author.guild.id][author.id].points);
-      } else {
-        return;
-      }
-
-      if (executor !== undefined && executor.user.bot !== false) {
-        executorRole = getCustomRole(executor);
-        executorPoints = getCalculatedPoints(
-          customPoints.messageDelete.executor,
-          reputationPoints[executor.guild.id][executor.id].points
-        );
-      } else {
-        return;
-      }
-    }
-  } else {
+  if (author.user.bot === true || executor.user.bot === true) {
     return;
   }
 
-  if (executor.id !== author.id && author.user.bot === false) {
-    message.client.emit("activity", author, authorPoints);
-    message.client.emit("activity", executor, executorPoints);
-
-    embedMessage
-      .setTitle("🛡️ moderation")
-      .setDescription(`${executorRole} *${executor.displayName}* deleted a message in *${message.channel.name}*\n`)
-      .addFields({ name: "author", value: `${authorRole} *${author}*`, inline: false })
-      .addFields({ name: "content", value: `${content}`, inline: false })
-      .addFields({ name: "promotion points", value: `${authorPoints} ⭐`, inline: true })
-      .addFields({ name: "to", value: `${author} ⭐`, inline: true })
-      .setThumbnail(author.displayAvatarURL({ dynamic: true }))
-      .setFooter({ text: `${executorPoints} ⭐ to ${executor.displayName}`, iconURL: `${executor.displayAvatarURL()}` })
-      .setTimestamp()
-      .setColor("DarkBlue");
-
-    channel.send({ embeds: [embedMessage] });
+  if (author.id === executor.id) {
+    return;
   }
+  
+  const content = deletedMessage.content || "n.a.";
+  const cachedMessage = deletedMessage.channel.messages.cache.get(deletedMessage.id);
+  console.log("try to find this deleted cached message ", cachedMessage);
+  const authorRole = getCustomRole(author) || "n.a.";
+  const authorPoints = getCalculatedPoints(customPoints.messageDelete.author, reputationPoints[author.guild.id][author.id].points);
+  deletedMessage.client.emit("activity", author, authorPoints);
+  const executorRole = getCustomRole(executor) || "n.a.";
+  const executorPoints = getCalculatedPoints(customPoints.messageDelete.executor, reputationPoints[executor.guild.id][executor.id].points);
+  deletedMessage.client.emit("activity", executor, executorPoints);
+  const message = new EmbedBuilder();
+  message.setTitle("🛡️ moderation");
+  message.setDescription(`${executorRole} *${executor.displayName}* deleted a message in *${deletedMessage.channel.name}*`);
+  message.addFields({ name: "author", value: `${authorRole} *${author}*`, inline: false });
+  message.addFields({ name: "content", value: `${content}`, inline: false });
+  message.addFields({ name: "promotion points", value: `${authorPoints} ⭐`, inline: true });
+  message.addFields({ name: "to", value: `${author} ⭐`, inline: true });
+  message.setThumbnail(author.displayAvatarURL({ dynamic: true }));
+  message.setFooter({ text: `${executorPoints} ⭐ to ${executor.displayName}`, iconURL: `${executor.displayAvatarURL()}` });
+  message.setTimestamp();
+  message.setColor("DarkBlue");
+  const channel = deletedMessage.guild.channels.cache.find((channel) => channel.name === customChannels.private)
+    || deletedMessage.guild.channels.cache.get(deletedMessage.guild.publicUpdatesChannelId);
+  channel.send({ embeds: [message] });
 };
 
 export { messageDelete };

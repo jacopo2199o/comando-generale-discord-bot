@@ -2,23 +2,22 @@ import { EmbedBuilder } from "discord.js";
 import { customChannels } from "../resources/custom-channels.js";
 import { customPoints } from "../resources/custom-points.js";
 import { addCustomBaseRoles, downgrade, getCustomRole } from "../resources/custom-roles.js";
-import { removeMember } from "../resources/general-utilities.js";
 import { globalPoints } from "./ready.js";
 
 /**
  * @param {import("discord.js").Guild} guild
  */
 const pointsDecay = async (guild, points) => {
-  for (const memberId in globalPoints[guild.id]) {
-    const member = guild.members.cache.get(memberId);
-
-    if (member !== undefined) {
-      const level = Math.floor(globalPoints[guild.id][member.id] / customPoints.promotionPoints) + 1;
-      const pointsRing = (globalPoints[guild.id][member.id] % customPoints.promotionPoints) + points;
+  guild.members.cache.forEach((member) => {
+    if (member.user.bot === false) {
       const role = getCustomRole(member);
 
       if (role !== undefined) {
+        const pointsRing = (globalPoints[guild.id][member.id] % customPoints.promotionPoints) + points;
+
         if (pointsRing < 0) {
+          const level = Math.floor(globalPoints[guild.id][member.id] / customPoints.promotionPoints) + 1;
+
           if (level < 24) {
             if (role.name !== "membro") {
               globalPoints[guild.id][member.id] = customPoints.promotionPoints + pointsRing;
@@ -37,7 +36,6 @@ const pointsDecay = async (guild, points) => {
               messagePublic.setThumbnail(member.displayAvatarURL({ dynamic: true }));
               messagePublic.setTimestamp();
               messagePublic.setColor("DarkRed");
-
               const channelActivity = guild.channels.cache.find((channel) => channel.name === customChannels.activity)
                 || guild.channels.cache.get(guild.publicUpdatesChannelId);
               channelActivity.send({ embeds: [messagePublic] });
@@ -48,15 +46,12 @@ const pointsDecay = async (guild, points) => {
         } else {
           globalPoints[guild.id][member.id] += points;
         }
-      } else if (member.user.bot === false) {
+      } else {
         addCustomBaseRoles(member);
-        console.error(`member ${memberId} has no custom roles: added base ones`);
+        console.error(`member ${member.id} has no custom roles: added base ones`);
       }
-    } else {
-      removeMember(member);
-      console.error(`member ${memberId} not found in cache: removed`);
     }
-  }
+  });
 
   const messageActivity = new EmbedBuilder();
   messageActivity.setTitle("🕯 points decay");
@@ -66,7 +61,6 @@ const pointsDecay = async (guild, points) => {
   messageActivity.setThumbnail(guild.client.user.displayAvatarURL({ dynamic: true }));
   messageActivity.setTimestamp();
   messageActivity.setColor("DarkRed");
-
   const channelPublic = guild.channels.cache.find((channel) => channel.name === customChannels.public)
     || guild.channels.cache.get(guild.publicUpdatesChannelId);
   channelPublic.send({ embeds: [messageActivity] });

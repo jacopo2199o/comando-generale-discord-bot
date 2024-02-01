@@ -21,31 +21,27 @@ import { takePromotionPoints } from "./take-promotion-points.js";
  */
 const interactionCreate = async (interaction) => {
   if (interaction.guild === null) {
-    const inviteLink = "https://discord.com/api/oauth2/authorize?client_id=1149977789496311888&permissions=8&scope=bot";
-
+    const invite = "https://discord.com/api/oauth2/authorize?client_id=1149977789496311888&permissions=8&scope=bot";
     await interaction.deferReply();
-    await interaction.editReply(`my commands work only into servers - invite link: ${inviteLink}`);
+    await interaction.editReply(`my commands work only into servers - invite link: ${invite}`);
     return;
   }
 
   if (interaction.isChatInputCommand()) {
-    const channel = interaction.guild.channels.cache.find((channel) => channel.name === customChannels.public)
-      || interaction.guild.channels.cache.get(interaction.guild.publicUpdatesChannelId);
-    const message = new EmbedBuilder();
     const maker = interaction.member;
 
-    let channelName = undefined;
-    let isValidCommand = true;
-    let makerRole = undefined;
-    let makerPoints = undefined;
-
-    if (maker !== undefined) {
-      makerPoints = getCalculatedPoints(
-        customPoints.interactionCreate,
-        reputationPoints[maker.guild.id][maker.id].points
-      );
-      makerRole = getCustomRole(maker);
+    if (maker === undefined) {
+      return console.error(maker);
     }
+
+    const makerRole = getCustomRole(maker);
+
+    if (makerRole === undefined) {
+      return console.error(makerRole);
+    }
+
+    const makerPoints = getCalculatedPoints(customPoints.interactionCreate, reputationPoints[maker.guild.id][maker.id].points);
+    let channelName = undefined;
 
     if (interaction.channel.isThread()) {
       channelName = interaction.channel.parent.name;
@@ -53,13 +49,15 @@ const interactionCreate = async (interaction) => {
       channelName = interaction.channel.name;
     }
 
+    let isValidCommand = true;
+
     if (interaction.commandName === "about") {
       about(interaction);
     } else if (interaction.commandName === "chart-promotion-points") {
       chartPromotionPoints(interaction);
     } else if (interaction.commandName === "chart-reputation-points") {
       chartReputationPoints(interaction);
-    } else if (interaction.commandName === "chart-global-points"){
+    } else if (interaction.commandName === "chart-global-points") {
       chartGlobalPoints(interaction);
     } else if (interaction.commandName === "check-members") {
       checkMembers(interaction);
@@ -76,25 +74,23 @@ const interactionCreate = async (interaction) => {
     } else if (interaction.commandName === "view-reputation-points") {
       viewReputationPoints(interaction);
     } else {
-      isValidCommand = false;
-
       console.error(`no command matching ${interaction.commandName} was found`);
-
       interaction.reply({ content: `invalid command /${interaction.commandName}`, ephemeral: true });
+      isValidCommand = false;
     }
 
-    if (isValidCommand) {
+    if (isValidCommand === true) {
       interaction.client.emit("activity", interaction.member, makerPoints);
-
-      message
-        .setTitle("⚙️ command")
-        .setDescription(`${makerRole} *${interaction.member}* used */${interaction.commandName}* in *${channelName}*`)
-        .addFields({ name: "promotion points", value: `${makerPoints} ⭐`, inline: true })
-        .addFields({ name: "to", value: `${interaction.member}`, inline: true })
-        .setThumbnail(interaction.member.displayAvatarURL({ dynamic: true }))
-        .setTimestamp()
-        .setColor(makerRole.color);
-
+      const message = new EmbedBuilder();
+      message.setTitle("⚙️ command");
+      message.setDescription(`${makerRole} *${interaction.member}* used */${interaction.commandName}* in *${channelName}*`);
+      message.addFields({ name: "promotion points", value: `${makerPoints} ⭐`, inline: true });
+      message.addFields({ name: "to", value: `${interaction.member}`, inline: true });
+      message.setThumbnail(interaction.member.displayAvatarURL({ dynamic: true }));
+      message.setTimestamp();
+      message.setColor(makerRole.color);
+      const channel = interaction.guild.channels.cache.find((channel) => channel.name === customChannels.public)
+        || interaction.guild.channels.cache.get(interaction.guild.publicUpdatesChannelId);
       channel.send({ embeds: [message] });
     }
   } else if (interaction.isButton()) {

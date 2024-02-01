@@ -47,7 +47,7 @@ const guildMemberAdd = async (newMember) => {
     message
       .setTitle("🌱 new member")
       .setDescription(`*${newMember}*, joined *comando generale*`)
-      .addFields({ name: "inviter", value: `*${inviter}*`, inline: true })
+      .addFields({ name: "inviter", value: `${inviter}`, inline: true })
       .addFields({ name: "uses", value: `${inviteUses}`, inline: true })
       .setThumbnail(newMember.displayAvatarURL({ dynamic: true }))
       .setFooter({ text: `${inviterPoints} ⭐ to ${inviter.displayName}`, iconURL: `${inviter.displayAvatarURL()}` })

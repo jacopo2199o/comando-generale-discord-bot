@@ -102,17 +102,31 @@ const downgrade = (member) => {
 const getCustomRole = (member) => {
   let customRole = undefined;
 
-  if (member !== undefined) {
-    member.roles.cache.forEach((role) => {
-      const customRoleIndex = customRoles.findIndex((customRole) => customRole === role.name);
+  member.roles.cache.forEach((role) => {
+    const customRoleIndex = customRoles.findIndex((customRole) => customRole === role.name);
 
-      if (customRoleIndex !== -1) {
-        customRole = role;
-      }
-    });
-  }
+    if (customRoleIndex !== -1) {
+      customRole = role;
+    }
+  });
 
   return customRole;
+};
+
+/**
+ * @param {import("discord.js").Role} role
+ * @param {Boolean} role
+ * @returns {Boolean}
+ */
+const hasModerationRole = (role, isResponsabile) => {
+  if (role.name === "presidente"
+    || role.name === "ministro"
+    || role.name === "senatore"
+    || role.name === "governatore"
+    || isResponsabile === true) {
+    return true;
+  }
+  else { return false; }
 };
 
 /**
@@ -164,6 +178,7 @@ export {
   customRoles,
   downgrade,
   getCustomRole,
+  hasModerationRole,
   upgrade
 };
 

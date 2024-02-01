@@ -10,10 +10,8 @@ const takePromotionPoints = async (interaction) => {
   button.setLabel("taken");
   button.setStyle(ButtonStyle.Danger);
   button.setDisabled(true);
-  
   const actionRow = new ActionRowBuilder();
   actionRow.setComponents(button);
-  
   interaction.client.emit("activity", interaction.member, drops.promotionPoints);
   interaction.update({ content: `*${interaction.member}* took the drop`, components: [actionRow] });
 };

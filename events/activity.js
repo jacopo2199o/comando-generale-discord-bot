@@ -20,9 +20,8 @@ const activity = async (member, points) => {
   let downgradeResult = undefined;
   let upgradeResult = undefined;
 
-  globalPoints[member.guild.id][member.id] += points;
 
-  if (member.id === member.guild.ownerId) return;
+  globalPoints[member.guild.id][member.id] += points;
 
   if (pointsRing < 0) {
     if (memberLevel < 24) {
