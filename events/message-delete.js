@@ -20,7 +20,7 @@ const messageDelete = async (deletedMessage) => {
     return console.error(audit);
   }
   
-  const author = deletedMessage.author;
+  const author = deletedMessage.guild.members.cache.get(deletedMessage.author.id);
   const executor = deletedMessage.guild.members.cache.get(audit.executorId);
   console.log("controlla chi elimina il messaggio ", executor);
   
@@ -37,17 +37,15 @@ const messageDelete = async (deletedMessage) => {
   }
   
   const content = deletedMessage.content || "n.a.";
-  const cachedMessage = deletedMessage.channel.messages.cache.get(deletedMessage.id);
-  console.log("try to find this deleted cached message ", cachedMessage);
-  const authorRole = getCustomRole(author) || "n.a.";
   const authorPoints = getCalculatedPoints(customPoints.messageDelete.author, reputationPoints[author.guild.id][author.id].points);
   deletedMessage.client.emit("activity", author, authorPoints);
-  const executorRole = getCustomRole(executor) || "n.a.";
   const executorPoints = getCalculatedPoints(customPoints.messageDelete.executor, reputationPoints[executor.guild.id][executor.id].points);
   deletedMessage.client.emit("activity", executor, executorPoints);
   const message = new EmbedBuilder();
   message.setTitle("🛡️ moderation");
+  const executorRole = getCustomRole(executor) || "n.a.";
   message.setDescription(`${executorRole} *${executor.displayName}* deleted a message in *${deletedMessage.channel.name}*`);
+  const authorRole = getCustomRole(author) || "n.a.";
   message.addFields({ name: "author", value: `${authorRole} *${author}*`, inline: false });
   message.addFields({ name: "content", value: `${content}`, inline: false });
   message.addFields({ name: "promotion points", value: `${authorPoints} ⭐`, inline: true });

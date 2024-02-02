@@ -11,16 +11,21 @@ import { globalPoints, reputationPoints } from "./ready.js";
 const guildMemberRemove = async (oldMember) => {
   const gaveToId = reputationPoints[oldMember.guild.id][oldMember.id].gaveTo;
   deleteMember(oldMember);
-
+  
   if (gaveToId !== "") {
     reputationPoints[oldMember.guild.id][gaveToId].points = -1;
   }
-
+  
   const penaltyPoints = Math.round(customPoints.guildMemberRemove / oldMember.guild.memberCount);
-
+  
   for (const memberId in globalPoints[oldMember.guild.id]) {
     const member = oldMember.guild.members.cache.get(memberId);
-    oldMember.client.emit("activity", member, penaltyPoints);
+
+    if (member !== undefined) {
+      oldMember.client.emit("activity", member, penaltyPoints);
+    } else {
+      console.error(member, oldMember);
+    }
   }
 
   const channel = oldMember.guild.channels.cache.find((channel) => channel.name === customChannels.private)
