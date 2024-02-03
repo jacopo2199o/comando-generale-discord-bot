@@ -28,7 +28,7 @@ const messageDelete = async (deletedMessage) => {
     return console.error(author, executor);
   }
 
-  if (author.bot === true || executor.user.bot === true) {
+  if (author.user.bot === true || executor.user.bot === true) {
     return;
   }
 
