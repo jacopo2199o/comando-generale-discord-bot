@@ -28,8 +28,8 @@ const giveReputationPoint = async (interaction) => {
   }
 
   const makerPoints = getCalculatedPoints(customPoints.reputationPoints.maker, reputationPoints[interaction.guild.id][maker.id].points);
-  const takerPoints = getCalculatedPoints(customPoints.reputationPoints.taker, reputationPoints[interaction.guild.id][taker.id].points);
   const makerRole = getCustomRole(maker);
+  const takerPoints = getCalculatedPoints(customPoints.reputationPoints.taker, reputationPoints[interaction.guild.id][taker.id].points);
   const takerRole = getCustomRole(taker);
 
   if (makerRole === undefined || takerRole === undefined) {

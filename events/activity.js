@@ -12,8 +12,13 @@ const activity = async (member, points) => {
   globalPoints[member.guild.id][member.id] += points;
   const channel = member.guild.channels.cache.find((channel) => channel.name === customChannels.activity)
     || member.guild.channels.cache.get(member.guild.publicUpdatesChannelId);
-  const pointsRing = (globalPoints[member.guild.id][member.id] % customPoints.promotionPoints) + points;
   const role = getCustomRole(member);
+
+  if (role === undefined) {
+    return console.error(role);
+  }
+
+  const pointsRing = (globalPoints[member.guild.id][member.id] % customPoints.promotionPoints) + points;
 
   if (pointsRing < 0) {
     const level = Math.floor(globalPoints[member.guild.id][member.id] / customPoints.promotionPoints) + 1;

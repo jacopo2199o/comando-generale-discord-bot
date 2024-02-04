@@ -119,14 +119,15 @@ const getCustomRole = (member) => {
  * @returns {Boolean}
  */
 const hasModerationRole = (role, isResponsabile) => {
-  if (role.name === "presidente"
-    || role.name === "ministro"
-    || role.name === "senatore"
-    || role.name === "governatore"
-    || isResponsabile === true) {
+  if (role.name === "presidente" || role.name === "ministro") {
     return true;
+  } else if (role.name === "senatore" || role.name === "governatore") {
+    return true;
+  } else if(isResponsabile === true){
+    return true;
+  } else {
+    return false;
   }
-  else { return false; }
 };
 
 /**

@@ -26,8 +26,8 @@ const rollDice = async (interaction) => {
   }
 
   const points = getCalculatedPoints(customPoints.interactionCreate, reputationPoints[maker.guild.id][maker.id].points);
-  const role = getCustomRole(maker);
   const result = roll();
+  const role = getCustomRole(maker);
   const message = new EmbedBuilder();
   message.setDescription(`${role} *${maker}* rolled a dice`);
   message.addFields({ name: "result", value: `${result} 🎲`});

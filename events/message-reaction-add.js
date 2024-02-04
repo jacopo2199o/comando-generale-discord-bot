@@ -21,12 +21,7 @@ const messageReactionAdd = async (reaction, user) => {
   }
 
   const makerRole = getCustomRole(maker);
-
-  if (makerRole === undefined) {
-    return console.error(makerRole);
-  }
-
-  const takerRole = getCustomRole(taker) || "n.a.";
+  const takerRole = getCustomRole(taker);
 
   if (makerRole === undefined || takerRole === undefined) {
     return console.error(makerRole, takerRole);

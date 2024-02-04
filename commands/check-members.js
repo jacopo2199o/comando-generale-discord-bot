@@ -11,16 +11,15 @@ const checkMembers = async (interaction) => {
   let messages = [];
   members.forEach((member) => {
     if (member.user.bot === false) {
-      if (!member.roles.cache.has((role) => role.name === "italiano")) {
-        if (!member.roles.cache.has((role) => role.name === "international")) {
-          messages.push(`member with missing language role: *${member.displayName}, ${member.nickname}, ${member.user.username}*\n`);
-        }
+      const isItaliano = member.roles.cache.has((role) => role.name === "italiano");
+      const isInternational = member.roles.cache.has((role) => role.name === "international");
+      
+      if (isItaliano === false && isInternational === false) {
+        messages.push(`member with missing language role: *${member.displayName}, ${member.nickname}, ${member.user.username}*\n`);
       }
 
-      if (member.roles.cache.has((role) => role.name === "italiano")) {
-        if (member.roles.cache.has((role) => role.name === "international")) {
-          messages.push(`member with *italiano* and *international* role: *${member.displayName}, ${member.nickname}, ${member.user.username}*\n`);
-        }
+      if (isItaliano === true && isInternational === true) {
+        messages.push(`member with *italiano* and *international* role: *${member.displayName}, ${member.nickname}, ${member.user.username}*\n`);
       }
     }
   });

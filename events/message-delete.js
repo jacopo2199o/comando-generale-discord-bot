@@ -22,7 +22,6 @@ const messageDelete = async (deletedMessage) => {
   
   const author = deletedMessage.guild.members.cache.get(deletedMessage.author.id);
   const executor = deletedMessage.guild.members.cache.get(audit.executorId);
-  console.log("controlla chi elimina il messaggio ", executor);
   
   if (author === undefined || executor === undefined) {
     return console.error(author, executor);

@@ -10,21 +10,19 @@ const chartPromotionPoints = async (interaction) => {
   await interaction.deferReply();
   const chart = [];
 
-  for (const id in globalPoints[interaction.guild.id]) {
-    const member = interaction.guild.members.cache.get(id);
+  for (const memberId in globalPoints[interaction.guild.id]) {
+    const member = interaction.guild.members.cache.get(memberId);
 
     if (member === undefined) {
       return console.error(member);
     }
 
-    const level = Math.floor(globalPoints[member.guild.id][member.id] / customPoints.promotionPoints) + 1;
-
-    if (interaction.guild.ownerId !== id) {
+    if (interaction.guild.ownerId !== memberId) {
       chart.push({
-        level,
+        level: Math.floor(globalPoints[member.guild.id][member.id] / customPoints.promotionPoints) + 1,
         member,
         role: getCustomRole(member) || "n.a.",
-        points: globalPoints[interaction.guild.id][id] % customPoints.promotionPoints
+        points: globalPoints[interaction.guild.id][memberId] % customPoints.promotionPoints
       });
     }
   }
