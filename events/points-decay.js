@@ -54,7 +54,7 @@ const pointsDecay = async (guild, points) => {
   });
 
   const message = new EmbedBuilder();
-  message.setTitle("🕯 points decay");
+  message.setTitle("🕯 points decay ");
   message.setDescription("hourly points decay balancing");
   message.addFields({ name: "promotion points", value: `${points} ⭐`, inline: true });
   message.addFields({ name: "to", value: `${guild.roles.everyone}`, inline: true });
