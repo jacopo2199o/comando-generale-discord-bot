@@ -21,7 +21,7 @@ const chartGlobalPoints = async (interaction) => {
       chart.push({
         level: Math.floor(globalPoints[member.guild.id][memberId] / customPoints.promotionPoints) + 1,
         member,
-        role: getCustomRole(member) || "n.a.",
+        role: getCustomRole(member) ?? "n.a.",
         points: globalPoints[interaction.guild.id][memberId]
       });
     }

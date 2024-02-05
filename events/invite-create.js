@@ -34,7 +34,7 @@ const inviteCreate = async (invite) => {
   message.setTimestamp();
   message.setColor(makerRole.color);
   const channel = invite.guild.channels.cache.find((channel) => channel.name === customChannels.activity)
-    || invite.guild.channels.cache.get(invite.guild.publicUpdatesChannelId);
+    ?? invite.guild.channels.cache.get(invite.guild.publicUpdatesChannelId);
   channel.send({ embeds: [message] });
 };
 

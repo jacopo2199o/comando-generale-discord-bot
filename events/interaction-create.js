@@ -5,6 +5,7 @@ import { chartPromotionPoints } from "../commands/chart-promotion-points.js";
 import { chartReputationPoints } from "../commands/chart-reputation-points.js";
 import { checkMembers } from "../commands/check-members.js";
 import { clear } from "../commands/clear.js";
+import { givePromotionPoints } from "../commands/give-promotion-points.js";
 import { giveReputationPoint } from "../commands/give-reputation-point.js";
 import { rollDice } from "../commands/roll-dice.js";
 import { save } from "../commands/save.js";
@@ -63,6 +64,8 @@ const interactionCreate = async (interaction) => {
       checkMembers(interaction);
     } else if (interaction.commandName === "clear") {
       clear(interaction);
+    } else if (interaction.commandName === "give-promotion-points") {
+      givePromotionPoints(interaction);
     } else if (interaction.commandName === "give-reputation-point") {
       giveReputationPoint(interaction);
     } else if (interaction.commandName === "roll-dice") {
@@ -90,7 +93,7 @@ const interactionCreate = async (interaction) => {
       message.setTimestamp();
       message.setColor(makerRole.color);
       const channel = interaction.guild.channels.cache.find((channel) => channel.name === customChannels.public)
-        || interaction.guild.channels.cache.get(interaction.guild.publicUpdatesChannelId);
+        ?? interaction.guild.channels.cache.get(interaction.guild.publicUpdatesChannelId);
       channel.send({ embeds: [message] });
     }
   } else if (interaction.isButton()) {

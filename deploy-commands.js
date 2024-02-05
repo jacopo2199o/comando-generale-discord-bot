@@ -35,6 +35,20 @@ commands.push(new SlashCommandBuilder()
   .setDescription("check members for general problems"));
 
 commands.push(new SlashCommandBuilder()
+  .setName("give-promotion-points")
+  .setDescription("give promotion points to a member")
+  .addUserOption((option) => option
+    .setName("member")
+    .setDescription("member to give points")
+    .setRequired(true))
+  .addNumberOption((option) => option
+    .setName("points")
+    .setDescription("points amount to give")
+    .setMinValue(1)
+    .setMaxValue(10000)
+    .setRequired(true)));
+
+commands.push(new SlashCommandBuilder()
   .setName("give-reputation-point")
   .setDescription("give reputation point to a member")
   .addUserOption((option) => option

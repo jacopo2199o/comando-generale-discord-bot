@@ -45,7 +45,7 @@ const messageReactionAdd = async (reaction, user) => {
     message.setTimestamp();
     message.setColor("DarkRed");
     const channel = reaction.message.guild.channels.cache.find((channel) => channel.name === customChannels.private)
-      || reaction.message.guild.channels.cache.get(reaction.message.guild.publicUpdatesChannelId);
+      ?? reaction.message.guild.channels.cache.get(reaction.message.guild.publicUpdatesChannelId);
     channel.send({ embeds: [message] });
   } else {
     user.client.emit("activity", maker, makerPoints);
@@ -60,7 +60,7 @@ const messageReactionAdd = async (reaction, user) => {
     message.setTimestamp();
     message.setColor(makerRole.color);
     const channel = reaction.message.guild.channels.cache.find((channel) => channel.name === customChannels.public)
-      || reaction.message.guild.channels.cache.get(reaction.message.guild.publicUpdatesChannelId);
+      ?? reaction.message.guild.channels.cache.get(reaction.message.guild.publicUpdatesChannelId);
     channel.send({ embeds: [message] });
   }
 

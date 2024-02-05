@@ -37,7 +37,7 @@ const pointsDecay = async (guild, points) => {
               message.setTimestamp();
               message.setColor("DarkRed");
               const channel = guild.channels.cache.find((channel) => channel.name === customChannels.activity)
-                || guild.channels.cache.get(guild.publicUpdatesChannelId);
+                ?? guild.channels.cache.get(guild.publicUpdatesChannelId);
               channel.send({ embeds: [message] });
             }
           } else {
@@ -62,7 +62,7 @@ const pointsDecay = async (guild, points) => {
   message.setTimestamp();
   message.setColor("DarkRed");
   const channel = guild.channels.cache.find((channel) => channel.name === customChannels.public)
-    || guild.channels.cache.get(guild.publicUpdatesChannelId);
+    ?? guild.channels.cache.get(guild.publicUpdatesChannelId);
   channel.send({ embeds: [message] });
 };
 

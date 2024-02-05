@@ -36,7 +36,6 @@ const ready = async (client) => {
       members.forEach((member) => {
         globalPoints[guild.id][member.id] = 0;
       });
-
       await saveFile(`./resources/database/points-${guild.id}.json`, globalPoints[guild.id]);
     }
 
@@ -61,7 +60,6 @@ const ready = async (client) => {
       members.forEach((member) => {
         reputationPoints[guild.id][member.id] = { points: 0, gaveTo: "" };
       });
-
       await saveFile(`./resources/database/reputation-${guild.id}.json`, reputationPoints[guild.id]);
     }
 
@@ -87,8 +85,7 @@ const ready = async (client) => {
       seniority[guild.id] = {};
       members.forEach((member) => {
         seniority[guild.id][member.id] = Math.round((new Date().getTime() - member.joinedAt.getTime()) / (1000 * 60 * 60 * 24));
-      });
-      
+      });  
       await saveFile(`./resources/database/seniority-${guild.id}.json`, seniority[guild.id]);
     }
 
@@ -101,7 +98,6 @@ const ready = async (client) => {
   }));
 
   let startHour = new Date().getHours();
-
   setInterval(() => {
     const actualHour = new Date().getHours();
 
@@ -113,14 +109,12 @@ const ready = async (client) => {
       startHour = actualHour;
     }
   }, generalSettings.hourCheckInterval);
-
   setInterval(async () => {
     await Promise.all(client.guilds.cache.map(async (guild) => {
       await saveFile(`./resources/database/points-${guild.id}.json`, globalPoints[guild.id]);
       await saveFile(`./resources/database/reputation-${guild.id}.json`, reputationPoints[guild.id]);
     }));
   }, generalSettings.saveInterval);
-
   client.user.setPresence({ activities: [{ name: "https://discord.gg/F7UTwWtwTV", type: ActivityType.Watching, }] }); 
   console.log(`bot ready as ${client.user.username}`);
 };

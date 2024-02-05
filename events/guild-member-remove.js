@@ -11,13 +11,13 @@ import { globalPoints, reputationPoints } from "./ready.js";
 const guildMemberRemove = async (oldMember) => {
   const gaveToId = reputationPoints[oldMember.guild.id][oldMember.id].gaveTo;
   deleteMember(oldMember);
-  
+
   if (gaveToId !== "") {
     reputationPoints[oldMember.guild.id][gaveToId].points = -1;
   }
-  
+
   const penaltyPoints = Math.round(customPoints.guildMemberRemove / oldMember.guild.memberCount);
-  
+
   for (const memberId in globalPoints[oldMember.guild.id]) {
     const member = oldMember.guild.members.cache.get(memberId);
 
@@ -29,9 +29,9 @@ const guildMemberRemove = async (oldMember) => {
   }
 
   const channel = oldMember.guild.channels.cache.find((channel) => channel.name === customChannels.private)
-    || oldMember.guild.channels.cache.get(oldMember.guild.publicUpdatesChannelId);
+    ?? oldMember.guild.channels.cache.get(oldMember.guild.publicUpdatesChannelId);
   const message = new EmbedBuilder();
-  const role = getCustomRole(oldMember) || "n.a.";
+  const role = getCustomRole(oldMember) ?? "n.a.";
 
   if (role !== undefined) {
     const roleComandoGenerale = oldMember.roles.cache.find((role) => role.name === "compagnia comando generale");

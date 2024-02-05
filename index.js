@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits } from "discord.js";
+import { Client, GatewayIntentBits, Partials } from "discord.js";
 import dotenv from "dotenv";
 import { activity } from "./events/activity.js";
 import { dropPromotionPoints } from "./events/drop-promotion-points.js";
@@ -25,7 +25,12 @@ const client = new Client({
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.GuildMessageReactions
-  ]
+  ],
+  partials: [
+    Partials.Channel,
+    Partials.GuildMember,
+    Partials.Message,
+  ],
 });
 
 client.once("ready", ready);

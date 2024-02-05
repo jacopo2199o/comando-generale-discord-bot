@@ -9,9 +9,8 @@ import { globalPoints } from "./ready.js";
  * @param { Number } points
  */
 const activity = async (member, points) => {
-  globalPoints[member.guild.id][member.id] += points;
   const channel = member.guild.channels.cache.find((channel) => channel.name === customChannels.activity)
-    || member.guild.channels.cache.get(member.guild.publicUpdatesChannelId);
+    ?? member.guild.channels.cache.get(member.guild.publicUpdatesChannelId);
   const role = getCustomRole(member);
 
   if (role === undefined) {
@@ -47,6 +46,8 @@ const activity = async (member, points) => {
       globalPoints[member.guild.id][member.id] = customPoints.promotionPoints + pointsRing;
     }
   } else {
+    globalPoints[member.guild.id][member.id] += points;
+
     if (pointsRing >= customPoints.promotionPoints) {
       const upgradeResult = upgrade(member);
 
@@ -62,8 +63,6 @@ const activity = async (member, points) => {
         channel.send({ embeds: [message2] });
       }
     }
-
-    globalPoints[member.guild.id][member.id] += points;
   }
 };
 

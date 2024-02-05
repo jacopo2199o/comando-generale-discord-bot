@@ -43,7 +43,7 @@ const messageCreate = async (newMessage) => {
   message.setTimestamp();
   message.setColor(makerRole.color);
   const channel = newMessage.guild.channels.cache.find((channel) => channel.name === customChannels.public)
-    || newMessage.guild.channels.cache.get(newMessage.guild.publicUpdatesChannelId);
+    ?? newMessage.guild.channels.cache.get(newMessage.guild.publicUpdatesChannelId);
   channel.send({ embeds: [message] });
 };
 

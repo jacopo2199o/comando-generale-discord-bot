@@ -13,7 +13,7 @@ const checkMembers = async (interaction) => {
     if (member.user.bot === false) {
       const isItaliano = member.roles.cache.has((role) => role.name === "italiano");
       const isInternational = member.roles.cache.has((role) => role.name === "international");
-      
+
       if (isItaliano === false && isInternational === false) {
         messages.push(`member with missing language role: *${member.displayName}, ${member.nickname}, ${member.user.username}*\n`);
       }
@@ -26,7 +26,7 @@ const checkMembers = async (interaction) => {
 
   if (messages.length > 0) {
     const channel = interaction.guild.channels.cache.find((channel) => channel.name === customChannels.internal)
-      || interaction.guild.channels.cache.get(interaction.guild.publicUpdatesChannelId);
+      ?? interaction.guild.channels.cache.get(interaction.guild.publicUpdatesChannelId);
     sendMesseges(messages, channel);
     await interaction.followUp("done");
   } else {
