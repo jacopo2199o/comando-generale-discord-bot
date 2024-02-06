@@ -31,6 +31,10 @@ commands.push(new SlashCommandBuilder()
   .setDescription("reputation points chart of top 10 members"));
 
 commands.push(new SlashCommandBuilder()
+  .setName("chart-seniority-points")
+  .setDescription("seniority points chart of top 10 members"));
+
+commands.push(new SlashCommandBuilder()
   .setName("check-members")
   .setDescription("check members for general problems"));
 

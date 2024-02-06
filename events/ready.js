@@ -70,30 +70,10 @@ const ready = async (client) => {
     }
 
     // seniority
-    if (fs.existsSync(`./resources/database/seniority-${guild.id}.json`)) {
-      seniority[guild.id] = await loadFile(`./resources/database/seniority-${guild.id}.json`);
-      members.forEach((member) => {
-        if (seniority[guild.id][member.id] === undefined) {
-          seniority[guild.id][member.id] = Math.round((new Date().getTime() - member.joinedAt.getTime()) / (1000 * 60 * 60 * 24));
-        }
-        //globalPoints[guild.id][member.id] += seniority[guild.id][member.id];
-      });
-
-      for (const memberId in seniority[guild.id]) {
-        if (members.get(memberId) === undefined) {
-          delete seniority[guild.id][memberId];
-        }
-      }
-
-      await saveFile(`./resources/database/seniority-${guild.id}.json`, seniority[guild.id]);
-      //await saveFile(`./resources/database/points-${guild.id}.json`, globalPoints[guild.id]);
-    } else {
-      seniority[guild.id] = {};
-      members.forEach((member) => {
-        seniority[guild.id][member.id] = Math.round((new Date().getTime() - member.joinedAt.getTime()) / (1000 * 60 * 60 * 24));
-      });  
-      await saveFile(`./resources/database/seniority-${guild.id}.json`, seniority[guild.id]);
-    }
+    seniority[guild.id] = {};
+    members.forEach((member) => {
+      seniority[guild.id][member.id] = Math.round((new Date().getTime() - member.joinedAt.getTime()) / (1000 * 60 * 60 * 24));
+    });
 
     // referrals
     const invites = await guild.invites.fetch();
@@ -121,7 +101,7 @@ const ready = async (client) => {
       await saveFile(`./resources/database/reputation-${guild.id}.json`, reputationPoints[guild.id]);
     }));
   }, generalSettings.saveInterval);
-  client.user.setPresence({ activities: [{ name: "https://discord.gg/F7UTwWtwTV", type: ActivityType.Watching, }] }); 
+  client.user.setPresence({ activities: [{ name: "https://discord.gg/F7UTwWtwTV", type: ActivityType.Watching, }] });
   console.log(`bot ready as ${client.user.username}`);
 };
 

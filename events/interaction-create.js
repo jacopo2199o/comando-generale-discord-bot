@@ -3,6 +3,7 @@ import { about } from "../commands/about.js";
 import { chartGlobalPoints } from "../commands/chart-global-points.js";
 import { chartPromotionPoints } from "../commands/chart-promotion-points.js";
 import { chartReputationPoints } from "../commands/chart-reputation-points.js";
+import { chartSeniorityPoints } from "../commands/chart-seniority-points.js";
 import { checkMembers } from "../commands/check-members.js";
 import { clear } from "../commands/clear.js";
 import { givePromotionPoints } from "../commands/give-promotion-points.js";
@@ -60,6 +61,8 @@ const interactionCreate = async (interaction) => {
       chartReputationPoints(interaction);
     } else if (interaction.commandName === "chart-global-points") {
       chartGlobalPoints(interaction);
+    } else if (interaction.commandName === "chart-seniority-points") {
+      chartSeniorityPoints(interaction);
     } else if (interaction.commandName === "check-members") {
       checkMembers(interaction);
     } else if (interaction.commandName === "clear") {
