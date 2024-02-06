@@ -2,7 +2,7 @@ import { EmbedBuilder } from "discord.js";
 import { customChannels } from "../resources/custom-channels.js";
 import { customPoints } from "../resources/custom-points.js";
 import { downgrade, getCustomRole, upgrade } from "../resources/custom-roles.js";
-import { globalPoints } from "./ready.js";
+import { globalPoints, pointsLastMove } from "./ready.js";
 
 /**
  * @param { import("discord.js").GuildMember } member
@@ -25,8 +25,10 @@ const activity = async (member, points) => {
     if (level < 24) {
       if (role.name !== "membro") {
         globalPoints[member.guild.id][member.id] = customPoints.promotionPoints + pointsRing;
+        pointsLastMove[member.guild.id][member.id] = -1;
       } else {
         globalPoints[member.guild.id][member.id] = 0;
+        pointsLastMove[member.guild.id][member.id] = 0;
       }
 
       const downgradeResult = downgrade(member);
@@ -47,6 +49,7 @@ const activity = async (member, points) => {
     }
   } else {
     globalPoints[member.guild.id][member.id] += points;
+    pointsLastMove[member.guild.id][member.id] = 1;
 
     if (pointsRing >= customPoints.promotionPoints) {
       const upgradeResult = upgrade(member);

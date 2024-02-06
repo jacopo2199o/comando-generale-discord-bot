@@ -1,5 +1,5 @@
 import { EmbedBuilder } from "discord.js";
-import { globalPoints } from "../events/ready.js";
+import { globalPoints, pointsLastMove } from "../events/ready.js";
 import { customPoints } from "../resources/custom-points.js";
 import { getCustomRole } from "../resources/custom-roles.js";
 
@@ -19,10 +19,11 @@ const chartPromotionPoints = async (interaction) => {
 
     if (interaction.guild.ownerId !== memberId) {
       chart.push({
+        lastMove: pointsLastMove[interaction.guild.id][member.id],
         level: Math.floor(globalPoints[member.guild.id][member.id] / customPoints.promotionPoints) + 1,
         member,
         role: getCustomRole(member) ?? "n.a.",
-        points: globalPoints[interaction.guild.id][memberId] % customPoints.promotionPoints
+        points: globalPoints[interaction.guild.id][member.id] % customPoints.promotionPoints
       });
     }
   }
@@ -31,7 +32,8 @@ const chartPromotionPoints = async (interaction) => {
   const sortedChart = chart.slice(0, 10);
   let chartRow = "";
   sortedChart.forEach((element, index) => {
-    chartRow += `${index + 1}: ${element.role} *${element.member}* ${element.points} (lvl. ${element.level}) ⭐\n`;
+    const lastMove = element.lastMove > 0 ? "🔼" : "🔻";
+    chartRow += `${index + 1}: ${element.role} *${element.member}* ${element.points} ${lastMove} (lvl. ${element.level}) ⭐\n`;
   });
   const message = new EmbedBuilder();
   message.setTitle("🏆🔰 promotion points chart");

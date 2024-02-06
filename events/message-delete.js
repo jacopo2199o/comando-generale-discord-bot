@@ -35,16 +35,20 @@ const messageDelete = async (deletedMessage) => {
     return;
   }
 
-  const content = deletedMessage.content ?? "n.a.";
+  if (executor.id === deletedMessage.guild.id) {
+    return;
+  }
+
   const authorPoints = getCalculatedPoints(customPoints.messageDelete.author, reputationPoints[author.guild.id][author.id].points);
-  deletedMessage.client.emit("activity", author, authorPoints);
+  const authorRole = getCustomRole(author) ?? "n.a.";
   const executorPoints = getCalculatedPoints(customPoints.messageDelete.executor, reputationPoints[executor.guild.id][executor.id].points);
+  const executorRole = getCustomRole(executor) ?? "n.a.";
+  deletedMessage.client.emit("activity", author, authorPoints);
   deletedMessage.client.emit("activity", executor, executorPoints);
+  const content = deletedMessage.content ?? "n.a.";
   const message = new EmbedBuilder();
   message.setTitle("🛡️ moderation");
-  const executorRole = getCustomRole(executor) ?? "n.a.";
   message.setDescription(`${executorRole} *${executor.displayName}* deleted a message in *${deletedMessage.channel.name}*`);
-  const authorRole = getCustomRole(author) ?? "n.a.";
   message.addFields({ name: "author", value: `${authorRole} *${author}*`, inline: false });
   message.addFields({ name: "content", value: `${content}`, inline: false });
   message.addFields({ name: "promotion points", value: `${authorPoints} ⭐`, inline: true });

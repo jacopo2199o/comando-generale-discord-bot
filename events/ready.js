@@ -4,6 +4,7 @@ import { generalSettings } from "../resources/general-settings.js";
 import { loadFile, saveFile } from "../resources/general-utilities.js";
 
 const globalPoints = {};
+const pointsLastMove = {};
 const reputationPoints = {};
 const referrals = {};
 const seniority = {};
@@ -14,6 +15,11 @@ const seniority = {};
 const ready = async (client) => {
   await Promise.all(client.guilds.cache.map(async (guild) => {
     const members = await guild.members.fetch();
+    // points last move
+    pointsLastMove[guild.id] = {};
+    members.forEach((member) => {
+      pointsLastMove[guild.id][member.id] = 0;
+    });
 
     // global points
     if (fs.existsSync(`./resources/database/points-${guild.id}.json`)) {
@@ -121,6 +127,7 @@ const ready = async (client) => {
 
 export {
   globalPoints,
+  pointsLastMove,
   ready,
   referrals,
   reputationPoints,

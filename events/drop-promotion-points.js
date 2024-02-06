@@ -18,6 +18,7 @@ const dropPromotionPoints = async (dropChannel) => {
   dropMessage.addFields({ name: "type", value: "promotion points", inline: true });
   dropMessage.addFields({ name: "value", value: `${drops.promotionPoints} ⭐`, inline: true });
   dropMessage.setThumbnail(dropChannel.client.user.displayAvatarURL({ dynamic: true }));
+  dropMessage.setFooter({ text: "*use __/view-promotion-points__* to see yours"});
   dropMessage.setTimestamp();
   dropMessage.setColor("DarkGreen");
   const publicMessage = new EmbedBuilder();
