@@ -35,7 +35,7 @@ const messageDelete = async (deletedMessage) => {
     return;
   }
 
-  if (executor.id === deletedMessage.guild.id) {
+  if (executor.id === deletedMessage.guild.ownerId) {
     return;
   }
 

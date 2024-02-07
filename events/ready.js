@@ -1,5 +1,6 @@
 import { ActivityType } from "discord.js";
 import fs from "node:fs";
+import { canvasMain } from "../canvas.js";
 import { generalSettings } from "../resources/general-settings.js";
 import { loadFile, saveFile } from "../resources/general-utilities.js";
 
@@ -74,12 +75,13 @@ const ready = async (client) => {
     members.forEach((member) => {
       seniority[guild.id][member.id] = Math.round((new Date().getTime() - member.joinedAt.getTime()) / (1000 * 60 * 60 * 24));
     });
-
     // referrals
     const invites = await guild.invites.fetch();
     invites.forEach((invite) => {
       referrals[invite.code] = invite.uses;
     });
+    // draw map
+    canvasMain(guild);
     console.log(`legged in guild ${guild.name}`);
   }));
 
@@ -101,6 +103,12 @@ const ready = async (client) => {
       await saveFile(`./resources/database/reputation-${guild.id}.json`, reputationPoints[guild.id]);
     }));
   }, generalSettings.saveInterval);
+  setInterval(async () => {
+    await Promise.all(client.guilds.cache.map(async (guild) => {
+      await saveFile(`./resources/backups/points-${guild.id}-backup.json`, globalPoints[guild.id]);
+      await saveFile(`./resources/backups/reputation-${guild.id}-backup.json`, reputationPoints[guild.id]);
+    }));
+  }, generalSettings.backupInterval);
   client.user.setPresence({ activities: [{ name: "https://discord.gg/F7UTwWtwTV", type: ActivityType.Watching, }] });
   console.log(`bot ready as ${client.user.username}`);
 };

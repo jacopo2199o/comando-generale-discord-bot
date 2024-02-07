@@ -102,7 +102,7 @@ const giveReputationPoint = async (interaction) => {
 
     if (interaction.channel.id !== channel.id) {
       const message = new EmbedBuilder();
-      message.setTitle("🏵 reputation points 🏵");
+      message.setTitle("🏵 reputation points");
       message.setDescription(`${makerRole} *${interaction.member}* gave 1 *reputation point* to ${takerRole} *${taker}*`);
       message.addFields({ name: "promotion points", value: `${customPoints.reputationPoints.taker} ⭐`, inline: true });
       message.addFields({ name: "to", value: `${taker}`, inline: true });
