@@ -2,7 +2,7 @@ import { EmbedBuilder } from "discord.js";
 import { customChannels } from "../resources/custom-channels.js";
 import { customPoints, drops, getCalculatedPoints } from "../resources/custom-points.js";
 import { getCustomRole } from "../resources/custom-roles.js";
-import { reputationPoints } from "./ready.js";
+import { cooldowns, reputationPoints, transfers } from "./ready.js";
 
 let dropPromotionPointsCounter = 0;
 
@@ -11,15 +11,37 @@ let dropPromotionPointsCounter = 0;
  */
 const messageCreate = async (newMessage) => {
   await newMessage.fetch();
-  
+
   if (newMessage.author.bot) {
     return;
   }
 
-  const maker = newMessage.guild.members.cache.get(newMessage.author.id);
+  const maker = newMessage.member;
 
-  if (maker === undefined) {
-    return console.error(maker);
+  if (cooldowns[newMessage.guild.id][maker.id] !== undefined && newMessage.channel.isThread() === false) {
+    const isExpiredPeriod = cooldowns[newMessage.guild.id][maker.id].endPeriod < new Date().getTime() ? true : false;
+
+    if (isExpiredPeriod === false) {
+      const isExpiredInterval = cooldowns[newMessage.guild.id][maker.id].endinterval < new Date().getTime() ? true : false;
+
+      if (isExpiredInterval === true) {
+        const nextInterval = 1000 * 60 * 60 * cooldowns[newMessage.guild.id][maker.id].interval;
+        cooldowns[newMessage.guild.id][maker.id].endInterval = new Date().getTime() + nextInterval;
+        return;
+      } else {
+        newMessage.delete();
+        return;
+      }
+    }
+  }
+
+  if (transfers[newMessage.guild.id][maker.id] !== undefined && newMessage.channel.isThread() === false) {
+    const isExpiredPeriod = transfers[newMessage.guild.id][maker.id].endPeriod < new Date().getTime() ? true : false;
+
+    if (isExpiredPeriod === false) {
+      newMessage.delete();
+      return;
+    }
   }
 
   const makerRole = getCustomRole(maker);
@@ -43,7 +65,7 @@ const messageCreate = async (newMessage) => {
   message.setTimestamp();
   message.setColor(makerRole.color);
   const channel = newMessage.guild.channels.cache.find((channel) => channel.name === customChannels.public)
-    ?? newMessage.guild.channels.cache.get(newMessage.guild.publicUpdatesChannelId);
+    ?? newMessage.guild.publicUpdatesChannel;
   channel.send({ embeds: [message] });
 };
 

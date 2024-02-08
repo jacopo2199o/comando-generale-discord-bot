@@ -34,7 +34,7 @@ const guildMemberAdd = async (newMember) => {
   if (inviter !== undefined) {
     newMember.client.emit("activity", inviter, points);
     message.setTitle("🌱 new member");
-    message.setDescription(`*${newMember}*, joined *comando generale*`);
+    message.setDescription(`*${newMember}*, joined *${newMember.guild.name}*`);
     message.addFields({ name: "inviter", value: `${inviter}`, inline: true });
     message.addFields({ name: "uses", value: `${uses}`, inline: true });
     message.setThumbnail(newMember.displayAvatarURL({ dynamic: true }));

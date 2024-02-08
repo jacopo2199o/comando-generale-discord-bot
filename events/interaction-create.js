@@ -6,10 +6,12 @@ import { chartReputationPoints } from "../commands/chart-reputation-points.js";
 import { chartSeniorityPoints } from "../commands/chart-seniority-points.js";
 import { checkMembers } from "../commands/check-members.js";
 import { clear } from "../commands/clear.js";
+import { cooldown } from "../commands/cooldown.js";
 import { givePromotionPoints } from "../commands/give-promotion-points.js";
 import { giveReputationPoint } from "../commands/give-reputation-point.js";
 import { rollDice } from "../commands/roll-dice.js";
 import { save } from "../commands/save.js";
+import { transfer } from "../commands/transfer.js";
 import { viewPromotionPoints } from "../commands/view-promotion-points.js";
 import { viewReputationPoints } from "../commands/view-reputation-points.js";
 import { customChannels } from "../resources/custom-channels.js";
@@ -67,6 +69,8 @@ const interactionCreate = async (interaction) => {
       checkMembers(interaction);
     } else if (interaction.commandName === "clear") {
       clear(interaction);
+    } else if (interaction.commandName === "cooldown") {
+      cooldown(interaction);
     } else if (interaction.commandName === "give-promotion-points") {
       givePromotionPoints(interaction);
     } else if (interaction.commandName === "give-reputation-point") {
@@ -75,6 +79,8 @@ const interactionCreate = async (interaction) => {
       rollDice(interaction);
     } else if (interaction.commandName === "save") {
       save(interaction);
+    } else if (interaction.commandName === "transfer") {
+      transfer(interaction);
     } else if (interaction.commandName === "view-promotion-points") {
       viewPromotionPoints(interaction);
     } else if (interaction.commandName === "view-reputation-points") {

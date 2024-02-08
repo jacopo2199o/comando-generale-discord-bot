@@ -39,6 +39,48 @@ commands.push(new SlashCommandBuilder()
   .setDescription("check members for general problems"));
 
 commands.push(new SlashCommandBuilder()
+  .setName("transfer")
+  .setDescription("transfer a member into threads")
+  .addUserOption((option) => option
+    .setName("member")
+    .setDescription("member to give points")
+    .setRequired(true))
+  .addNumberOption((option) => option
+    .setName("period")
+    .setDescription("time period (hours) to expiration")
+    .setMinValue(1)
+    .setMaxValue(10000)
+    .setRequired(true))
+  .addStringOption((option) => option
+    .setName("reason")
+    .setDescription("reason description")
+    .setRequired(true)));
+
+commands.push(new SlashCommandBuilder()
+  .setName("cooldown")
+  .setDescription("apply cooldown penalty to a member")
+  .addUserOption((option) => option
+    .setName("member")
+    .setDescription("member to give points")
+    .setRequired(true))
+  .addNumberOption((option) => option
+    .setName("interval")
+    .setDescription("time interval (hours) between messages")
+    .setMinValue(1)
+    .setMaxValue(10000)
+    .setRequired(true))
+  .addNumberOption((option) => option
+    .setName("period")
+    .setDescription("time period (hours) to expiration")
+    .setMinValue(2)
+    .setMaxValue(10000)
+    .setRequired(true))
+  .addStringOption((option) => option
+    .setName("reason")
+    .setDescription("reason description")
+    .setRequired(true)));
+
+commands.push(new SlashCommandBuilder()
   .setName("give-promotion-points")
   .setDescription("give promotion points to a member")
   .addUserOption((option) => option

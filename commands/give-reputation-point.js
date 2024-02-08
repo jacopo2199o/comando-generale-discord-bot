@@ -85,6 +85,7 @@ const giveReputationPoint = async (interaction) => {
       message.setDescription(`${makerRole} *${interaction.member}* gave 1 *reputation point* to ${takerRole} *${taker}*`);
       message.addFields({ name: "promotion points", value: `${takerPoints} ⭐`, inline: true });
       message.addFields({ name: "to", value: `${taker}`, inline: true });
+      message.addFields({ name: "\u200b", value: "*use __/give-reputation-points__ to give your*" });
       message.setThumbnail(taker.displayAvatarURL({ dynamic: true }));
       message.setFooter({ text: `${makerPoints} ⭐ to ${maker.displayName}`, iconURL: `${maker.displayAvatarURL()}` });
       message.setTimestamp();

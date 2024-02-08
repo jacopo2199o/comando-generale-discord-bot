@@ -17,11 +17,11 @@ const messageDelete = async (deletedMessage) => {
   const audit = audits.entries.first();
 
   if (audit === undefined) {
-    return console.error(audit);
+    return;
   }
 
-  const author = deletedMessage.guild.members.cache.get(deletedMessage.author.id ?? undefined);
-  const executor = deletedMessage.guild.members.cache.get(audit.executorId);
+  const author = deletedMessage.member;
+  const executor = audit.executor;
 
   if (author === undefined || executor === undefined) {
     return console.error(author, executor);
@@ -36,7 +36,7 @@ const messageDelete = async (deletedMessage) => {
   }
 
   if (executor.id === deletedMessage.guild.ownerId) {
-    return;
+    return console.log(executor);
   }
 
   const authorPoints = getCalculatedPoints(customPoints.messageDelete.author, reputationPoints[author.guild.id][author.id].points);

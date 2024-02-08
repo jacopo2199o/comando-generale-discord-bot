@@ -1,6 +1,7 @@
 import { globalPoints } from "../events/ready.js";
 
 const customPoints = {
+  cooldownPenalty: -100,
   guildMemberAdd: 1000,
   guildMemberRemove: -1000,
   interactionCreate: 2,
@@ -20,7 +21,8 @@ const customPoints = {
     taker: 100,
     oldTaker: -100
   },
-  threadCreate: 100
+  threadCreate: 100,
+  transferPenalty: -200
 };
 
 const drops = {
