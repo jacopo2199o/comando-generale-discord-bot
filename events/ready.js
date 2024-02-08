@@ -206,7 +206,7 @@ const ready = async (client) => {
       await saveFile(`./resources/backups/transfers-${guild.id}-backup.json`, transfers[guild.id]);
     }));
   }, generalSettings.backupInterval);
-  client.user.setPresence({ activities: [{ name: "https://discord.gg/F7UTwWtwTV", type: ActivityType.Watching, }] });
+  client.user.setPresence({ activities: [{ state: "", name: "https://discord.gg/F7UTwWtwTV", type: ActivityType.Watching, }] });
   console.log(`bot ready as ${client.user.username}`);
 };
 

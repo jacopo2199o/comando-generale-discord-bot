@@ -10,7 +10,7 @@ import { globalPoints, pointsLastMove } from "./ready.js";
  */
 const activity = async (member, points) => {
   const channel = member.guild.channels.cache.find((channel) => channel.name === customChannels.activity)
-    ?? member.guild.channels.cache.get(member.guild.publicUpdatesChannelId);
+    ?? member.guild.publicUpdatesChannel;
   const role = getCustomRole(member);
 
   if (role === undefined) {
