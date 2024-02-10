@@ -28,7 +28,7 @@ const givePromotionPoints = async (interaction) => {
   message.setTitle("🔰 promotion points");
   message.setDescription(`${makerRole} *${maker}* give ${points} *${pointsString}* to ${takerRole} *${taker}*`);
   message.addFields({ name: "promotion points", value: `${points} ⭐`, inline: true });
-  message.addFields({ name: "to", value: `${taker} ⭐`, inline: true });
+  message.addFields({ name: "to", value: `${taker}`, inline: true });
   message.setThumbnail(taker.displayAvatarURL({ dynamic: true }));
   message.setFooter({ text: `${maker.displayName}`, iconURL: `${maker.displayAvatarURL()}` });
   message.setTimestamp();

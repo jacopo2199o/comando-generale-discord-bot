@@ -20,14 +20,14 @@ const messageDelete = async (deletedMessage) => {
     return;
   }
 
-  const author = deletedMessage.member;
-  const executor = audit.executor;
+  const author = deletedMessage.member ?? undefined;
+  const executor = audit.executor ?? undefined;
 
   if (author === undefined || executor === undefined) {
     return console.error(author, executor);
   }
 
-  if (author.user.bot === true || executor.user.bot === true) {
+  if (author.user.bot === true || executor.bot === true) {
     return;
   }
 
@@ -36,7 +36,7 @@ const messageDelete = async (deletedMessage) => {
   }
 
   if (executor.id === deletedMessage.guild.ownerId) {
-    return console.log(executor);
+    return;
   }
 
   const authorPoints = getCalculatedPoints(customPoints.messageDelete.author, reputationPoints[author.guild.id][author.id].points);
