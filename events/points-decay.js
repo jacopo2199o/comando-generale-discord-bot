@@ -2,7 +2,7 @@ import { EmbedBuilder } from "discord.js";
 import { customChannels } from "../resources/custom-channels.js";
 import { customPoints } from "../resources/custom-points.js";
 import { addCustomBaseRoles, downgrade, getCustomRole } from "../resources/custom-roles.js";
-import { globalPoints } from "./ready.js";
+import { globalPoints, pointsLastMove } from "./ready.js";
 
 /**
  * @param {import("discord.js").Guild} guild
@@ -10,6 +10,7 @@ import { globalPoints } from "./ready.js";
 const pointsDecay = async (guild, points) => {
   guild.members.cache.forEach((member) => {
     if (member.user.bot === false) {
+      pointsLastMove[member.guild.id][member.id] = -1;
       const role = getCustomRole(member);
 
       if (role !== undefined) {
@@ -37,7 +38,7 @@ const pointsDecay = async (guild, points) => {
               message.setTimestamp();
               message.setColor("DarkRed");
               const channel = guild.channels.cache.find((channel) => channel.name === customChannels.activity)
-                ?? guild.channels.cache.get(guild.publicUpdatesChannelId);
+                ?? guild.publicUpdatesChannel;
               channel.send({ embeds: [message] });
             }
           } else {
@@ -62,7 +63,7 @@ const pointsDecay = async (guild, points) => {
   message.setTimestamp();
   message.setColor("DarkRed");
   const channel = guild.channels.cache.find((channel) => channel.name === customChannels.public)
-    ?? guild.publicUpdatesChannelId;
+    ?? guild.publicUpdatesChannel;
   channel.send({ embeds: [message] });
 };
 

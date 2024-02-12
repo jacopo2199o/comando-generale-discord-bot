@@ -28,8 +28,8 @@ const guildMemberRemove = async (oldMember) => {
     }
   }
 
-  const channel = oldMember.guild.channels.cache.find((channel) => channel.name === customChannels.private)
-    ?? oldMember.guild.channels.cache.get(oldMember.guild.publicUpdatesChannelId);
+  const channel = oldMember.guild.channels.cache.find((channel) => channel.name === customChannels.internal)
+    ?? oldMember.guild.publicUpdatesChannel;
   const message = new EmbedBuilder();
   const role = getCustomRole(oldMember) ?? "n.a.";
 

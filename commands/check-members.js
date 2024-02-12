@@ -26,7 +26,7 @@ const checkMembers = async (interaction) => {
 
   if (messages.length > 0) {
     const channel = interaction.guild.channels.cache.find((channel) => channel.name === customChannels.internal)
-      ?? interaction.guild.channels.cache.get(interaction.guild.publicUpdatesChannelId);
+      ?? interaction.guild.publicUpdatesChannel;
     sendMesseges(messages, channel);
     await interaction.followUp("done");
   } else {

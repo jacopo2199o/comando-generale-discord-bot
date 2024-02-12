@@ -21,7 +21,7 @@ const canvasMain = async (guild) => {
   ctx.stroke();
   const image = new AttachmentBuilder(canvas.toBuffer(), { name: "test.png" });
   const channel = guild.channels.cache.find((channel) => channel.name === customChannels.internal)
-    ?? guild.channels.cache.get(guild.channels.publicUpdatesChannelId);
+    ?? guild.channels.publicUpdatesChannel;
   const messageSent = await channel.send({ files: [image] });
   setTimeout(() => {
     messageSent.delete();

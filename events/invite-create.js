@@ -9,9 +9,7 @@ import { referrals, reputationPoints } from "./ready.js";
  */
 const inviteCreate = async (invite) => {
   referrals[invite.code] = invite.uses;
-  //const members = await invite.guild.members.fetch();
-  //const maker = members.get(invite.inviter.id);
-  const maker = invite.guild.members.cache.get(invite.inviter.id);
+  const maker = invite.inviter ?? undefined;
 
   if (maker === undefined) {
     return console.error(maker);
@@ -34,7 +32,7 @@ const inviteCreate = async (invite) => {
   message.setTimestamp();
   message.setColor(makerRole.color);
   const channel = invite.guild.channels.cache.find((channel) => channel.name === customChannels.activity)
-    ?? invite.guild.channels.cache.get(invite.guild.publicUpdatesChannelId);
+    ?? invite.guild.publicUpdatesChannel;
   channel.send({ embeds: [message] });
 };
 

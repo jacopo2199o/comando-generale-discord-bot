@@ -10,7 +10,7 @@ import { getCustomRole } from "../resources/custom-roles.js";
 const giveReputationPoint = async (interaction) => {
   await interaction.deferReply();
   const channel = interaction.guild.channels.cache.find((channel) => channel.name === customChannels.public)
-    ?? interaction.guild.channels.cache.get(interaction.guild.publicUpdatesChannelId);
+    ?? interaction.guild.publicUpdatesChannel;
   /**
    * @type { import("discord.js").User }
    */

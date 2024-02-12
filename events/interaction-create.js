@@ -102,7 +102,7 @@ const interactionCreate = async (interaction) => {
       message.setTimestamp();
       message.setColor(makerRole.color);
       const channel = interaction.guild.channels.cache.find((channel) => channel.name === customChannels.public)
-        ?? interaction.guild.channels.cache.get(interaction.guild.publicUpdatesChannelId);
+        ?? interaction.guild.publicUpdatesChannel;
       channel.send({ embeds: [message] });
     }
   } else if (interaction.isButton()) {

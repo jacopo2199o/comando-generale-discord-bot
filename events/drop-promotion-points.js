@@ -30,7 +30,7 @@ const dropPromotionPoints = async (dropChannel) => {
   publicMessage.setTimestamp();
   publicMessage.setColor("DarkGreen");
   const publicChannel = dropChannel.guild.channels.cache.find((channel) => channel.name === customChannels.public)
-    ?? dropChannel.guild.channels.cache.get(dropChannel.guild.publicUpdatesChannelId);
+    ?? dropChannel.guild.publicUpdatesChannel;
   await publicChannel.send({ embeds: [publicMessage] });
   await dropChannel.send({ embeds: [dropMessage], components: [actionRow] });
 };

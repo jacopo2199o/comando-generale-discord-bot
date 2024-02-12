@@ -58,7 +58,7 @@ const messageDelete = async (deletedMessage) => {
   message.setTimestamp();
   message.setColor("DarkBlue");
   const channel = deletedMessage.guild.channels.cache.find((channel) => channel.name === customChannels.private)
-    ?? deletedMessage.guild.channels.cache.get(deletedMessage.guild.publicUpdatesChannelId);
+    ?? deletedMessage.guild.publicUpdatesChannel;
   channel.send({ embeds: [message] });
 };
 

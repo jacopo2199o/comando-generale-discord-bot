@@ -50,7 +50,7 @@ const guildMemberAdd = async (newMember) => {
   }
 
   const channel = newMember.guild.channels.cache.find((channel) => channel.name === customChannels.activity)
-    ?? newMember.guild.channels.cache.get(newMember.guild.publicUpdatesChannelId);
+    ?? newMember.guild.publicUpdatesChannel;
   channel.send({ embeds: [message] });
 };
 

@@ -14,7 +14,7 @@ const activity = async (member, points) => {
   const role = getCustomRole(member);
 
   if (role === undefined) {
-    return console.error(role);
+    return;
   }
 
   const pointsRing = (globalPoints[member.guild.id][member.id] % customPoints.promotionPoints) + points;

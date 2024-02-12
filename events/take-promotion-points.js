@@ -26,7 +26,7 @@ const takePromotionPoints = async (interaction) => {
   message.setTimestamp();
   message.setColor("DarkGreen");
   const channel = interaction.guild.channels.cache.find((channel) => channel.name === customChannels.public)
-    ?? interaction.guild.channels.cache.get(interaction.guild.publicUpdatesChannel);
+    ?? interaction.guild.publicUpdatesChannel;
   channel.send({ embeds: [message] });
 };
 
