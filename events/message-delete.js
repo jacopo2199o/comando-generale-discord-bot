@@ -24,7 +24,7 @@ const messageDelete = async (deletedMessage) => {
   const executor = audit.executor ?? undefined;
 
   if (author === undefined || executor === undefined) {
-    return console.error(author, executor);
+    return;
   }
 
   if (author.user.bot === true || executor.bot === true) {
