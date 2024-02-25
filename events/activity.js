@@ -24,7 +24,7 @@ const activity = async (member, points) => {
 
     if (level < 24) {
       if (role.name !== "membro") {
-        globalPoints[member.guild.id][member.id] = customPoints.promotionPoints + pointsRing;
+        globalPoints[member.guild.id][member.id] += points;
         pointsLastMove[member.guild.id][member.id] = -1;
       } else {
         globalPoints[member.guild.id][member.id] = 0;
@@ -36,7 +36,7 @@ const activity = async (member, points) => {
       if (downgradeResult !== undefined) {
         const message1 = new EmbedBuilder();
         message1.setTitle("🔰 downgrade");
-        message1.setDescription(`*${member}* lost ${customPoints.promotionPoints} *promotion points*`);
+        message1.setDescription(`*${member}* no longer have *promotion points* for ${downgradeResult.oldRole}`);
         message1.addFields({ name: "old role", value: `${downgradeResult.oldRole}`, inline: true });
         message1.addFields({ name: "new role", value: `${downgradeResult.newRole}`, inline: true });
         message1.setThumbnail(member.displayAvatarURL({ dynamic: true }));
