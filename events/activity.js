@@ -24,7 +24,11 @@ const activity = async (member, points) => {
 
     if (level < 24) {
       if (role.name !== "membro") {
-        globalPoints[member.guild.id][member.id] += points;
+        if (globalPoints[member.guild.id][member.id] > 0) {
+          globalPoints[member.guild.id][member.id] += points;
+        } else {
+          globalPoints[member.guild.id][member.id] = customPoints.promotionPoints + points;
+        }
         pointsLastMove[member.guild.id][member.id] = -1;
       } else {
         globalPoints[member.guild.id][member.id] = 0;
