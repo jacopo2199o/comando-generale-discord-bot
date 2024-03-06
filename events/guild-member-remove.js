@@ -3,37 +3,46 @@ import { customChannels } from "../resources/custom-channels.js";
 import { customPoints } from "../resources/custom-points.js";
 import { getCustomRole } from "../resources/custom-roles.js";
 import { deleteMember } from "../resources/general-utilities.js";
-import { globalPoints, reputationPoints } from "./ready.js";
+import { reputationPoints } from "./ready.js";
 
 /**
 * @param { import("discord.js").GuildMember } oldMember
 */
 const guildMemberRemove = async (oldMember) => {
   const gaveToId = reputationPoints[oldMember.guild.id][oldMember.id].gaveTo;
-  deleteMember(oldMember);
-
+  
   if (gaveToId !== "") {
     reputationPoints[oldMember.guild.id][gaveToId].points = -1;
   }
 
+  deleteMember(oldMember);
+
   const penaltyPoints = Math.round(customPoints.guildMemberRemove / oldMember.guild.memberCount);
 
-  for (const memberId in globalPoints[oldMember.guild.id]) {
-    const member = oldMember.guild.members.cache.get(memberId);
-
+  oldMember.guild.members.cache.forEach((member) => {
     if (member !== undefined) {
-      oldMember.client.emit("activity", member, penaltyPoints);
+      member.client.emit("activity", member, penaltyPoints);
     } else {
       console.error(member, oldMember);
     }
-  }
+  });
+
+  // for (const memberId in globalPoints[oldMember.guild.id]) {
+  //   const member = oldMember.guild.members.cache.get(memberId);
+
+  //   if (member !== undefined) {
+  //     oldMember.client.emit("activity", member, penaltyPoints);
+  //   } else {
+  //     console.error(member, oldMember);
+  //   }
+  // }
 
   const channel = oldMember.guild.channels.cache.find((channel) => channel.name === customChannels.internal)
     ?? oldMember.guild.publicUpdatesChannel;
   const message = new EmbedBuilder();
   const role = getCustomRole(oldMember) ?? "n.a.";
 
-  if (role !== undefined) {
+  if (role !== "n.a.") {
     const roleComandoGenerale = oldMember.roles.cache.find((role) => role.name === "compagnia comando generale");
 
     if (roleComandoGenerale !== undefined) {
