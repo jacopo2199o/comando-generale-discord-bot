@@ -27,18 +27,6 @@ const guildMemberRemove = async (oldMember) => {
     }
   });
 
-  // for (const memberId in globalPoints[oldMember.guild.id]) {
-  //   const member = oldMember.guild.members.cache.get(memberId);
-
-  //   if (member !== undefined) {
-  //     oldMember.client.emit("activity", member, penaltyPoints);
-  //   } else {
-  //     console.error(member, oldMember);
-  //   }
-  // }
-
-  const channel = oldMember.guild.channels.cache.find((channel) => channel.name === customChannels.internal)
-    ?? oldMember.guild.publicUpdatesChannel;
   const message = new EmbedBuilder();
   const role = getCustomRole(oldMember) ?? "n.a.";
 
@@ -73,6 +61,8 @@ const guildMemberRemove = async (oldMember) => {
     message.setColor("DarkRed");
   }
 
+  const channel = oldMember.guild.channels.cache.find((channel) => channel.name === customChannels.internal)
+  ?? oldMember.guild.publicUpdatesChannel;
   channel.send({ embeds: [message] });
 };
 
