@@ -41,7 +41,7 @@ const viewPromotionPoints = async (interaction) => {
   } else {
     const message = new EmbedBuilder();
     message.setTitle("⭐ promotion points");
-    message.setDescription(`you have ${points}/${customPoints.promotionPoints} *promotion points*`);
+    message.setDescription(`you have ${points}/${customPoints.promotionPoints} (lvl. ${level}) *promotion points*`);
     message.setThumbnail(interaction.member.displayAvatarURL({ dynamic: true }));
     message.setTimestamp();
     message.setColor(role.color);
