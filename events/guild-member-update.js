@@ -41,7 +41,7 @@ const guildMemberUpdate = async (oldMember, newMember) => {
 
     const message = new EmbedBuilder();
     message.setTitle("🪪 new nickname");
-    message.setDescription(`${role} *${oldMember}* changed his nickname in ${newMember}`);
+    message.setDescription(`${role} *${oldMember.nickname}* changed his nickname in ${newMember}`);
     message.setThumbnail(newMember.displayAvatarURL({ dynamic: true }));
     message.setTimestamp();
     message.setColor(role.color);
