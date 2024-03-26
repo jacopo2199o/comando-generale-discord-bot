@@ -23,7 +23,7 @@ const dropPromotionPoints = async (dropChannel) => {
   dropMessage.setColor("DarkGreen");
   const publicMessage = new EmbedBuilder();
   publicMessage.setTitle("📦 new drop");
-  publicMessage.setDescription(`a *promotion points* drop spawned in ${dropChannel.name}`);
+  publicMessage.setDescription(`a *promotion points* drop spawned in *${dropChannel.name}*`);
   publicMessage.addFields({ name: "type", value: "promotion points", inline: true });
   publicMessage.addFields({ name: "value", value: `${drops.promotionPoints} ⭐`, inline: true });
   publicMessage.setThumbnail(dropChannel.client.user.displayAvatarURL({ dynamic: true }));
