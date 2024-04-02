@@ -1,7 +1,7 @@
 const generalSettings = {
-  backupInterval: 4000,
+  backupInterval: 8000,
   hourCheckInterval: 1000 * 60,
-  saveInterval: 2000
+  saveInterval: 4000
 };
 
 export { generalSettings };
