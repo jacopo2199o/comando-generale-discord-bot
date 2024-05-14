@@ -1,7 +1,4 @@
 {
-  "git.autofetch": true,
-  "terminal.integrated.defaultProfile.windows": "PowerShell",
-  "html.autoClosingTags": false,
   "editor.autoClosingBrackets": "never",
   "editor.autoClosingDelete": "never",
   "editor.autoClosingOvertype": "never",
@@ -9,10 +6,6 @@
   "editor.insertSpaces": true,
   "editor.detectIndentation": false,
   "editor.tabSize": 2,
-  "editor.codeActionsOnSave": {
-    "source.organizeImports": "explicit"
-  },
-  "javascript.autoClosingTags": false,
   "javascript.suggestionActions.enabled": false,
-  "workbench.startupEditor": "none",
+  "terminal.integrated.defaultProfile.windows": "Command Prompt"
 }

@@ -29,7 +29,7 @@ const threadCreate = async (thread, newlyCreated) => {
   message.setThumbnail(maker.displayAvatarURL({ dynamic: true }));
   message.setTimestamp();
   message.setColor(role.color);
-  const channel = thread.guild.channels.cache.find((channel) => channel.name === customChannels.activity)
+  const channel = thread.guild.channels.cache.find((channel) => channel.name === customChannels.public)
     ?? thread.guild.publicUpdatesChannel;
   channel.send({ embeds: [message] });
   thread.client.emit("activity", maker, points);
