@@ -7,7 +7,7 @@ import { loadFile, saveFile } from "../resources/general-utilities.js";
 
 const cooldowns = {};
 const globalPoints = {};
-const pointsLastActivity = {};
+const pointsLastMove = {};
 const reputationPoints = {};
 const referrals = {};
 const seniority = {};
@@ -20,9 +20,9 @@ const ready = async (client) => {
   await Promise.all(client.guilds.cache.map(async (guild) => {
     const members = await guild.members.fetch();
     // points last move
-    pointsLastActivity[guild.id] = {};
+    pointsLastMove[guild.id] = {};
     members.forEach((member) => {
-      pointsLastActivity[guild.id][member.id] = 0;
+      pointsLastMove[guild.id][member.id] = 0;
     });
 
     // cooldonws
@@ -213,7 +213,7 @@ const ready = async (client) => {
 export {
   cooldowns,
   globalPoints,
-  pointsLastActivity as pointsLastMove,
+  pointsLastMove as pointsLastMove,
   ready,
   referrals,
   reputationPoints,
