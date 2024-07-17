@@ -7,7 +7,7 @@ import { loadFile, saveFile } from "../resources/general-utilities.js";
 
 const cooldowns = {};
 const globalPoints = {};
-const pointsLastMove = {};
+const pointsLastActivity = {};
 const reputationPoints = {};
 const referrals = {};
 const seniority = {};
@@ -20,9 +20,9 @@ const ready = async (client) => {
   await Promise.all(client.guilds.cache.map(async (guild) => {
     const members = await guild.members.fetch();
     // points last move
-    pointsLastMove[guild.id] = {};
+    pointsLastActivity[guild.id] = {};
     members.forEach((member) => {
-      pointsLastMove[guild.id][member.id] = 0;
+      pointsLastActivity[guild.id][member.id] = 0;
     });
 
     // cooldonws
@@ -200,10 +200,10 @@ const ready = async (client) => {
   // backup data save
   setInterval(async () => {
     await Promise.all(client.guilds.cache.map(async (guild) => {
-      await saveFile(`./resources/backups/cooldowns-${guild.id}-backup.json`, cooldowns[guild.id]);
-      await saveFile(`./resources/backups/points-${guild.id}-backup.json`, globalPoints[guild.id]);
-      await saveFile(`./resources/backups/reputation-${guild.id}-backup.json`, reputationPoints[guild.id]);
-      await saveFile(`./resources/backups/transfers-${guild.id}-backup.json`, transfers[guild.id]);
+      await saveFile(`./resources/backups/cooldowns-${guild.id}.json`, cooldowns[guild.id]);
+      await saveFile(`./resources/backups/points-${guild.id}.json`, globalPoints[guild.id]);
+      await saveFile(`./resources/backups/reputation-${guild.id}.json`, reputationPoints[guild.id]);
+      await saveFile(`./resources/backups/transfers-${guild.id}.json`, transfers[guild.id]);
     }));
   }, generalSettings.backupInterval);
   client.user.setPresence({ activities: [{ state: "", name: "https://discord.gg/F7UTwWtwTV", type: ActivityType.Watching, }] });
@@ -213,7 +213,7 @@ const ready = async (client) => {
 export {
   cooldowns,
   globalPoints,
-  pointsLastMove,
+  pointsLastActivity as pointsLastMove,
   ready,
   referrals,
   reputationPoints,
