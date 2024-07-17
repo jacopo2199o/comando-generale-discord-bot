@@ -31,7 +31,7 @@ const messageDelete = async (deletedMessage) => {
     return;
   }
 
-  if (author.id === executor.id) {
+  if (author.id === executor.id || executor.id === undefined) {
     return;
   }
 
