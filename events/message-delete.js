@@ -45,7 +45,7 @@ const messageDelete = async (deletedMessage) => {
 
   const authorPoints = getCalculatedPoints(customPoints.messageDelete.author, reputationPoints[author.guild.id][author.id].points);
   const authorRole = getCustomRole(author) ?? "n.a.";
-  const executorPoints = getCalculatedPoints(customPoints.messageDelete.executor, reputationPoints[executor.guild.id][executor.id].points);
+  const executorPoints = getCalculatedPoints(customPoints.messageDelete.executor, reputationPoints[author.guild.id][executor.id].points);
   const executorRole = getCustomRole(executor) ?? "n.a.";
   deletedMessage.client.emit("activity", author, authorPoints);
   deletedMessage.client.emit("activity", executor, executorPoints);
