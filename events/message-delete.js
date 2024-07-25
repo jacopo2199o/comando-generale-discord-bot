@@ -13,34 +13,30 @@ const messageDelete = async (deletedMessage) => {
   if (audits === undefined) {
     return console.error(audits);
   }
-  
+
   const audit = audits.entries.first();
-  
+
   if (audit === undefined) {
     return console.error(audit);
   }
-  
+
   const author = deletedMessage.member ?? undefined;
-  const executor = audit.executor ?? undefined;
-  
+  const executor = deletedMessage.guild.members.cache.get(audit.executor.id) ?? undefined;
+
   if (author === undefined || executor === undefined) {
-    return console.error(author, executor);
+    return console.error(`message delete error - author: ${author}, executor: ${executor}`);
   }
-  
-  if (author === null || executor === null) {
-    return console.error(author, executor);
-  }
-  
-  if (author.user.bot === true || executor.bot === true) {
-    return console.error(author.user.bot, executor.bot);
-  }
-  
-  if (author.id === executor.id || executor.id === undefined) {
-    return console.error(author.id, executor.id);
-  }
-  
+
   if (executor.id === deletedMessage.guild.ownerId) {
-    return console.error(executor.id);
+    return;
+  }
+
+  if (author.id === executor.id) {
+    return;
+  }
+
+  if (author.user.bot === true || executor.user.bot === true) {
+    return;
   }
 
   const authorPoints = getCalculatedPoints(customPoints.messageDelete.author, reputationPoints[author.guild.id][author.id].points);
