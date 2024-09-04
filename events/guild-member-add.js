@@ -15,8 +15,8 @@ const guildMemberAdd = async (newMember) => {
    * @type { import("discord.js").GuildMember }
   */
   let inviter = undefined;
-  let points = undefined;
   let uses = undefined;
+  let points = undefined;
   invites.forEach((invite) => {
     if (invite.uses !== referrals[invite.code]) {
       referrals[invite.code] = invite.uses;

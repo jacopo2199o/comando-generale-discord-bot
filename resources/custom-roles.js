@@ -114,6 +114,19 @@ const getCustomRole = (member) => {
 };
 
 /**
+* @param {import("discord.js").GuildMember} member
+*/
+const hasMoreCustomRoles = (member) => {
+  let roles = 0;
+  member.roles.cache.forEach((role) => customRoles.find((customRole) => {
+    if (customRole === role.name) {
+      roles++;
+    }
+  }));
+  return roles > 1 ? true : false;
+};
+
+/**
  * @param {import("discord.js").Role} role
  * @param {Boolean} role
  * @returns {Boolean}
@@ -123,7 +136,7 @@ const hasModerationRole = (role, isResponsabile) => {
     return true;
   } else if (role.name === "senatore" || role.name === "governatore") {
     return true;
-  } else if(isResponsabile === true){
+  } else if (isResponsabile === true) {
     return true;
   } else {
     return false;
@@ -180,6 +193,7 @@ export {
   downgrade,
   getCustomRole,
   hasModerationRole,
+  hasMoreCustomRoles,
   upgrade
 };
 

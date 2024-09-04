@@ -23,7 +23,7 @@ const guildMemberRemove = async (oldMember) => {
     if (member !== undefined) {
       member.client.emit("activity", member, penaltyPoints);
     } else {
-      console.error(member, oldMember);
+      console.error("member not found");
     }
   });
 

@@ -36,7 +36,7 @@ const guildMemberUpdate = async (oldMember, newMember) => {
     const role = getCustomRole(newMember);
     
     if (role === undefined) {
-      return console.error(role);
+      return console.error(`custom role not found for ${newMember.nickname}`);
     }
 
     const message = new EmbedBuilder();

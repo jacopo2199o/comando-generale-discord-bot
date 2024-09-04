@@ -20,11 +20,11 @@ const messageDelete = async (deletedMessage) => {
     return console.error(audit);
   }
 
-  const author = deletedMessage.guild.members.cache.get(deletedMessage.member.id) ?? undefined;
-  const executor = deletedMessage.guild.members.cache.get(audit.executor.id) ?? undefined;
+  const author = deletedMessage.guild.members.cache.get(deletedMessage.author?.id) ?? undefined;
+  const executor = deletedMessage.guild.members.cache.get(audit.executor?.id) ?? undefined;
 
   if (author === undefined || executor === undefined) {
-    return console.error(`message delete error - author: ${author}, executor: ${executor}`);
+    return console.error("message delete error");
   }
 
   if (executor.id === deletedMessage.guild.ownerId) {

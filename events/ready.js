@@ -120,16 +120,15 @@ const ready = async (client) => {
     console.log(`legged in guild ${guild.name}`);
   }));
   // points decay
-  let startHour = new Date().getHours();
+  let startDay = new Date().getDay();
   setInterval(() => {
-    const actualHour = new Date().getHours();
-
-    if (startHour !== actualHour) {
-      console.log("a new hour started");
+    const actualDay = new Date().getDay();
+    if (startDay !== actualDay) {
+      console.log("a new day started");
       client.guilds.cache.forEach((guild) => {
-        client.emit("pointsDecay", guild, -1);
+        client.emit("pointsDecay", guild, -24);
       });
-      startHour = actualHour;
+      startDay = actualDay;
     }
   }, generalSettings.hourCheckInterval);
   // cooldowns check for expirations
@@ -137,12 +136,10 @@ const ready = async (client) => {
     client.guilds.cache.forEach((guild) => {
       for (const memberId in cooldowns[guild.id]) {
         const isExpired = cooldowns[guild.id][memberId].endPeriod < new Date().getTime() ? true : false;
-
         if (isExpired === true) {
           delete cooldowns[guild.id][memberId];
           const member = guild.members.cache.get(memberId);
           const role = getCustomRole(member);
-
           if (member !== undefined && role !== undefined) {
             const message = new EmbedBuilder();
             message.setDescription(`🛡️ ${role} *${member}* cooldown penalty expired`);
@@ -165,12 +162,10 @@ const ready = async (client) => {
     client.guilds.cache.forEach((guild) => {
       for (const memberId in transfers[guild.id]) {
         const isExpired = transfers[guild.id][memberId].endPeriod < new Date().getTime() ? true : false;
-
         if (isExpired === true) {
           delete transfers[guild.id][memberId];
           const member = guild.members.cache.get(memberId);
           const role = getCustomRole(member);
-
           if (member !== undefined && role !== undefined) {
             const message = new EmbedBuilder();
             message.setDescription(`🛡️ ${role} *${member}* transfer penalty expired`);

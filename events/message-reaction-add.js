@@ -17,7 +17,7 @@ const messageReactionAdd = async (reaction, user) => {
   const taker = reaction.message.guild.members.cache.get(reaction.message.author.id);
 
   if (maker === undefined || taker === undefined) {
-    return console.error(maker, taker);
+    return console.error(maker.displayName, taker.displayName);
   }
 
   const makerRole = getCustomRole(maker);
