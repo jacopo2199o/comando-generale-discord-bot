@@ -5,28 +5,22 @@ import { getCustomRole } from "../resources/custom-roles.js";
 /**
  * @param {import("discord.js").Interaction} interaction
  */
-const viewReputationPoints = async (interaction) => {
-  await interaction.deferReply();
+const viewReputationPoints = async (interaction) =>
+{
   const user = interaction.options.getUser("member");
-  let member = undefined;
-  
-  if (user !== null) {
-    member = interaction.guild.members.cache.get(user.id);
-  } else {
-    member = interaction.guild.members.cache.get(interaction.member.id);
+  const member = interaction.guild.members.cache.get(user?.id) ?? interaction.guild.members.cache.get(interaction.member.id);
+  if (member === undefined)
+  {
+    return console.error("view reputation points: member undefined");
   }
-
-  if (member === undefined) {
-    return console.error(member);
-  }
-
   const role = getCustomRole(member);
-
-  if (role === undefined) {
-    return console.error(role);
+  if (role === undefined)
+  {
+    return console.error("view reputation points: role undefined");
   }
-
-  if (user !== null) {
+  await interaction.deferReply();
+  if (user !== null)
+  {
     const message = new EmbedBuilder();
     message.setTitle("🏵 reputation points");
     message.setDescription(`${role} *${member}* have ${reputationPoints[member.guild.id][member.id].points} *reputation points*`);
@@ -34,7 +28,9 @@ const viewReputationPoints = async (interaction) => {
     message.setTimestamp();
     message.setColor(role.color);
     await interaction.editReply({ embeds: [message] });
-  } else {
+  }
+  else
+  {
     const message = new EmbedBuilder();
     message.setTitle("🏵 reputation points");
     message.setDescription(`you have ${reputationPoints[member.guild.id][member.id].points} *reputation points*`);

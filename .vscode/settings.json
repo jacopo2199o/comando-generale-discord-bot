@@ -1,5 +1,5 @@
 {
-  "editor.autoClosingBrackets": "never",
+  "editor.autoClosingBrackets": "languageDefined",
   "editor.autoClosingDelete": "never",
   "editor.autoClosingOvertype": "never",
   "editor.autoClosingQuotes": "never",

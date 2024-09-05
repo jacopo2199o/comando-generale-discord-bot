@@ -30,16 +30,21 @@ const customRoles = Object.freeze([
  */
 const addCustomBaseRoles = async (member) => {
   if (member.user.bot === false) {
-    const roleMembro = member.guild.roles.cache.find((role) => role.name === "membro");
-    const roleInternational = member.guild.roles.cache.find((role) => role.name === "international");
-    const hasRoleInternational = member.roles.cache.has((role) => role.name === "international");
-    const hasRoleItaliano = member.roles.cache.has((role) => role.name === "italiano");
-
+    const roleMembro = member.guild.roles.cache.find((role) => role.name === "membro");    
     await member.roles.add(roleMembro.id);
-
-    if (hasRoleInternational === false && hasRoleItaliano === false) {
-      await member.roles.add(roleInternational.id);
-    } else if (hasRoleInternational === true && hasRoleItaliano === true) {
+    const roleItaliano = member.guild.roles.cache.find((role) => role.name === "italiano");
+    const roleEnglish = member.guild.roles.cache.find((role) => role.name === "english");
+    const roleInternational = member.guild.roles.cache.find((role) => role.name === "international");
+    const hasRoleItaliano = member.roles.cache.has((role) => role.name === "italiano");
+    const hasRoleEnglish = member.roles.cache.has((role) => role.name === "english");
+    const hasRoleInternational = member.roles.cache.has((role) => role.name === "international");
+    if (hasRoleItaliano === false && hasRoleEnglish === false && hasRoleInternational === false) {
+      await member.roles.add(roleEnglish.id);
+    } else if (hasRoleItaliano === true && hasRoleEnglish === true) {
+      await member.roles.remove(roleEnglish.id);
+    } else if (hasRoleItaliano === true && hasRoleInternational === true) {
+      await member.roles.remove(roleItaliano.id);
+    } else if (hasRoleEnglish === true && hasRoleInternational === true) {
       await member.roles.remove(roleInternational.id);
     }
   }

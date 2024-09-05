@@ -53,7 +53,7 @@ const pointsDecay = async (guild, points) => {
         }
       } else {
         addCustomBaseRoles(member);
-        console.error(`member ${member.id} has no custom roles: added base ones`);
+        console.error(`member ${member.nickname} has no custom roles: added base ones`);
       }
     }
   });

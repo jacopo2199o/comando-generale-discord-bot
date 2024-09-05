@@ -6,31 +6,24 @@ import { getCustomRole } from "../resources/custom-roles.js";
 /**
  * @param {import("discord.js").Interaction} interaction
  */
-const viewPromotionPoints = async (interaction) => {
-  await interaction.deferReply();
+const viewPromotionPoints = async (interaction) =>
+{
   const user = interaction.options.getUser("member");
-  let member = undefined;
-
-  if (user !== null) {
-    member = interaction.guild.members.cache.get(user.id);
-  } else {
-    member = interaction.guild.members.cache.get(interaction.member.id);
+  const member = interaction.guild.members.cache.get(user?.id) ?? interaction.guild.members.cache.get(interaction.member.id);
+  if (member === undefined)
+  {
+    return console.error("view promotions points: member undefined");
   }
-
-  if (member === undefined) {
-    return console.error(member);
-  }
-
   const role = getCustomRole(member);
-
-  if (role === undefined) {
-    return console.error(role);
+  if (role === undefined)
+  {
+    return console.error("view promotions points: role undefined");
   }
-
-  const level = getLevel(member);
+  await interaction.deferReply();
   const points = globalPoints[member.guild.id][member.id] % customPoints.promotionPoints;
-
-  if (user !== null) {
+  const level = getLevel(member);
+  if (user !== null)
+  {
     const message = new EmbedBuilder();
     message.setTitle("⭐ promotion points");
     message.setDescription(`${role} *${member}* have ${points}/${customPoints.promotionPoints} (lvl. ${level}) *promotion points*`);
@@ -38,7 +31,9 @@ const viewPromotionPoints = async (interaction) => {
     message.setTimestamp();
     message.setColor(role.color);
     await interaction.editReply({ embeds: [message] });
-  } else {
+  }
+  else
+  {
     const message = new EmbedBuilder();
     message.setTitle("⭐ promotion points");
     message.setDescription(`you have ${points}/${customPoints.promotionPoints} (lvl. ${level}) *promotion points*`);

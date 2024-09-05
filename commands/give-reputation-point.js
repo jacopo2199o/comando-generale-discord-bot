@@ -7,45 +7,51 @@ import { getCustomRole } from "../resources/custom-roles.js";
 /**
  * @param {import("discord.js").Interaction} interaction
  */
-const giveReputationPoint = async (interaction) => {
-  await interaction.deferReply();
-  const channel = interaction.guild.channels.cache.find((channel) => channel.name === customChannels.public)
-    ?? interaction.guild.publicUpdatesChannel;
+const giveReputationPoint = async (interaction) =>
+{
   /**
    * @type { import("discord.js").User }
    */
   const user = interaction.options.getUser("member");
-
-  if (user === null) {
-    return console.error(user);
+  if (user === null)
+  {
+    return console.error("give reputation points: user null");
   }
-
   const maker = interaction.guild.members.cache.get(interaction.member.id);
   const taker = interaction.guild.members.cache.get(user.id);
-
-  if (maker === undefined || taker === undefined) {
-    return console.error(maker, taker);
+  if (maker === undefined || taker === undefined)
+  {
+    return console.error("give reputation points: maker or taker undefined");
   }
-
-  const makerPoints = getCalculatedPoints(customPoints.reputationPoints.maker, reputationPoints[interaction.guild.id][maker.id].points);
   const makerRole = getCustomRole(maker);
-  const takerPoints = getCalculatedPoints(customPoints.reputationPoints.taker, reputationPoints[interaction.guild.id][taker.id].points);
   const takerRole = getCustomRole(taker);
-
-  if (makerRole === undefined || takerRole === undefined) {
-    return console.error(makerRole, takerRole);
+  if (makerRole === undefined || takerRole === undefined)
+  {
+    return console.error("give reputation points: maker role or taker role undefined");
   }
-
-  if (taker.id === interaction.member.id) {
+  await interaction.deferReply();
+  if (taker.id === interaction.member.id)
+  {
     await interaction.editReply("you can not select yourself");
-  } else if (taker.id === interaction.guild.ownerId) {
+  }
+  else if (taker.id === interaction.guild.ownerId)
+  {
     await interaction.editReply("you can not select the server owner");
-  } else if (user.bot) {
+  }
+  else if (user.bot)
+  {
     await interaction.editReply("you can not select a bot");
-  } else if (reputationPoints[interaction.guild.id][maker.id].gaveTo == taker.id) {
+  }
+  else if (reputationPoints[interaction.guild.id][maker.id].gaveTo == taker.id)
+  {
     await interaction.editReply(`you already give a reputation points to ${taker}`);
-  } else {
-    if (reputationPoints[interaction.guild.id][maker.id].gaveTo === "") {
+  }
+  else
+  {
+    const makerPoints = getCalculatedPoints(customPoints.reputationPoints.maker, reputationPoints[interaction.guild.id][maker.id].points);
+    const takerPoints = getCalculatedPoints(customPoints.reputationPoints.taker, reputationPoints[interaction.guild.id][taker.id].points);
+    if (reputationPoints[interaction.guild.id][maker.id].gaveTo === "")
+    {
       reputationPoints[interaction.guild.id][maker.id].gaveTo = taker.id;
       reputationPoints[interaction.guild.id][taker.id].points += 1;
       interaction.client.emit("activity", maker, makerPoints);
@@ -60,25 +66,25 @@ const giveReputationPoint = async (interaction) => {
       message.setTimestamp();
       message.setColor(makerRole.color);
       await interaction.editReply({ embeds: [message] });
-    } else {
+    }
+    else
+    {
       const previousTaker = interaction.guild.members.cache.get(reputationPoints[interaction.guild.id][maker.id].gaveTo);
-
-      if (previousTaker === undefined) {
-        return console.error(previousTaker);
+      if (previousTaker === undefined)
+      {
+        return console.error("give reputation points: previous taker undefined");
       }
-
-      const previousTakerPoints = getCalculatedPoints(customPoints.reputationPoints.taker, reputationPoints[interaction.guild.id][previousTaker.id].points);
       const previousTakerRole = getCustomRole(previousTaker);
-
-      if (previousTakerRole === undefined) {
-        return console.error(previousTakerRole);
+      if (previousTakerRole === undefined)
+      {
+        return console.error("give reputation poinuts: previous taker role undefined");
       }
-
       reputationPoints[interaction.guild.id][maker.id].gaveTo = taker.id;
       reputationPoints[interaction.guild.id][taker.id].points += 1;
       reputationPoints[interaction.guild.id][previousTaker.id].points -= 1;
       interaction.client.emit("activity", maker, makerPoints);
       interaction.client.emit("activity", taker, takerPoints);
+      const previousTakerPoints = getCalculatedPoints(customPoints.reputationPoints.taker, reputationPoints[interaction.guild.id][previousTaker.id].points);
       interaction.client.emit("activity", previousTaker, -previousTakerPoints);
       const message = new EmbedBuilder();
       message.setTitle("🏵 reputation points");
@@ -100,8 +106,10 @@ const giveReputationPoint = async (interaction) => {
       message2.setColor(previousTakerRole.color);
       await interaction.editReply({ embeds: [message, message2] });
     }
-
-    if (interaction.channel.id !== channel.id) {
+    const channel = interaction.guild.channels.cache.find((channel) => channel.name === customChannels.public)
+      ?? interaction.guild.publicUpdatesChannel;
+    if (interaction.channel.id !== channel.id)
+    {
       const message = new EmbedBuilder();
       message.setTitle("🏵 reputation points");
       message.setDescription(`${makerRole} *${interaction.member}* gave 1 *reputation point* to ${takerRole} *${taker}*`);

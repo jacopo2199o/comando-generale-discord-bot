@@ -16,101 +16,117 @@ const transfers = {};
 /**
  * @param { import("discord.js").Client } client
  */
-const ready = async (client) => {
-  await Promise.all(client.guilds.cache.map(async (guild) => {
+const ready = async (client) =>
+{
+  await Promise.all(client.guilds.cache.map(async (guild) =>
+  {
     const members = await guild.members.fetch();
     // points last move
     pointsLastMove[guild.id] = {};
-    members.forEach((member) => {
+    members.forEach((member) =>
+    {
       pointsLastMove[guild.id][member.id] = 0;
     });
-
     // cooldonws
-    if (fs.existsSync(`./resources/database/cooldowns-${guild.id}.json`)) {
+    if (fs.existsSync(`./resources/database/cooldowns-${guild.id}.json`))
+    {
       cooldowns[guild.id] = await loadFile(`./resources/database/cooldowns-${guild.id}.json`);
-
-      for (const memberId in cooldowns[guild.id]) {
-        if (members.get(memberId) === undefined) {
+      for (const memberId in cooldowns[guild.id])
+      {
+        if (members.get(memberId) === undefined)
+        {
           delete cooldowns[guild.id][memberId];
         }
       }
-
       await saveFile(`./resources/database/cooldowns-${guild.id}.json`, cooldowns[guild.id]);
-    } else {
+    } else
+    {
       cooldowns[guild.id] = {};
       await saveFile(`./resources/database/cooldowns-${guild.id}.json`, cooldowns[guild.id]);
     }
-
     // global points
-    if (fs.existsSync(`./resources/database/points-${guild.id}.json`)) {
+    if (fs.existsSync(`./resources/database/points-${guild.id}.json`))
+    {
       globalPoints[guild.id] = await loadFile(`./resources/database/points-${guild.id}.json`);
-      members.forEach((member) => {
-        if (globalPoints[guild.id][member.id] === undefined) {
+      members.forEach((member) =>
+      {
+        if (globalPoints[guild.id][member.id] === undefined)
+        {
           globalPoints[guild.id][member.id] = 0;
         }
       });
-
-      for (const id in globalPoints[guild.id]) {
-        if (members.get(id) === undefined) {
+      for (const id in globalPoints[guild.id])
+      {
+        if (members.get(id) === undefined)
+        {
           delete globalPoints[guild.id][id];
         }
       }
-
       await saveFile(`./resources/database/points-${guild.id}.json`, globalPoints[guild.id]);
-    } else {
+    } else
+    {
       globalPoints[guild.id] = {};
-      members.forEach((member) => {
+      members.forEach((member) =>
+      {
         globalPoints[guild.id][member.id] = 0;
       });
       await saveFile(`./resources/database/points-${guild.id}.json`, globalPoints[guild.id]);
     }
-
     // reputation points
-    if (fs.existsSync(`./resources/database/reputation-${guild.id}.json`)) {
+    if (fs.existsSync(`./resources/database/reputation-${guild.id}.json`))
+    {
       reputationPoints[guild.id] = await loadFile(`./resources/database/reputation-${guild.id}.json`);
-      members.forEach((member) => {
-        if (reputationPoints[guild.id][member.id] === undefined) {
+      members.forEach((member) =>
+      {
+        if (reputationPoints[guild.id][member.id] === undefined)
+        {
           reputationPoints[guild.id][member.id] = { points: 0, gaveTo: "" };
         }
       });
-
-      for (const id in reputationPoints[guild.id]) {
-        if (members.get(id) === undefined) {
+      for (const id in reputationPoints[guild.id])
+      {
+        if (members.get(id) === undefined)
+        {
           delete reputationPoints[guild.id][id];
         }
       }
-
       await saveFile(`./resources/database/reputation-${guild.id}.json`, reputationPoints[guild.id]);
-    } else {
+    } else
+    {
       reputationPoints[guild.id] = {};
-      members.forEach((member) => {
+      members.forEach((member) =>
+      {
         reputationPoints[guild.id][member.id] = { points: 0, gaveTo: "" };
       });
       await saveFile(`./resources/database/reputation-${guild.id}.json`, reputationPoints[guild.id]);
     }
-
     // referrals
     const invites = await guild.invites.fetch();
-    invites.forEach((invite) => {
+    invites.forEach((invite) =>
+    {
       referrals[invite.code] = invite.uses;
     });
     // seniority
     seniority[guild.id] = {};
-    members.forEach((member) => {
+    members.forEach((member) =>
+    {
       seniority[guild.id][member.id] = Math.round((new Date().getTime() - member.joinedAt.getTime()) / (1000 * 60 * 60 * 24));
     });
     // transfer
-    if (fs.existsSync(`./resources/database/transfers-${guild.id}.json`)) {
+    if (fs.existsSync(`./resources/database/transfers-${guild.id}.json`))
+    {
       transfers[guild.id] = await loadFile(`./resources/database/transfers-${guild.id}.json`);
 
-      for (const memberId in transfers[guild.id]) {
-        if (members.get(memberId) === undefined) {
+      for (const memberId in transfers[guild.id])
+      {
+        if (members.get(memberId) === undefined)
+        {
           delete transfers[guild.id][memberId];
         }
       }
-
       await saveFile(`./resources/database/transfers-${guild.id}.json`, transfers[guild.id]);
-    } else {
+    } else
+    {
       transfers[guild.id] = {};
       await saveFile(`./resources/database/transfers-${guild.id}.json`, transfers[guild.id]);
     }
@@ -121,26 +137,34 @@ const ready = async (client) => {
   }));
   // points decay
   let startDay = new Date().getDay();
-  setInterval(() => {
+  setInterval(() =>
+  {
     const actualDay = new Date().getDay();
-    if (startDay !== actualDay) {
+    if (startDay !== actualDay)
+    {
       console.log("a new day started");
-      client.guilds.cache.forEach((guild) => {
+      client.guilds.cache.forEach((guild) =>
+      {
         client.emit("pointsDecay", guild, -24);
       });
       startDay = actualDay;
     }
   }, generalSettings.hourCheckInterval);
   // cooldowns check for expirations
-  setInterval(() => {
-    client.guilds.cache.forEach((guild) => {
-      for (const memberId in cooldowns[guild.id]) {
+  setInterval(() =>
+  {
+    client.guilds.cache.forEach((guild) =>
+    {
+      for (const memberId in cooldowns[guild.id])
+      {
         const isExpired = cooldowns[guild.id][memberId].endPeriod < new Date().getTime() ? true : false;
-        if (isExpired === true) {
+        if (isExpired === true)
+        {
           delete cooldowns[guild.id][memberId];
           const member = guild.members.cache.get(memberId);
           const role = getCustomRole(member);
-          if (member !== undefined && role !== undefined) {
+          if (member !== undefined && role !== undefined)
+          {
             const message = new EmbedBuilder();
             message.setDescription(`🛡️ ${role} *${member}* cooldown penalty expired`);
             message.setThumbnail(member.displayAvatarURL({ dynamic: true }));
@@ -150,7 +174,8 @@ const ready = async (client) => {
             const channel = guild.channels.cache.find((channel) => channel.name === customChannels.activity)
               ?? guild.publicUpdatesChannel;
             channel.send({ embeds: [message] });
-          } else {
+          } else
+          {
             console.error(member, role);
           }
         }
@@ -158,15 +183,20 @@ const ready = async (client) => {
     });
   }, generalSettings.backupInterval);
   // transfers check for expiration
-  setInterval(() => {
-    client.guilds.cache.forEach((guild) => {
-      for (const memberId in transfers[guild.id]) {
+  setInterval(() =>
+  {
+    client.guilds.cache.forEach((guild) =>
+    {
+      for (const memberId in transfers[guild.id])
+      {
         const isExpired = transfers[guild.id][memberId].endPeriod < new Date().getTime() ? true : false;
-        if (isExpired === true) {
+        if (isExpired === true)
+        {
           delete transfers[guild.id][memberId];
           const member = guild.members.cache.get(memberId);
           const role = getCustomRole(member);
-          if (member !== undefined && role !== undefined) {
+          if (member !== undefined && role !== undefined)
+          {
             const message = new EmbedBuilder();
             message.setDescription(`🛡️ ${role} *${member}* transfer penalty expired`);
             message.setThumbnail(member.displayAvatarURL({ dynamic: true }));
@@ -176,7 +206,8 @@ const ready = async (client) => {
             const channel = guild.channels.cache.find((channel) => channel.name === customChannels.activity)
               ?? guild.publicUpdatesChannel;
             channel.send({ embeds: [message] });
-          } else {
+          } else
+          {
             console.error(member, role);
           }
         }
@@ -184,8 +215,10 @@ const ready = async (client) => {
     });
   }, generalSettings.backupInterval);
   // regular data save
-  setInterval(async () => {
-    await Promise.all(client.guilds.cache.map(async (guild) => {
+  setInterval(async () =>
+  {
+    await Promise.all(client.guilds.cache.map(async (guild) =>
+    {
       await saveFile(`./resources/database/cooldowns-${guild.id}.json`, cooldowns[guild.id]);
       await saveFile(`./resources/database/points-${guild.id}.json`, globalPoints[guild.id]);
       await saveFile(`./resources/database/reputation-${guild.id}.json`, reputationPoints[guild.id]);
@@ -193,8 +226,10 @@ const ready = async (client) => {
     }));
   }, generalSettings.saveInterval);
   // backup data save
-  setInterval(async () => {
-    await Promise.all(client.guilds.cache.map(async (guild) => {
+  setInterval(async () =>
+  {
+    await Promise.all(client.guilds.cache.map(async (guild) =>
+    {
       await saveFile(`./resources/backups/cooldowns-${guild.id}.json`, cooldowns[guild.id]);
       await saveFile(`./resources/backups/points-${guild.id}.json`, globalPoints[guild.id]);
       await saveFile(`./resources/backups/reputation-${guild.id}.json`, reputationPoints[guild.id]);
@@ -205,7 +240,8 @@ const ready = async (client) => {
   console.log(`bot ready as ${client.user.username}`);
 };
 
-export {
+export
+{
   cooldowns,
   globalPoints,
   pointsLastMove as pointsLastMove,

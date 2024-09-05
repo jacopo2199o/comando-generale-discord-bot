@@ -15,7 +15,7 @@ const checkMembers = async (interaction) => {
       const isMember = member.roles.cache.has((role) => role.name === "membro");
       if (isMember === true && hasMoreCustomRoles(member) === true) {
         const roleMember = member.roles.cache.get((role) => role.name === "membro");
-        member.roles.remove(roleMember);
+        member.roles.remove(roleMember.id);
       }
       const isItaliano = member.roles.cache.has((role) => role.name === "italiano");
       const isEnglish = member.roles.cache.has((role) => role.name === "english");

@@ -4,28 +4,30 @@ import { getCustomRole } from "../resources/custom-roles.js";
 /**
  * @param {import("discord.js").Interaction} interaction 
  */
-const givePromotionPoints = async (interaction) => {
-  await interaction.deferReply();
-  const maker = interaction.guild.members.cache.get(interaction.member.id);
+const givePromotionPoints = async (interaction) =>
+{
+  /**
+   * @type { import("discord.js").User }
+  */
   const user = interaction.options.getUser("member");
+  const maker = interaction.guild.members.cache.get(interaction.member.id);
   const taker = interaction.guild.members.cache.get(user.id);
-
-  if (maker === undefined || taker === undefined) {
-    return console.error(maker, taker);
+  if (maker === undefined || taker === undefined)
+  {
+    return console.error("give promotion points: maker or taker undefined");
   }
-
   const makerRole = getCustomRole(maker);
   const takerRole = getCustomRole(taker);
-
-  if (makerRole === undefined || takerRole === undefined) {
-    return console.error(makerRole, takerRole);
+  if (makerRole === undefined || takerRole === undefined)
+  {
+    return console.error("give promotion points: maker role or taker role undefined");
   }
-
-  const points = interaction.options.getNumber("points");
-  const pointsString = (points > 1) ? "promotion points" : "promotion point";
   interaction.client.emit("activity", taker, points);
+  await interaction.deferReply();
   const message = new EmbedBuilder();
   message.setTitle("🔰 promotion points");
+  const points = interaction.options.getNumber("points");
+  const pointsString = points > 1 ? "promotion points" : "promotion point";
   message.setDescription(`${makerRole} *${maker}* give ${points} *${pointsString}* to ${takerRole} *${taker}*`);
   message.addFields({ name: "promotion points", value: `${points} ⭐`, inline: true });
   message.addFields({ name: "to", value: `${taker}`, inline: true });
