@@ -11,7 +11,7 @@ const guildMemberUpdate = async (oldMember, newMember) => {
     ?? newMember.guild.publicUpdatesChannel;
 
   if (oldMember.roles.cache.size > newMember.roles.cache.size) {
-    oldMember.roles.cache.forEach(role => {
+    oldMember.roles.cache.forEach((role) => {
       if (!newMember.roles.cache.has(role.id)) {
         const message = new EmbedBuilder();
         message.setDescription(`🔰 ${role} has been removed from *${newMember}*`);
@@ -22,7 +22,7 @@ const guildMemberUpdate = async (oldMember, newMember) => {
       }
     });
   } else if (oldMember.roles.cache.size < newMember.roles.cache.size) {
-    newMember.roles.cache.forEach(role => {
+    newMember.roles.cache.forEach((role) => {
       if (!oldMember.roles.cache.has(role.id)) {
         const message = new EmbedBuilder();
         message.setDescription(`🔰 ${role} has been added to *${newMember}*`);

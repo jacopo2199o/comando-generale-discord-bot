@@ -24,24 +24,20 @@ const customPoints = {
   threadCreate: 100,
   transferPenalty: -200
 };
+const drops = { promotionPoints: 100 };
 
-const drops = {
-  promotionPoints: 100
-};
-
-const getCalculatedPoints = (customPoints, reputationPoints) => {
+function getCalculatedPoints(customPoints, reputationPoints) {
   const reputationFactor = (reputationPoints / 10) + 1;
-
   return Math.round(customPoints * reputationFactor);
-};
+}
 
 /**
  * @param {import("discord.js").GuildMember} member
  * @returns {Number}
  */
-const getLevel = (member) => {
+function getLevel(member) {
   return Math.floor(globalPoints[member.guild.id][member.id] / customPoints.promotionPoints) + 1;
-};
+}
 
 export {
   customPoints,

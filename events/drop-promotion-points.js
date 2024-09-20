@@ -5,7 +5,8 @@ import { drops } from "../resources/custom-points.js";
 /**
  * @param {import("discord.js").Channel} dropChannel
  */
-const dropPromotionPoints = async (dropChannel) => {
+const dropPromotionPoints = async (dropChannel) =>
+{
   const button = new ButtonBuilder();
   button.setCustomId("takePromotionPoints");
   button.setLabel("take");
@@ -18,7 +19,7 @@ const dropPromotionPoints = async (dropChannel) => {
   dropMessage.addFields({ name: "type", value: "promotion points", inline: true });
   dropMessage.addFields({ name: "value", value: `${drops.promotionPoints} ⭐`, inline: true });
   dropMessage.setThumbnail(dropChannel.client.user.displayAvatarURL({ dynamic: true }));
-  dropMessage.setFooter({ text: "use /view-promotion-points to see yours"});
+  dropMessage.setFooter({ text: "use /view-promotion-points to see yours" });
   dropMessage.setTimestamp();
   dropMessage.setColor("DarkGreen");
   const publicMessage = new EmbedBuilder();
@@ -32,7 +33,12 @@ const dropPromotionPoints = async (dropChannel) => {
   const publicChannel = dropChannel.guild.channels.cache.find((channel) => channel.name === customChannels.public)
     ?? dropChannel.guild.publicUpdatesChannel;
   await publicChannel.send({ embeds: [publicMessage] });
-  await dropChannel.send({ embeds: [dropMessage], components: [actionRow] });
+  const dropMessageSent = await dropChannel.send({ embeds: [dropMessage], components: [actionRow] });
+  setTimeout(() =>
+  {
+    dropMessageSent.delete();
+    dropChannel.send("promotion points drop has expired");
+  }, 8000);
 };
 
 export { dropPromotionPoints };

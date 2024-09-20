@@ -8,36 +8,29 @@ import { globalPoints, pointsLastMove } from "./ready.js";
  * @param { import("discord.js").GuildMember } member
  * @param { Number } points
  */
-const activity = async (member, points) => {
-  const channel = member.guild.channels.cache.find((channel) => channel.name === customChannels.activity)
-    ?? member.guild.publicUpdatesChannel;
+const activity = async (member, points) =>
+{
   const role = getCustomRole(member);
-
-  if (role === undefined) {
+  if (role === undefined)
+  {
     return;
   }
-
   const pointsRing = (globalPoints[member.guild.id][member.id] % customPoints.promotionPoints) + points;
-
-  if (pointsRing < 0) {
-    const level = Math.floor(globalPoints[member.guild.id][member.id] / customPoints.promotionPoints) + 1;
-
-    if (level < 24) {
-      if (role.name !== "membro") {
-        if (globalPoints[member.guild.id][member.id] > 0) {
-          globalPoints[member.guild.id][member.id] += points;
-        } else {
-          globalPoints[member.guild.id][member.id] = customPoints.promotionPoints + points;
-        }
-        pointsLastMove[member.guild.id][member.id] = -1;
-      } else {
-        globalPoints[member.guild.id][member.id] = 0;
-        pointsLastMove[member.guild.id][member.id] = 0;
-      }
-
+  const channel = member.guild.channels.cache.find((channel) => channel.name === customChannels.activity)
+    ?? member.guild.publicUpdatesChannel;
+  if (pointsRing < 0)
+  {
+    pointsLastMove[member.guild.id][member.id] = 0;
+    if (globalPoints[member.guild.id][member.id] > customPoints.promotionPoints * 24)
+    {
+      globalPoints[member.guild.id][member.id] += points;
+    }
+    else if (globalPoints[member.guild.id][member.id] > customPoints.promotionPoints)
+    {
+      globalPoints[member.guild.id][member.id] += points;
       const downgradeResult = downgrade(member);
-
-      if (downgradeResult !== undefined) {
+      if (downgradeResult !== undefined)
+      {
         const message1 = new EmbedBuilder();
         message1.setTitle("🔰 downgrade");
         message1.setDescription(`*${member}* no longer have *promotion points* for ${downgradeResult.oldRole}`);
@@ -48,27 +41,32 @@ const activity = async (member, points) => {
         message1.setColor("DarkRed");
         channel.send({ embeds: [message1] });
       }
-    } else {
-      globalPoints[member.guild.id][member.id] = customPoints.promotionPoints + pointsRing;
     }
-  } else {
-    globalPoints[member.guild.id][member.id] += points;
-    pointsLastMove[member.guild.id][member.id] = 1;
-
-    if (pointsRing >= customPoints.promotionPoints) {
-      const upgradeResult = upgrade(member);
-
-      if (upgradeResult !== undefined) {
-        const message2 = new EmbedBuilder();
-        message2.setTitle("🔰 promotion");
-        message2.setDescription(`*${member}* reached ${customPoints.promotionPoints} *promotion points*`);
-        message2.addFields({ name: "old role", value: `${upgradeResult.oldRole}`, inline: true });
-        message2.addFields({ name: "new role", value: `${upgradeResult.newRole}`, inline: true });
-        message2.setThumbnail(member.displayAvatarURL({ dynamic: true }));
-        message2.setTimestamp();
-        message2.setColor("DarkGreen");
-        channel.send({ embeds: [message2] });
+    else
+    {
+      globalPoints[member.guild.id][member.id] += points;
+      if (globalPoints[member.guild.id][member.id] < 0) 
+      {
+        globalPoints[member.guild.id][member.id] = 0;
       }
+    }
+  }
+  else if (pointsRing >= customPoints.promotionPoints)
+  {
+    pointsLastMove[member.guild.id][member.id] = 1;
+    globalPoints[member.guild.id][member.id] += points;
+    const upgradeResult = upgrade(member);
+    if (upgradeResult !== undefined)
+    {
+      const message2 = new EmbedBuilder();
+      message2.setTitle("🔰 promotion");
+      message2.setDescription(`*${member}* reached ${customPoints.promotionPoints} *promotion points*`);
+      message2.addFields({ name: "old role", value: `${upgradeResult.oldRole}`, inline: true });
+      message2.addFields({ name: "new role", value: `${upgradeResult.newRole}`, inline: true });
+      message2.setThumbnail(member.displayAvatarURL({ dynamic: true }));
+      message2.setTimestamp();
+      message2.setColor("DarkGreen");
+      channel.send({ embeds: [message2] });
     }
   }
 };

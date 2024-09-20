@@ -39,7 +39,8 @@ const ready = async (client) =>
         }
       }
       await saveFile(`./resources/database/cooldowns-${guild.id}.json`, cooldowns[guild.id]);
-    } else
+    }
+    else
     {
       cooldowns[guild.id] = {};
       await saveFile(`./resources/database/cooldowns-${guild.id}.json`, cooldowns[guild.id]);
@@ -63,7 +64,8 @@ const ready = async (client) =>
         }
       }
       await saveFile(`./resources/database/points-${guild.id}.json`, globalPoints[guild.id]);
-    } else
+    }
+    else
     {
       globalPoints[guild.id] = {};
       members.forEach((member) =>
@@ -91,7 +93,8 @@ const ready = async (client) =>
         }
       }
       await saveFile(`./resources/database/reputation-${guild.id}.json`, reputationPoints[guild.id]);
-    } else
+    }
+    else
     {
       reputationPoints[guild.id] = {};
       members.forEach((member) =>
@@ -125,7 +128,8 @@ const ready = async (client) =>
         }
       }
       await saveFile(`./resources/database/transfers-${guild.id}.json`, transfers[guild.id]);
-    } else
+    }
+    else
     {
       transfers[guild.id] = {};
       await saveFile(`./resources/database/transfers-${guild.id}.json`, transfers[guild.id]);
@@ -174,7 +178,8 @@ const ready = async (client) =>
             const channel = guild.channels.cache.find((channel) => channel.name === customChannels.activity)
               ?? guild.publicUpdatesChannel;
             channel.send({ embeds: [message] });
-          } else
+          }
+          else
           {
             console.error(member, role);
           }
@@ -206,7 +211,8 @@ const ready = async (client) =>
             const channel = guild.channels.cache.find((channel) => channel.name === customChannels.activity)
               ?? guild.publicUpdatesChannel;
             channel.send({ embeds: [message] });
-          } else
+          }
+          else
           {
             console.error(member, role);
           }

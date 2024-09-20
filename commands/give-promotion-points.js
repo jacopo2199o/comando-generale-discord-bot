@@ -22,11 +22,11 @@ const givePromotionPoints = async (interaction) =>
   {
     return console.error("give promotion points: maker role or taker role undefined");
   }
+  const points = interaction.options.getNumber("points");
   interaction.client.emit("activity", taker, points);
   await interaction.deferReply();
   const message = new EmbedBuilder();
   message.setTitle("🔰 promotion points");
-  const points = interaction.options.getNumber("points");
   const pointsString = points > 1 ? "promotion points" : "promotion point";
   message.setDescription(`${makerRole} *${maker}* give ${points} *${pointsString}* to ${takerRole} *${taker}*`);
   message.addFields({ name: "promotion points", value: `${points} ⭐`, inline: true });
