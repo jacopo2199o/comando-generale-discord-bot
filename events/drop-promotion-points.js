@@ -5,8 +5,7 @@ import { drops } from "../resources/custom-points.js";
 /**
  * @param {import("discord.js").Channel} dropChannel
  */
-const dropPromotionPoints = async (dropChannel) =>
-{
+async function dropPromotionPoints(dropChannel) {
   const button = new ButtonBuilder();
   button.setCustomId("takePromotionPoints");
   button.setLabel("take");
@@ -33,13 +32,15 @@ const dropPromotionPoints = async (dropChannel) =>
   const publicChannel = dropChannel.guild.channels.cache.find((channel) => channel.name === customChannels.public)
     ?? dropChannel.guild.publicUpdatesChannel;
   await publicChannel.send({ embeds: [publicMessage] });
-  const dropMessageSent = await dropChannel.send({ embeds: [dropMessage], components: [actionRow] });
-  setTimeout(() =>
-  {
-    dropMessageSent.delete();
-    dropChannel.send("promotion points drop has expired");
-  }, 8000);
-};
+  const dropMessageSent = await dropChannel.send({
+    embeds: [dropMessage],
+    components: [actionRow]
+  });
+  setTimeout(
+    () => { dropMessageSent.delete(); },
+    60000
+  );
+}
 
 export { dropPromotionPoints };
 

@@ -6,7 +6,7 @@ import { getCustomRole } from "../resources/custom-roles.js";
 /**
  * @param {import("discord.js").Interaction} interaction 
  */
-const takePromotionPoints = async (interaction) => {
+async function takePromotionPoints(interaction) {
   const button = new ButtonBuilder();
   button.setCustomId("takenPromotionPoints");
   button.setLabel("taken");
@@ -28,7 +28,7 @@ const takePromotionPoints = async (interaction) => {
   const channel = interaction.guild.channels.cache.find((channel) => channel.name === customChannels.public)
     ?? interaction.guild.publicUpdatesChannel;
   channel.send({ embeds: [message] });
-};
+}
 
 export { takePromotionPoints };
 

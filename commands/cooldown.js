@@ -30,7 +30,7 @@ const cooldown = async (interaction) => {
   const period = interaction.options.getNumber("period");
 
   if (interval > period) {
-    await interaction.editReply("interval can not be major to period");
+    await interaction.editReply("interval can not be major than period");
     return;
   }
 
@@ -53,7 +53,8 @@ const cooldown = async (interaction) => {
     message.setTimestamp();
     message.setColor("DarkBlue");
     await interaction.editReply({ embeds: [message] });
-  } else {
+  } 
+  else {
     await interaction.editReply("this member have already a *cooldown* penalty");
   }
 };

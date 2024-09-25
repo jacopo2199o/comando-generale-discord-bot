@@ -132,6 +132,28 @@ function hasModerationRole(
 /**
  * @param {import("discord.js").GuildMember} member 
  */
+async function updateRoleTo(member, newRoleName, oldRoleName) {
+  const oldRole = member.guild.roles.cache.find((role) => {return role.name === oldRoleName;});
+  const newRole = member.guild.roles.cache.find((role) => {return role.name === newRoleName;});
+  await member.roles.remove(oldRole.id);
+  await member.roles.add(newRole.id);
+  if (
+    oldRole !== undefined &&
+    newRole !== undefined
+  ) {
+    return {
+      newRole,
+      oldRole
+    };
+  }
+  else {
+    console.error("update member role to: new role or old role undefined");
+  }
+}
+
+/**
+ * @param {import("discord.js").GuildMember} member 
+ */
 function upgrade(member) {
   /**
    * @type {import("discord.js").Role}
@@ -237,6 +259,7 @@ export {
   getCustomRole,
   hasMoreCustomRoles,
   hasModerationRole,
+  updateRoleTo,
   upgrade,
   downgrade
 };

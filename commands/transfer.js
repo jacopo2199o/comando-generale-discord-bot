@@ -39,7 +39,7 @@ const transfer = async (interaction) =>
     message.addFields({ name: "reason", value: `${reason}`, inline: false });
     message.addFields({ name: "notes", value: "*threads* are excluded from penalty" });
     message.setThumbnail(interaction.client.user.displayAvatarURL({ dynamic: true }));
-    message.setFooter({ text: `${interaction.member}`, iconURL: `${interaction.member.displayAvatarURL()}` });
+    message.setFooter({ text: `${interaction.member.displayName}`, iconURL: `${interaction.member.displayAvatarURL()}` });
     message.setTimestamp();
     message.setColor("DarkBlue");
     await interaction.editReply({ embeds: [message] });

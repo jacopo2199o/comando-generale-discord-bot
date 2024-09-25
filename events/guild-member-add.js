@@ -7,10 +7,11 @@ import { referrals, reputationPoints } from "./ready.js";
 /**
   * @param { import("discord.js").GuildMember } newMember
 */
-const guildMemberAdd = async (newMember) =>
-{
+async function guildMemberAdd(newMember) {
   addMember(newMember);
-  const memberRole = newMember.guild.roles.cache.get((role) => role.name === "membro");
+  const memberRole = newMember.guild.roles.cache.find((role) => {
+    return role.name === "membro";
+  });
   newMember.roles.add(memberRole.id);
   const invites = await newMember.guild.invites.fetch();
   /**
@@ -19,22 +20,18 @@ const guildMemberAdd = async (newMember) =>
   let inviter = undefined;
   let uses = undefined;
   let points = undefined;
-  invites.forEach((invite) =>
-  {
-    if (invite.uses !== referrals[invite.code])
-    {
+  invites.forEach((invite) => {
+    if (invite.uses !== referrals[invite.code]) {
       referrals[invite.code] = invite.uses;
       inviter = invite.guild.members.cache.get(invite.inviter.id);
       uses = invite.uses;
-      if (inviter !== undefined)
-      {
+      if (inviter !== undefined) {
         points = getCalculatedPoints(customPoints.guildMemberAdd, reputationPoints[inviter.guild.id][inviter.id].points);
       }
     }
   });
   const message = new EmbedBuilder();
-  if (inviter !== undefined)
-  {
+  if (inviter !== undefined) {
     newMember.client.emit("activity", inviter, points);
     message.setTitle("🌱 new member");
     message.setDescription(`*${newMember}*, joined *${newMember.guild.name}*`);
@@ -44,19 +41,18 @@ const guildMemberAdd = async (newMember) =>
     message.setFooter({ text: `${points} ⭐ to ${inviter.displayName}`, iconURL: `${inviter.displayAvatarURL()}` });
     message.setTimestamp();
     message.setColor("DarkGreen");
-  }
-  else
-  {
+  } else {
     message.setTitle("🌱 new member");
     message.setDescription(`*${newMember}*, joined *comando generale*`);
     message.setThumbnail(newMember.displayAvatarURL({ dynamic: true }));
     message.setTimestamp();
     message.setColor("DarkBlue");
   }
-  const channel = newMember.guild.channels.cache.find((channel) => channel.name === customChannels.activity)
-    ?? newMember.guild.publicUpdatesChannel;
+  const channel = newMember.guild.channels.cache.find((channel) => {
+    return channel.name === customChannels.activity;
+  }) ?? newMember.guild.publicUpdatesChannel;
   channel.send({ embeds: [message] });
-};
+}
 
 export { guildMemberAdd };
 

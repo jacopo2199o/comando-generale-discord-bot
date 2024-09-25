@@ -23,94 +23,121 @@ import { takePromotionPoints } from "./take-promotion-points.js";
 /**
  * @param {import("discord.js").Interaction} interaction
  */
-const interactionCreate = async (interaction) => {
+async function interactionCreate(interaction) {
   if (interaction.guild === null) {
     const invite = "https://discord.com/api/oauth2/authorize?client_id=1149977789496311888&permissions=8&scope=bot";
     await interaction.deferReply();
     await interaction.editReply(`my commands work only into servers - invite link: ${invite}`);
     return;
   }
-
   if (interaction.isChatInputCommand()) {
     const maker = interaction.member;
-
     if (maker === undefined) {
-      return console.error(maker);
+      return console.error("interaction create: maker undefined");
     }
-
     const makerRole = getCustomRole(maker);
-
     if (makerRole === undefined) {
-      return console.error(makerRole);
+      return console.error("interaction create: maker role undefined");
     }
-
     const makerPoints = getCalculatedPoints(customPoints.interactionCreate, reputationPoints[maker.guild.id][maker.id].points);
-    let channelName = undefined;
-
-    if (interaction.channel.isThread()) {
-      channelName = interaction.channel.parent.name;
-    } else {
-      channelName = interaction.channel.name;
-    }
-
+    const channelName = interaction.channel.name;
+    const threadName = interaction.channel.parent.name;
     let isValidCommand = true;
-
     if (interaction.commandName === "about") {
       about(interaction);
-    } else if (interaction.commandName === "chart-promotion-points") {
+    }
+    else if (interaction.commandName === "chart-promotion-points") {
       chartPromotionPoints(interaction);
-    } else if (interaction.commandName === "chart-reputation-points") {
+    }
+    else if (interaction.commandName === "chart-reputation-points") {
       chartReputationPoints(interaction);
-    } else if (interaction.commandName === "chart-global-points") {
+    }
+    else if (interaction.commandName === "chart-global-points") {
       chartGlobalPoints(interaction);
-    } else if (interaction.commandName === "chart-seniority-points") {
+    }
+    else if (interaction.commandName === "chart-seniority-points") {
       chartSeniorityPoints(interaction);
-    } else if (interaction.commandName === "check-members") {
+    }
+    else if (interaction.commandName === "check-members") {
       checkMembers(interaction);
-    } else if (interaction.commandName === "clear") {
+    }
+    else if (interaction.commandName === "clear") {
       clear(interaction);
-    } else if (interaction.commandName === "cooldown") {
+    }
+    else if (interaction.commandName === "cooldown") {
       cooldown(interaction);
-    } else if (interaction.commandName === "give-promotion-points") {
+    }
+    else if (interaction.commandName === "give-promotion-points") {
       givePromotionPoints(interaction);
-    } else if (interaction.commandName === "give-reputation-point") {
+    }
+    else if (interaction.commandName === "give-reputation-point") {
       giveReputationPoint(interaction);
-    } else if (interaction.commandName === "roll-dice") {
+    }
+    else if (interaction.commandName === "roll-dice") {
       rollDice(interaction);
-    } else if (interaction.commandName === "save") {
+    }
+    else if (interaction.commandName === "save") {
       save(interaction);
-    } else if (interaction.commandName === "transfer") {
+    }
+    else if (interaction.commandName === "transfer") {
       transfer(interaction);
-    } else if (interaction.commandName === "view-promotion-points") {
+    }
+    else if (interaction.commandName === "view-promotion-points") {
       viewPromotionPoints(interaction);
-    } else if (interaction.commandName === "view-reputation-points") {
+    }
+    else if (interaction.commandName === "view-reputation-points") {
       viewReputationPoints(interaction);
-    } else {
+    }
+    else {
       console.error(`no command matching ${interaction.commandName} was found`);
       interaction.reply({ content: `invalid command /${interaction.commandName}`, ephemeral: true });
       isValidCommand = false;
     }
-
     if (isValidCommand === true) {
       interaction.client.emit("activity", interaction.member, makerPoints);
+      let description = undefined;
+      if (interaction.channel.isThread() === true) {
+        description = `${makerRole} *${interaction.member}* used */${interaction.commandName}* in *${threadName}* of *${channelName}*`;
+      }
+      else {
+        description = `${makerRole} *${interaction.member}* used */${interaction.commandName}* in *${channelName}*`;
+      }
       const message = new EmbedBuilder();
       message.setTitle("⚙️ command");
-      message.setDescription(`${makerRole} *${interaction.member}* used */${interaction.commandName}* in *${channelName}*`);
-      message.addFields({ name: "promotion points", value: `${makerPoints} ⭐`, inline: true });
-      message.addFields({ name: "to", value: `${interaction.member}`, inline: true });
-      message.setThumbnail(interaction.member.displayAvatarURL({ dynamic: true }));
+      message.setDescription(description);
+      message.addFields({
+        name: "promotion points",
+        value: `${makerPoints} ⭐`,
+        inline: true
+      });
+      message.addFields({
+        name: "to",
+        value: `${interaction.member}`,
+        inline: true
+      });
+      message.setThumbnail(
+        interaction.member.displayAvatarURL({
+          dynamic: true
+        })
+      );
       message.setTimestamp();
       message.setColor(makerRole.color);
-      const channel = interaction.guild.channels.cache.find((channel) => channel.name === customChannels.public)
-        ?? interaction.guild.publicUpdatesChannel;
-      channel.send({ embeds: [message] });
+      const channel = interaction.guild.channels.cache.find((channel) => {
+        return channel.name === customChannels.public;
+      }) ?? interaction.guild.publicUpdatesChannel;
+      channel.send({
+        embeds: [
+          message
+        ]
+      });
     }
-  } else if (interaction.isButton()) {
+  }
+  else if (interaction.isButton()) {
     if (interaction.component.customId === "takePromotionPoints") {
       takePromotionPoints(interaction);
     }
   }
-};
+}
 
 export { interactionCreate };
 
