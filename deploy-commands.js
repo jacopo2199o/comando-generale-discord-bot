@@ -90,8 +90,8 @@ commands.push(new SlashCommandBuilder()
   .addNumberOption((option) => option
     .setName("points")
     .setDescription("points amount to give")
-    .setMinValue(1)
-    .setMaxValue(10000)
+    .setMinValue(-100000)
+    .setMaxValue(100000)
     .setRequired(true)));
 
 commands.push(new SlashCommandBuilder()

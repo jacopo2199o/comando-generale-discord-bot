@@ -10,49 +10,38 @@ async function about(
 ) {
   await interaction.deferReply();
   const message = new EmbedBuilder();
+  message.setTitle(
+    "📄 about"
+  );
+  message.setTimestamp();
+  message.setColor(
+    "DarkGreen"
+  );
   if (
     interaction.channel.isVoiceBased()
   ) {
-    await interaction.editReply("description is not available for voice channels");
+    await interaction.editReply(
+      "description is not available for voice channels"
+    );
+    return;
   } else if (
     interaction.channel.isThread()
   ) {
-    message.setTitle(
-      "📄 about"
-    );
     message.setDescription(
       `${interaction.channel.parent.topic}`
     );
-    message.setTimestamp();
-    message.setColor(
-      "DarkGreen"
-    );
-    await interaction.editReply(
-      {
-        embeds: [
-          message
-        ]
-      }
-    );
   } else {
-    message.setTitle(
-      "📄 about"
-    );
     message.setDescription(
       `${interaction.channel.topic}`
     );
-    message.setTimestamp();
-    message.setColor(
-      "DarkGreen"
-    );
-    await interaction.editReply(
-      {
-        embeds: [
-          message
-        ]
-      }
-    );
   }
+  await interaction.editReply(
+    {
+      embeds: [
+        message
+      ]
+    }
+  );
 }
 
 export {

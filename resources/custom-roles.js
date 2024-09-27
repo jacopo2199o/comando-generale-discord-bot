@@ -30,50 +30,104 @@ const moderationRoles = [
   customRoles[2],
   customRoles[3]
 ];
+const pointsRole = {
+  "presidente": 23000,
+  "ministro": 22000,
+  "senatore": 21000,
+  "governatore": 20000,
+  "prefetto": 19000,
+  "sottoprefetto": 18000,
+  "segretario": 17000,
+  "sottosegretario": 16000,
+  "principale": 15000,
+  "dirigente": 14000,
+  "coordinatore capo": 13000,
+  "coordinatore": 12000,
+  "sovrintendente capo": 11000,
+  "sovrintendente": 10000,
+  "assistente capo": 9000,
+  "assistente": 8000,
+  "gran generale": 7000,
+  "generale": 6000,
+  "gran colonnello": 5000,
+  "colonnello": 4000,
+  "gran comandante": 3000,
+  "comandante": 2000,
+  "tenente": 1000,
+  "membro": 0
+};
 
 /**
  * @param {import("discord.js").GuildMember} member 
  */
-async function addCustomBaseRoles(member) {
-  if (member.user.bot === true) {
+async function addCustomBaseRoles(
+  member
+) {
+  if (
+    member.user.bot === true
+  ) {
     return;
   }
-  const roleMembro = member.guild.roles.cache.find((role) => {
-    return role.name === "membro";
-  });
-  await member.roles.add(roleMembro.id);
-  const roleItaliano = member.guild.roles.cache.find((role) => {
-    return role.name === "italiano";
-  });
-  const roleEnglish = member.guild.roles.cache.find((role) => {
-    return role.name === "english";
-  });
-  const roleInternational = member.guild.roles.cache.find((role) => {
-    return role.name === "international";
-  });
+  const roleMembro = member.guild.roles.cache.find(
+    function (
+      role
+    ) {
+      return role.name === "membro";
+    }
+  );
+  await member.roles.add(
+    roleMembro.id
+  );
+  const roleItaliano = member.guild.roles.cache.find(
+    function (
+      role
+    ) {
+      return role.name === "italiano";
+    }
+  );
+  const roleEnglish = member.guild.roles.cache.find(
+    function (
+      role
+    ) {
+      return role.name === "english";
+    }
+  );
+  const roleInternational = member.guild.roles.cache.find(
+    function (
+      role
+    ) {
+      return role.name === "international";
+    }
+  );
   if (
-    roleItaliano === false &&
-    roleEnglish === false && roleInternational === false
+    roleItaliano === undefined &&
+    roleEnglish === undefined &&
+    roleInternational === undefined
   ) {
-    await member.roles.add(roleEnglish.id);
-  }
-  else if (
+    await member.roles.add(
+      roleEnglish.id
+    );
+  } else if (
     roleItaliano !== undefined &&
     roleEnglish !== undefined
   ) {
-    await member.roles.remove(roleEnglish.id);
-  }
-  else if (
+    await member.roles.remove(
+      roleEnglish.id
+    );
+  } else if (
     roleItaliano !== undefined &&
     roleInternational !== undefined
   ) {
-    await member.roles.remove(roleItaliano.id);
-  }
-  else if (
+    await member.roles.remove(
+      roleItaliano.id
+    );
+  } else if (
     roleEnglish !== undefined &&
     roleInternational !== undefined
   ) {
-    await member.roles.remove(roleInternational.id);
+    await member.roles.remove(
+      roleInternational.id
+    );
   }
 }
 
@@ -81,32 +135,57 @@ async function addCustomBaseRoles(member) {
 * @param {import("discord.js").GuildMember} member 
 * @returns {import("discord.js").Role}
 */
-function getCustomRole(member) {
-  let customRole = undefined;
-  member.roles.cache.forEach((role) => {
-    const customRoleIndex = customRoles.findIndex((customRole) => {
-      return customRole === role.name;
-    });
-    if (customRoleIndex !== -1) {
-      customRole = role;
+function getCustomRole(
+  member
+) {
+  let result = undefined;
+  member.roles.cache.forEach(
+    function (
+      role
+    ) {
+      customRoles.forEach(
+        function (
+          customRole
+        ) {
+          if (
+            role.name === customRole
+          ) {
+            result = role;
+          }
+        }
+      );
     }
-  });
-  return customRole;
+  );
+  return result;
 }
 
 /**
 * @param {import("discord.js").GuildMember} member
 */
-function hasMoreCustomRoles(member) {
-  let roles = 0;
-  member.roles.cache.forEach((role) => {
-    customRoles.forEach((customRole) => {
-      if (customRole === role.name) {
-        roles++;
-      }
-    });
-  });
-  return roles > 1 ? true : false;
+function getCustomRoles(
+  member
+) {
+  let result = [];
+  member.roles.cache.forEach(
+    function (
+      role
+    ) {
+      customRoles.forEach(
+        function (
+          customRole
+        ) {
+          if (
+            role.name === customRole
+          ) {
+            result.push(
+              role
+            );
+          }
+        }
+      );
+    }
+  );
+  return result;
 }
 
 /**
@@ -119,12 +198,13 @@ function hasModerationRole(
   isResponsabile
 ) {
   if (
-    moderationRoles.includes(role.name) === true ||
+    moderationRoles.includes(
+      role.name
+    ) === true ||
     isResponsabile === true
   ) {
     return true;
-  }
-  else {
+  } else {
     return false;
   }
 }
@@ -132,11 +212,31 @@ function hasModerationRole(
 /**
  * @param {import("discord.js").GuildMember} member 
  */
-async function updateRoleTo(member, newRoleName, oldRoleName) {
-  const oldRole = member.guild.roles.cache.find((role) => {return role.name === oldRoleName;});
-  const newRole = member.guild.roles.cache.find((role) => {return role.name === newRoleName;});
-  await member.roles.remove(oldRole.id);
-  await member.roles.add(newRole.id);
+async function updateRoleTo(
+  member,
+  newRoleName,
+  oldRoleName
+) {
+  const oldRole = member.roles.cache.find(
+    function (
+      role
+    ) {
+      return role.name === oldRoleName;
+    }
+  );
+  const newRole = member.guild.roles.cache.find(
+    function (
+      role
+    ) {
+      return role.name === newRoleName;
+    }
+  );
+  await member.roles.remove(
+    oldRole.id
+  );
+  await member.roles.add(
+    newRole.id
+  );
   if (
     oldRole !== undefined &&
     newRole !== undefined
@@ -145,8 +245,7 @@ async function updateRoleTo(member, newRoleName, oldRoleName) {
       newRole,
       oldRole
     };
-  }
-  else {
+  } else {
     console.error("update member role to: new role or old role undefined");
   }
 }
@@ -154,7 +253,9 @@ async function updateRoleTo(member, newRoleName, oldRoleName) {
 /**
  * @param {import("discord.js").GuildMember} member 
  */
-function upgrade(member) {
+function upgrade(
+  member
+) {
   /**
    * @type {import("discord.js").Role}
    */
@@ -163,35 +264,58 @@ function upgrade(member) {
    * @type {import("discord.js").Role}
    */
   let oldRole = undefined;
-  member.roles.cache.forEach(async (role) => {
-    const customRoleIndex = customRoles.findIndex((customRole) => {
-      return customRole === role.name;
-    });
-    if (customRoleIndex !== -1) {
-      const newRoleName = customRoles[customRoleIndex - 1];
-      const oldRoleName = customRoles[customRoleIndex];
+  member.roles.cache.forEach(
+    async function (
+      role
+    ) {
+      const customRoleIndex = customRoles.findIndex(
+        function (
+          customRole
+        ) {
+          return customRole === role.name;
+        }
+      );
       if (
-        newRoleName !== undefined &&
-        oldRoleName !== undefined
+        customRoleIndex !== -1
       ) {
-        if (newRoleName !== "presidente") {
-          newRole = member.guild.roles.cache.find((role) => {
-            return role.name === newRoleName;
-          });
-          oldRole = member.guild.roles.cache.find((role) => {
-            return role.name === oldRoleName;
-          });
+        const newRoleName = customRoles[customRoleIndex - 1];
+        const oldRoleName = customRoles[customRoleIndex];
+        if (
+          newRoleName !== undefined &&
+          oldRoleName !== undefined
+        ) {
           if (
-            newRole !== undefined &&
-            oldRole !== undefined
+            newRoleName !== "presidente"
           ) {
-            await member.roles.remove(oldRole.id);
-            await member.roles.add(newRole.id);
+            newRole = member.guild.roles.cache.find(
+              function (
+                role
+              ) {
+                return role.name === newRoleName;
+              }
+            );
+            oldRole = member.roles.cache.find(
+              function (
+                role
+              ) {
+                return role.name === oldRoleName;
+              }
+            );
+            if (
+              newRole !== undefined &&
+              oldRole !== undefined
+            ) {
+              await member.roles.remove(
+                oldRole.id
+              );
+              await member.roles.add(
+                newRole.id
+              );
+            }
           }
         }
       }
-    }
-  });
+    });
   if (
     newRole !== undefined &&
     oldRole !== undefined
@@ -206,7 +330,9 @@ function upgrade(member) {
 /**
  * @param {import("discord.js").GuildMember} member 
  */
-function downgrade(member) {
+function downgrade(
+  member
+) {
   /**
    * @type {import("discord.js").Role}
   */
@@ -215,33 +341,55 @@ function downgrade(member) {
    * @type {import("discord.js").Role}
   */
   let oldRole = undefined;
-  member.roles.cache.forEach(async (role) => {
-    const customRoleIndex = customRoles.findIndex((customRole) => {
-      return customRole === role.name;
-    });
-    if (customRoleIndex !== -1) {
-      const newRoleName = customRoles[customRoleIndex + 1];
-      const oldRoleName = customRoles[customRoleIndex];
-      if (
-        newRoleName !== undefined &&
-        oldRoleName !== undefined
-      ) {
-        newRole = member.guild.roles.cache.find((role) => {
-          return role.name === newRoleName;
-        });
-        oldRole = member.guild.roles.cache.find((role) => {
-          return role.name === oldRoleName;
-        });
-        if (
-          newRole !== undefined &&
-          oldRole !== undefined
+  member.roles.cache.forEach(
+    async function (
+      role
+    ) {
+      const customRoleIndex = customRoles.findIndex(
+        function (
+          customRole
         ) {
-          await member.roles.remove(oldRole.id);
-          await member.roles.add(newRole.id);
+          return customRole === role.name;
+        }
+      );
+      if (
+        customRoleIndex !== -1
+      ) {
+        const newRoleName = customRoles[customRoleIndex + 1];
+        const oldRoleName = customRoles[customRoleIndex];
+        if (
+          newRoleName !== undefined &&
+          oldRoleName !== undefined
+        ) {
+          newRole = member.guild.roles.cache.find(
+            function (
+              role
+            ) {
+              return role.name === newRoleName;
+            }
+          );
+          oldRole = member.roles.cache.find(
+            function (
+              role
+            ) {
+              return role.name === oldRoleName;
+            }
+          );
+          if (
+            newRole !== undefined &&
+            oldRole !== undefined
+          ) {
+            await member.roles.remove(
+              oldRole.id
+            );
+            await member.roles.add(
+              newRole.id
+            );
+          }
         }
       }
     }
-  });
+  );
   if (
     newRole !== undefined &&
     oldRole !== undefined
@@ -255,9 +403,10 @@ function downgrade(member) {
 
 export {
   customRoles,
+  pointsRole,
   addCustomBaseRoles,
   getCustomRole,
-  hasMoreCustomRoles,
+  getCustomRoles,
   hasModerationRole,
   updateRoleTo,
   upgrade,

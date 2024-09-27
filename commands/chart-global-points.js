@@ -34,7 +34,8 @@ async function chartGlobalPoints(
       );
     }
     if (
-      interaction.guild.ownerId !== member.id
+      member.user.bot === false &&
+      member.id !== interaction.guild.ownerId
     ) {
       chart.push(
         {
