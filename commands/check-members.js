@@ -23,9 +23,9 @@ async function checkMembers(
   const members = await interaction.guild.members.fetch();
   let messages = [];
   members.forEach(
-    (
+    function (
       member
-    ) => {
+    ) {
       const customRole = getCustomRole(
         member
       );
@@ -44,23 +44,23 @@ async function checkMembers(
           );
         }
         const isItaliano = member.roles.cache.some(
-          (
+          function (
             role
-          ) => {
+          ) {
             return role.name === "italiano";
           }
         );
         const isEnglish = member.roles.cache.some(
-          (
+          function (
             role
-          ) => {
+          ) {
             return role.name === "english";
           }
         );
         const isInternational = member.roles.cache.some(
-          (
+          function (
             role
-          ) => {
+          ) {
             return role.name === "international";
           }
         );
@@ -107,9 +107,8 @@ async function checkMembers(
               `member with >= ${pointsRole["ministro"]} points should be a ministro: *${member}*\n`,
               `points difference: ${globalPoints[member.guild.id][member.id] - pointsRole[customRole.name]}\n`
             );
-          } else {
-            return;
           }
+          return;
         } else if (
           globalPoints[member.guild.id][member.id] >= pointsRole["senatore"]
         ) {
@@ -120,9 +119,8 @@ async function checkMembers(
               `member with >= ${pointsRole["senatore"]} points should be a senatore: *${member}*\n`,
               `points difference: ${globalPoints[member.guild.id][member.id] - pointsRole[customRole.name]}\n`
             );
-          } else {
-            return;
           }
+          return;
         } else if (
           globalPoints[member.guild.id][member.id] >= pointsRole["governatore"]
         ) {
@@ -133,9 +131,8 @@ async function checkMembers(
               `member with >= ${pointsRole["governatore"]} points should be a governatore: *${member}*\n`,
               `points difference: ${globalPoints[member.guild.id][member.id] - pointsRole[customRole.name]}\n`
             );
-          } else {
-            return;
           }
+          return;
         } else if (
           globalPoints[member.guild.id][member.id] >= pointsRole["prefetto"]
         ) {
@@ -146,9 +143,8 @@ async function checkMembers(
               `member with >= ${pointsRole["prefetto"]} points should be a prefetto: *${member}*\n`,
               `points difference: ${globalPoints[member.guild.id][member.id] - pointsRole[customRole.name]}\n`
             );
-          } else {
-            return;
           }
+          return;
         } else if (
           globalPoints[member.guild.id][member.id] >= pointsRole["sottoprefetto"]
         ) {
@@ -159,9 +155,8 @@ async function checkMembers(
               `member with >= ${pointsRole["sottoprefetto"]} points should be a sottoprefetto: *${member}*\n`,
               `points difference: ${globalPoints[member.guild.id][member.id] - pointsRole[customRole.name]}\n`
             );
-          } else {
-            return;
           }
+          return;
         } else if (
           globalPoints[member.guild.id][member.id] >= pointsRole["segretario"]
         ) {
@@ -172,9 +167,8 @@ async function checkMembers(
               `member with >= ${pointsRole["segretario"]} points should be a segretario: *${member}*\n`,
               `points difference: ${globalPoints[member.guild.id][member.id] - pointsRole[customRole.name]}\n`
             );
-          } else {
-            return;
           }
+          return;
         } else if (
           globalPoints[member.guild.id][member.id] >= pointsRole["sottosegretario"]
         ) {
@@ -185,9 +179,8 @@ async function checkMembers(
               `member with >= ${pointsRole["sottosegretario"]} points should be a sottosegretario: *${member}*\n`,
               `points difference: ${globalPoints[member.guild.id][member.id] - pointsRole[customRole.name]}\n`
             );
-          } else {
-            return;
           }
+          return;
         } else if (
           globalPoints[member.guild.id][member.id] >= pointsRole["principale"]
         ) {
@@ -198,9 +191,8 @@ async function checkMembers(
               `member with >= ${pointsRole["principale"]} points should be a principale: *${member}*\n`,
               `points difference: ${globalPoints[member.guild.id][member.id] - pointsRole[customRole.name]}\n`
             );
-          } else {
-            return;
           }
+          return;
         } else if (
           globalPoints[member.guild.id][member.id] >= pointsRole["dirigente"]
         ) {
@@ -211,9 +203,8 @@ async function checkMembers(
               `member with >= ${pointsRole["dirigente"]} points should be a dirigente: ${member}*\n`,
               `points difference: ${globalPoints[member.guild.id][member.id] - pointsRole[customRole.name]}\n`
             );
-          } else {
-            return;
           }
+          return;
         } else if (
           globalPoints[member.guild.id][member.id] >= pointsRole["coordinatore capo"]
         ) {
@@ -224,9 +215,8 @@ async function checkMembers(
               `member with >= ${pointsRole["coordinatore capo"]} points should be a coordinatore capo: ${member}*\n`,
               `points difference: ${globalPoints[member.guild.id][member.id] - pointsRole[customRole.name]}\n`
             );
-          } else {
-            return;
           }
+          return;
         } else if (
           globalPoints[member.guild.id][member.id] >= pointsRole["coordinatore"]
         ) {
@@ -237,9 +227,8 @@ async function checkMembers(
               `member with >= ${pointsRole["coordinatore"]} points should be a coordinatore: *${member}*\n`,
               `points difference: ${globalPoints[member.guild.id][member.id] - pointsRole[customRole.name]}\n`
             );
-          } else {
-            return;
           }
+          return;
         } else if (
           globalPoints[member.guild.id][member.id] >= pointsRole["sovrintendente capo"]
         ) {
@@ -250,9 +239,8 @@ async function checkMembers(
               `member with >= ${pointsRole["sovrintendente capo"]} points should be a sovrintendente capo: *${member}*\n`,
               `points difference: ${globalPoints[member.guild.id][member.id] - pointsRole[customRole.name]}\n`
             );
-          } else {
-            return;
           }
+          return;
         } else if (
           globalPoints[member.guild.id][member.id] >= pointsRole["sovrintendente"]
         ) {
@@ -263,9 +251,8 @@ async function checkMembers(
               `member with >= ${pointsRole["sovrintendente"]} points should be a sovrintendente: *${member}*\n`,
               `points difference: ${globalPoints[member.guild.id][member.id] - pointsRole[customRole.name]}\n`
             );
-          } else {
-            return;
           }
+          return;
         } else if (
           globalPoints[member.guild.id][member.id] >= pointsRole["assistente capo"]
         ) {
@@ -276,9 +263,8 @@ async function checkMembers(
               `member with >= ${pointsRole["assistente capo"]} points should be a assistente capo: *${member}*\n`,
               `points difference: ${globalPoints[member.guild.id][member.id] - pointsRole[customRole.name]}\n`
             );
-          } else {
-            return;
           }
+          return;
         } else if (
           globalPoints[member.guild.id][member.id] >= pointsRole["assistente"]
         ) {
@@ -289,9 +275,8 @@ async function checkMembers(
               `member with >= ${pointsRole["assistente"]} points should be a assistente: *${member}*\n`,
               `points difference: ${globalPoints[member.guild.id][member.id] - pointsRole[customRole.name]}\n`
             );
-          } else {
-            return;
           }
+          return;
         } else if (
           globalPoints[member.guild.id][member.id] >= pointsRole["gran generale"]
         ) {
@@ -302,9 +287,8 @@ async function checkMembers(
               `member with >= ${pointsRole["gran generale"]} points should be a gran generale: *${member}*\n`,
               `points difference: ${globalPoints[member.guild.id][member.id] - pointsRole[customRole.name]}\n`
             );
-          } else {
-            return;
           }
+          return;
         } else if (
           globalPoints[member.guild.id][member.id] >= pointsRole["generale"]
         ) {
@@ -315,9 +299,8 @@ async function checkMembers(
               `member with >= ${pointsRole["generale"]} points should be a generale: *${member}*\n`,
               `points difference: ${globalPoints[member.guild.id][member.id] - pointsRole[customRole.name]}\n`
             );
-          } else {
-            return;
           }
+          return;
         } else if (
           globalPoints[member.guild.id][member.id] >= pointsRole["gran colonnello"]
         ) {
@@ -328,9 +311,8 @@ async function checkMembers(
               `member with >= ${pointsRole["gran colonnello"]} points should be a gran colonnello: *${member}*\n`,
               `points difference: ${globalPoints[member.guild.id][member.id] - pointsRole[customRole.name]}\n`
             );
-          } else {
-            return;
           }
+          return;
         } else if (
           globalPoints[member.guild.id][member.id] >= pointsRole["colonnello"]
         ) {
@@ -341,9 +323,8 @@ async function checkMembers(
               `member with >= ${pointsRole["colonnello"]} points should be a colonnello: *${member}*\n`,
               `points difference: ${globalPoints[member.guild.id][member.id] - pointsRole[customRole.name]}\n`
             );
-          } else {
-            return;
           }
+          return;
         } else if (
           globalPoints[member.guild.id][member.id] >= pointsRole["gran comandante"]
         ) {
@@ -354,9 +335,8 @@ async function checkMembers(
               `member with >= ${pointsRole["gran comandante"]} points should be a gran comandante: *${member}*\n`,
               `points difference: ${globalPoints[member.guild.id][member.id] - pointsRole[customRole.name]}\n`
             );
-          } else {
-            return;
           }
+          return;
         } else if (
           globalPoints[member.guild.id][member.id] >= pointsRole["comandante"]
         ) {
@@ -367,9 +347,8 @@ async function checkMembers(
               `member with >= ${pointsRole["comandante"]} points should be a comandante: *${member}*\n`,
               `points difference: ${globalPoints[member.guild.id][member.id] - pointsRole[customRole.name]}\n`
             );
-          } else {
-            return;
           }
+          return;
         } else if (
           globalPoints[member.guild.id][member.id] >= pointsRole["tenente"]
         ) {
@@ -380,8 +359,16 @@ async function checkMembers(
               `member with >= ${pointsRole["tenente"]} points should be a tenente: *${member}*\n`,
               `points difference: ${globalPoints[member.guild.id][member.id] - pointsRole[customRole.name]}\n`
             );
-          } else {
-            return;
+          }
+          return;
+        } else {
+          if (
+            customRole.name !== "membro"
+          ) {
+            messages.push(
+              `member with < ${pointsRole["tenente"]} points should be a membro: *${member}*\n`,
+              `points difference: ${globalPoints[member.guild.id][member.id] - pointsRole[customRole.name]}\n`
+            );
           }
         }
       }
@@ -391,9 +378,9 @@ async function checkMembers(
     messages.length > 0
   ) {
     const channel = interaction.guild.channels.cache.find(
-      (
+      function (
         channel
-      ) => {
+      ) {
         return channel.name === customChannels.internal;
       }
     ) ?? interaction.guild.publicUpdatesChannel;

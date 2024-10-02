@@ -1,4 +1,6 @@
-import { globalPoints } from "../events/ready.js";
+import {
+  globalPoints
+} from "../events/ready.js";
 
 const customPoints = {
   cooldownPenalty: -100,
@@ -24,19 +26,30 @@ const customPoints = {
   threadCreate: 100,
   transferPenalty: -200
 };
-const drops = { promotionPoints: 100 };
+const drops = {
+  promotionPoints: 100
+};
 
-function getCalculatedPoints(customPoints, reputationPoints) {
+function getCalculatedPoints(
+  customPoints,
+  reputationPoints
+) {
   const reputationFactor = (reputationPoints / 10) + 1;
-  return Math.round(customPoints * reputationFactor);
+  return Math.round(
+    customPoints * reputationFactor
+  );
 }
 
 /**
  * @param {import("discord.js").GuildMember} member
  * @returns {Number}
  */
-function getLevel(member) {
-  return Math.floor(globalPoints[member.guild.id][member.id] / customPoints.promotionPoints) + 1;
+function getLevel(
+  member
+) {
+  return Math.floor(
+    globalPoints[member.guild.id][member.id] / customPoints.promotionPoints
+  ) + 1;
 }
 
 export {

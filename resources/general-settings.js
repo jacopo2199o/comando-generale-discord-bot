@@ -4,5 +4,7 @@ const generalSettings = {
   saveInterval: 4000
 };
 
-export { generalSettings };
+export {
+  generalSettings
+};
 

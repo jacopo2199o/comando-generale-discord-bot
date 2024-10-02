@@ -37,9 +37,13 @@ async function chartPromotionPoints(
       chart.push(
         {
           lastMove: pointsLastMove[interaction.guild.id][member.id],
-          level: Math.floor(globalPoints[member.guild.id][member.id] / customPoints.promotionPoints) + 1,
+          level: Math.floor(
+            globalPoints[member.guild.id][member.id] / customPoints.promotionPoints
+          ) + 1,
           member,
-          role: getCustomRole(member) ?? "n.a.",
+          role: getCustomRole(
+            member
+          ) ?? "n.a.",
           points: globalPoints[interaction.guild.id][member.id] % customPoints.promotionPoints
         }
       );
@@ -47,10 +51,10 @@ async function chartPromotionPoints(
   }
 
   chart.sort(
-    (
+    function (
       a,
       b
-    ) => {
+    ) {
       return b.points - a.points;
     }
   );
@@ -60,10 +64,10 @@ async function chartPromotionPoints(
   );
   let chartRow = "";
   sortedChart.forEach(
-    (
+    function (
       element,
       index
-    ) => {
+    ) {
       const lastMove = element.lastMove > 0 ? "🔼" : "🔻";
       chartRow += `${index + 1}: ${element.role} *${element.member}* ${element.points} ${lastMove} (lvl. ${element.level}) ⭐\n`;
     }

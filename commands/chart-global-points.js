@@ -53,10 +53,10 @@ async function chartGlobalPoints(
     }
   }
   chart.sort(
-    (
+    function (
       a,
       b
-    ) => {
+    ) {
       return b.points - a.points;
     }
   );
@@ -66,10 +66,10 @@ async function chartGlobalPoints(
   );
   let row = "";
   sortedChart.forEach(
-    (
+    function (
       element,
       index
-    ) => {
+    ) {
       const lastMove = element.lastMove > 0 ? "🔼" : "🔻";
       row += `${index + 1}: ${element.role} *${element.member}* ${element.points} ${lastMove} (lvl. ${element.level}) ⭐\n`;
     }

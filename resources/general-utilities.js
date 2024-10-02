@@ -8,33 +8,46 @@ import {
 /**
  * @param {import("discord.js").GuildMember} member 
  */
-function addMember(member) {
+function addMember(
+  member
+) {
   globalPoints[member.guild.id][member.id] = 0;
   reputationPoints[member.guild.id][member.id] = {
     points: 0,
     gaveTo: ""
   };
   seniority[member.guild.id][member.id] = 0;
-  console.log(`new member: ${member.id}`);
+  console.log(
+    `new member: ${member.id}`
+  );
 }
 
 /**
  * @param {import("discord.js").GuildMember} member 
  */
-function deleteMember(member) {
+function deleteMember(
+  member
+) {
   delete globalPoints[member.guild.id][member.id];
   delete reputationPoints[member.guild.id][member.id];
   delete seniority[member.guild.id][member.id];
-  console.log(`deleted member: ${member.id}`);
+  console.log(
+    `deleted member: ${member.id}`
+  );
 }
 
 /**
  * @param { String } path
  * @returns { JSON }  
  */
-function loadFile(path) {
-  const data = fs.readFileSync(path);
-  return JSON.parse(data);
+function loadFile(
+  path
+) {
+  return JSON.parse(
+    fs.readFileSync(
+      path
+    )
+  );
 }
 
 /**
@@ -44,13 +57,20 @@ function saveFile(
   path,
   data
 ) {
-  const dataString = JSON.stringify(data);
   fs.writeFile(
     path,
-    dataString,
-    (error) => {
-      if (error) {
-        console.error(error.message);
+    JSON.stringify(
+      data
+    ),
+    function (
+      error
+    ) {
+      if (
+        error
+      ) {
+        console.error(
+          error.message
+        );
       }
     }
   );

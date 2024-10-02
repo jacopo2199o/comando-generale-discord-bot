@@ -19,7 +19,6 @@ import {
 import {
   checkMembers
 } from "../commands/check-members.js";
-
 import {
   clear
 } from "../commands/clear.js";
@@ -204,7 +203,7 @@ async function interactionCreate(
       );
       interaction.reply(
         {
-          content: `invalid command /${interaction.commandName}`,
+          content: `invalid command */${interaction.commandName}*`,
           ephemeral: true
         }
       );
@@ -215,23 +214,25 @@ async function interactionCreate(
       channelName !== customChannels.internal
     ) {
       interaction.client.emit(
-        "activity", interaction.member, makerPoints
+        "activity",
+        interaction.member,
+        makerPoints
       );
-      let description = undefined;
-      if (
-        interaction.channel.isThread() === true
-      ) {
-        description = `${makerRole} *${interaction.member}* used */${interaction.commandName}* in *${threadName}* of *${channelName}*`;
-      } else {
-        description = `${makerRole} *${interaction.member}* used */${interaction.commandName}* in *${channelName}*`;
-      }
       const message = new EmbedBuilder();
       message.setTitle(
         "⚙️ command"
       );
-      message.setDescription(
-        description
-      );
+      if (
+        interaction.channel.isThread() === true
+      ) {
+        message.setDescription(
+          `${makerRole} *${interaction.member}* used */${interaction.commandName}* in *${threadName}* of *${channelName}*`
+        );
+      } else {
+        message.setDescription(
+          `${makerRole} *${interaction.member}* used */${interaction.commandName}* in *${channelName}*`
+        );
+      }
       message.addFields(
         {
           name: "promotion points",
@@ -258,9 +259,9 @@ async function interactionCreate(
         makerRole.color
       );
       const channel = interaction.guild.channels.cache.find(
-        (
+        function (
           channel
-        ) => {
+        ) {
           return channel.name === customChannels.public;
         }
       ) ?? interaction.guild.publicUpdatesChannel;
@@ -273,7 +274,7 @@ async function interactionCreate(
       );
     }
   } else if (
-    interaction.isButton()
+    interaction.isButton() === true
   ) {
     if (
       interaction.component.customId === "takePromotionPoints"

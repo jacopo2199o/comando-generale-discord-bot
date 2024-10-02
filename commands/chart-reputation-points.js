@@ -50,10 +50,10 @@ async function chartReputationPoints(
   }
 
   chart.sort(
-    (
+    function (
       a,
       b
-    ) => {
+    ) {
       return b.points - a.points;
     }
   );
@@ -63,10 +63,10 @@ async function chartReputationPoints(
   );
   let chartRow = "";
   sortedChart.forEach(
-    (
+    function (
       element,
       index
-    ) => {
+    ) {
       chartRow += `${index + 1}: ${element.role} *${element.member}* ${element.points} (lvl. ${element.level}) 🏵\n`;
     }
   );

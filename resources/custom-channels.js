@@ -5,4 +5,6 @@ const customChannels = {
   internal: "🤖bot-testing",
 };
 
-export { customChannels };
+export {
+  customChannels
+};
