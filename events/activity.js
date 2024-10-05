@@ -532,6 +532,11 @@ async function activity(
       );
     }
   }
+  if (
+    globalPoints[member.guild.id][member.id] < 0
+  ) {
+    globalPoints[member.guild.id][member.id] = 0;
+  }
 }
 
 export {

@@ -16,6 +16,7 @@ import {
   loadFile,
   saveFile
 } from "../resources/general-utilities.js";
+import {canvasMain} from "../canvas.js";
 
 const cooldowns = {};
 const globalPoints = {};
@@ -31,6 +32,18 @@ const transfers = {};
 async function ready(
   client
 ) {
+  async function get_valuations(
+    complete_url
+  ) {
+    const response = await fetch(
+      complete_url
+    );
+    const json = await response.json();
+    return json.result.data[0].v;
+  }
+
+  console.log(await get_valuations("https://api.crypto.com/exchange/v1/public/get-valuations?instrument_name=BTCUSD-INDEX&valuation_type=index_price&count=1"));
+
   await Promise.all(
     client.guilds.cache.map(
       async function (
@@ -233,7 +246,7 @@ async function ready(
         }
 
         // draw map
-        //canvasMain(guild);
+        canvasMain(guild);
         console.log(`legged in guild ${guild.name}`);
       }
     )
