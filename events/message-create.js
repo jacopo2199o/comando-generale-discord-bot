@@ -93,18 +93,14 @@ async function messageCreate(
       newMessage.channel
     );
   }
-  const message = new EmbedBuilder();
-  message.setDescription(
+  const message = new EmbedBuilder().setDescription(
     `💬 ${makerRole} *${maker}* sended a new message in *${newMessage.channel.name}*`
-  );
-  message.setFooter(
+  ).setFooter(
     {
       text: `${makerPoints} ⭐ to ${maker.displayName}`,
       iconURL: `${maker.displayAvatarURL()}`
     }
-  );
-  message.setTimestamp();
-  message.setColor(
+  ).setTimestamp().setColor(
     makerRole.color
   );
   const channel = newMessage.guild.channels.cache.find(

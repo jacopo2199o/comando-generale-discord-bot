@@ -16,7 +16,9 @@ import {
   loadFile,
   saveFile
 } from "../resources/general-utilities.js";
-import {canvasMain} from "../canvas.js";
+import {
+  canvasMain
+} from "../canvas.js";
 
 const cooldowns = {};
 const globalPoints = {};
@@ -32,224 +34,224 @@ const transfers = {};
 async function ready(
   client
 ) {
-  async function get_valuations(
-    complete_url
-  ) {
-    const response = await fetch(
-      complete_url
-    );
-    const json = await response.json();
-    return json.result.data[0].v;
-  }
+  console.log(
+    await get_bitcoin_valuation(
+      "https://api.crypto.com/exchange/v1/public/get-valuations?instrument_name=BTCUSD-INDEX&valuation_type=index_price&count=1"
+    )
+  );
 
-  console.log(await get_valuations("https://api.crypto.com/exchange/v1/public/get-valuations?instrument_name=BTCUSD-INDEX&valuation_type=index_price&count=1"));
-
-  await Promise.all(
-    client.guilds.cache.map(
-      async function (
-        guild
+  client.guilds.cache.map(
+    async function (
+      guild
+    ) {
+      const members = await guild.members.fetch();
+      // points last move
+      pointsLastMove[guild.id] = {};
+      members.forEach(
+        function (
+          member
+        ) {
+          pointsLastMove[guild.id][member.id] = 0;
+        }
+      );
+      // cooldonws
+      if (
+        fs.existsSync(
+          `./resources/database/cooldowns-${guild.id}.json`
+        ) === true
       ) {
-        const members = await guild.members.fetch();
-        // points last move
-        pointsLastMove[guild.id] = {};
+        cooldowns[guild.id] = loadFile(
+          `./resources/database/cooldowns-${guild.id}.json`
+        );
+        for (
+          const memberId in cooldowns[guild.id]
+        ) {
+          if (
+            members.get(
+              memberId
+            ) === undefined
+          ) {
+            delete cooldowns[guild.id][memberId];
+          }
+        }
+        saveFile(
+          `./resources/database/cooldowns-${guild.id}.json`,
+          cooldowns[guild.id]
+        );
+      } else {
+        cooldowns[guild.id] = {};
+        saveFile(
+          `./resources/database/cooldowns-${guild.id}.json`,
+          cooldowns[guild.id]
+        );
+      }
+      // global points
+      if (
+        fs.existsSync(
+          `./resources/database/points-${guild.id}.json`
+        ) === true
+      ) {
+        globalPoints[guild.id] = loadFile(
+          `./resources/database/points-${guild.id}.json`
+        );
         members.forEach(
           function (
             member
           ) {
-            pointsLastMove[guild.id][member.id] = 0;
-          }
-        );
-        // cooldonws
-        if (
-          fs.existsSync(
-            `./resources/database/cooldowns-${guild.id}.json`
-          ) === true
-        ) {
-          cooldowns[guild.id] = loadFile(
-            `./resources/database/cooldowns-${guild.id}.json`
-          );
-          for (
-            const memberId in cooldowns[guild.id]
-          ) {
             if (
-              members.get(
-                memberId
-              ) === undefined
-            ) {
-              delete cooldowns[guild.id][memberId];
-            }
-          }
-          saveFile(
-            `./resources/database/cooldowns-${guild.id}.json`,
-            cooldowns[guild.id]
-          );
-        } else {
-          cooldowns[guild.id] = {};
-          saveFile(
-            `./resources/database/cooldowns-${guild.id}.json`,
-            cooldowns[guild.id]
-          );
-        }
-        // global points
-        if (
-          fs.existsSync(
-            `./resources/database/points-${guild.id}.json`
-          ) === true
-        ) {
-          globalPoints[guild.id] = loadFile(
-            `./resources/database/points-${guild.id}.json`
-          );
-          members.forEach(
-            function (
-              member
-            ) {
-              if (
-                globalPoints[guild.id][member.id] === undefined
-              ) {
-                globalPoints[guild.id][member.id] = 0;
-              }
-            }
-          );
-          for (
-            const memberId in globalPoints[guild.id]
-          ) {
-            if (
-              members.get(
-                memberId
-              ) === undefined
-            ) {
-              delete globalPoints[guild.id][memberId];
-            }
-          }
-          saveFile(
-            `./resources/database/points-${guild.id}.json`,
-            globalPoints[guild.id]
-          );
-        } else {
-          globalPoints[guild.id] = {};
-          members.forEach(
-            function (
-              member
+              globalPoints[guild.id][member.id] === undefined
             ) {
               globalPoints[guild.id][member.id] = 0;
             }
-          );
-          saveFile(
-            `./resources/database/points-${guild.id}.json`,
-            globalPoints[guild.id]);
-        }
-        // reputation points
-        if (
-          fs.existsSync(
-            `./resources/database/reputation-${guild.id}.json`
-          ) === true
+          }
+        );
+        for (
+          const memberId in globalPoints[guild.id]
         ) {
-          reputationPoints[guild.id] = loadFile(
-            `./resources/database/reputation-${guild.id}.json`
-          );
-          members.forEach(
-            function (
-              member
-            ) {
-              if (
-                reputationPoints[guild.id][member.id] === undefined
-              ) {
-                reputationPoints[guild.id][member.id] = {
-                  points: 0,
-                  gaveTo: ""
-                };
-              }
-            }
-          );
-          for (
-            const memberId in reputationPoints[guild.id]
+          if (
+            members.get(
+              memberId
+            ) === undefined
+          ) {
+            delete globalPoints[guild.id][memberId];
+          }
+        }
+        saveFile(
+          `./resources/database/points-${guild.id}.json`,
+          globalPoints[guild.id]
+        );
+      } else {
+        globalPoints[guild.id] = {};
+        members.forEach(
+          function (
+            member
+          ) {
+            globalPoints[guild.id][member.id] = 0;
+          }
+        );
+        saveFile(
+          `./resources/database/points-${guild.id}.json`,
+          globalPoints[guild.id]
+        );
+      }
+      // reputation points
+      if (
+        fs.existsSync(
+          `./resources/database/reputation-${guild.id}.json`
+        ) === true
+      ) {
+        reputationPoints[guild.id] = loadFile(
+          `./resources/database/reputation-${guild.id}.json`
+        );
+        members.forEach(
+          function (
+            member
           ) {
             if (
-              members.get(
-                memberId
-              ) === undefined
-            ) {
-              delete reputationPoints[guild.id][memberId];
-            }
-          }
-          saveFile(
-            `./resources/database/reputation-${guild.id}.json`,
-            reputationPoints[guild.id]
-          );
-        } else {
-          reputationPoints[guild.id] = {};
-          members.forEach(
-            function (
-              member
+              reputationPoints[guild.id][member.id] === undefined
             ) {
               reputationPoints[guild.id][member.id] = {
                 points: 0,
                 gaveTo: ""
               };
             }
-          );
-          saveFile(
-            `./resources/database/reputation-${guild.id}.json`,
-            reputationPoints[guild.id]
-          );
-        }
-        // referrals
-        const invites = await guild.invites.fetch();
-        invites.forEach(
-          function (
-            invite
-          ) {
-            referrals[invite.code] = invite.uses;
           }
         );
-        // seniority
-        seniority[guild.id] = {};
+        for (
+          const memberId in reputationPoints[guild.id]
+        ) {
+          if (
+            members.get(
+              memberId
+            ) === undefined
+          ) {
+            delete reputationPoints[guild.id][memberId];
+          }
+        }
+        saveFile(
+          `./resources/database/reputation-${guild.id}.json`,
+          reputationPoints[guild.id]
+        );
+      } else {
+        reputationPoints[guild.id] = {};
         members.forEach(
           function (
             member
           ) {
-            seniority[guild.id][member.id] = Math.round(
-              (new Date().getTime() - member.joinedAt.getTime()) / (1000 * 60 * 60 * 24)
-            );
+            reputationPoints[guild.id][member.id] = {
+              points: 0,
+              gaveTo: ""
+            };
           }
         );
-        // transfer
-        if (
-          fs.existsSync(
-            `./resources/database/transfers-${guild.id}.json`
-          ) === true
+        saveFile(
+          `./resources/database/reputation-${guild.id}.json`,
+          reputationPoints[guild.id]
+        );
+      }
+      // referrals
+      const invites = await guild.invites.fetch();
+      invites.forEach(
+        function (
+          invite
         ) {
-          transfers[guild.id] = loadFile(
-            `./resources/database/transfers-${guild.id}.json`
-          );
-          for (
-            const memberId in transfers[guild.id]
-          ) {
-            if (
-              members.get(
-                memberId
-              ) === undefined
-            ) {
-              delete transfers[guild.id][memberId];
-            }
-          }
-          saveFile(
-            `./resources/database/transfers-${guild.id}.json`,
-            transfers[guild.id]
-          );
-        } else {
-          transfers[guild.id] = {};
-          saveFile(
-            `./resources/database/transfers-${guild.id}.json`,
-            transfers[guild.id]
+          referrals[invite.code] = invite.uses;
+        }
+      );
+      // seniority
+      seniority[guild.id] = {};
+      members.forEach(
+        function (
+          member
+        ) {
+          seniority[guild.id][member.id] = Math.round(
+            (
+              new Date().getTime() - member.joinedAt.getTime()
+            ) / (
+              1000 * 60 * 60 * 24
+            )
           );
         }
-
-        // draw map
-        canvasMain(guild);
-        console.log(`legged in guild ${guild.name}`);
+      );
+      // transfer
+      if (
+        fs.existsSync(
+          `./resources/database/transfers-${guild.id}.json`
+        ) === true
+      ) {
+        transfers[guild.id] = loadFile(
+          `./resources/database/transfers-${guild.id}.json`
+        );
+        for (
+          const memberId in transfers[guild.id]
+        ) {
+          if (
+            members.get(
+              memberId
+            ) === undefined
+          ) {
+            delete transfers[guild.id][memberId];
+          }
+        }
+        saveFile(
+          `./resources/database/transfers-${guild.id}.json`,
+          transfers[guild.id]
+        );
+      } else {
+        transfers[guild.id] = {};
+        saveFile(
+          `./resources/database/transfers-${guild.id}.json`,
+          transfers[guild.id]
+        );
       }
-    )
+      // initialize map game
+      canvasMain(
+        guild
+      );
+      console.log(
+        `logged in guild ${guild.name}`
+      );
+    }
   );
   // points decay
   let startDay = new Date().getDay();
@@ -492,6 +494,16 @@ async function ready(
   console.log(
     `bot ready as ${client.user.username}`
   );
+}
+
+async function get_bitcoin_valuation(
+  complete_url
+) {
+  const response = await fetch(
+    complete_url
+  );
+  const json = await response.json();
+  return json.result.data[0].v;
 }
 
 export {

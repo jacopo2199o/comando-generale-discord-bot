@@ -9,12 +9,9 @@ async function about(
   interaction
 ) {
   await interaction.deferReply();
-  const message = new EmbedBuilder();
-  message.setTitle(
+  const message = new EmbedBuilder().setTitle(
     "📄 about"
-  );
-  message.setTimestamp();
-  message.setColor(
+  ).setTimestamp().setColor(
     "DarkGreen"
   );
   if (

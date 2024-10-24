@@ -1,38 +1,100 @@
-import Canvas, {loadImage} from "canvas";
-import {AttachmentBuilder} from "discord.js";
-import {customChannels} from "./resources/custom-channels.js";
+import Canvas from "canvas";
+import {
+  AttachmentBuilder
+} from "discord.js";
+import {
+  customChannels
+} from "./resources/custom-channels.js";
+import http from "node:http";
+import {
+  Image
+} from "canvas";
 
 /**
- * @param {import("discord.js").Guild} guild 
+ * @param {import("discord.js").Guild} guild
  */
-const canvasMain = async (guild) => {
-  const canvas = Canvas.createCanvas(200, 200);
-  const ctx = canvas.getContext("2d");
-  // Write "Awesome!"
-  ctx.font = "30px Impact";
-  ctx.rotate(0.1);
-  ctx.fillText("Awesome!", 50, 100);
-  // Draw line under text
-  const text = ctx.measureText("Awesome!");
-  ctx.strokeStyle = "rgba(0,0,0,0.5)";
-  ctx.beginPath();
-  ctx.lineTo(50, 102);
-  ctx.lineTo(50 + text.width, 102);
-  ctx.stroke();
-  // Draw cat with lime helmet
-  loadImage("it.svg").then(async (img) => {
-    ctx.drawImage(img, 50, 0, 70, 70);
+async function canvasMain(
+  guild
+) {
+  const canvas = Canvas.createCanvas(
+    512,
+    512
+  );
+  const context = canvas.getContext(
+    "2d"
+  );
 
-    /*const image =*/ new AttachmentBuilder(canvas.toBuffer(), {name: "test.png"});
-    /*const channel =*/ guild.channels.cache.find((channel) => channel.name === customChannels.internal)
-      ?? guild.channels.publicUpdatesChannel;
-    /*const messageSent =*/ //await channel.send({files: [image]});
-    setTimeout(() => {
-      //messageSent.delete();
-    }, 4000);
-    //console.log('<img src="' + canvas.toDataURL() + '" />');
-  });
-};
+  //get_new_map();
+
+  function get_new_map() {
+    http.get(
+      "http://localhost:3000/new_map",
+      function (
+        response
+      ) {
+        let data = "";
+        response.on(
+          "data",
+          function (
+            chunk
+          ) {
+            data += chunk;
+          }
+        );
+        response.on(
+          "end",
+          async function () {
+            await send_map(
+              data
+            );
+          }
+        );
+      }
+    );
+  }
+
+  async function send_map(
+    data
+  ) {
+    const base_64_uri = Buffer.from(
+      decodeURI(
+        encodeURI(
+          data
+        )
+      )
+    ).toString(
+      "base64"
+    );
+    const image = new Image();
+    image.src = `data:image/svg+xml;base64,${base_64_uri}`;
+    image.onload = function () {
+      context.drawImage(
+        image,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+    };
+    const attachment = new AttachmentBuilder(
+      canvas.toBuffer()
+    );
+    const channel = guild.channels.cache.find(
+      function (
+        channel
+      ) {
+        return channel.name === customChannels.internal;
+      }
+    ) ?? guild.channels.publicUpdatesChannel;
+    await channel.send(
+      {
+        files: [
+          attachment
+        ]
+      }
+    );
+  }
+}
 
 export {
   canvasMain

@@ -12,8 +12,7 @@ import {
 } from "../resources/custom-roles.js";
 
 /**
- * 
- * @param {import("discord.js").Interaction} interaction 
+ * @param {import("discord.js").Interaction} interaction
  */
 async function cooldown(
   interaction
@@ -25,7 +24,9 @@ async function cooldown(
   if (
     user === undefined
   ) {
-    return console.error("cooldown: user undefined");
+    return console.error(
+      "cooldown: user undefined"
+    );
   }
   const member = interaction.guild.members.cache.get(
     user.id
@@ -33,13 +34,19 @@ async function cooldown(
   if (
     member === undefined
   ) {
-    return console.error("cooldown: member undefined");
+    return console.error(
+      "cooldown: member undefined"
+    );
   }
   const role = getCustomRole(
     member
   );
-  if (role === undefined) {
-    return console.error("cooldown: role undefined");
+  if (
+    role === undefined
+  ) {
+    return console.error(
+      "cooldown: role undefined"
+    );
   }
   const interval = interaction.options.getNumber(
     "interval"
@@ -51,7 +58,7 @@ async function cooldown(
     interval > period
   ) {
     await interaction.editReply(
-      "interval can not be major than period"
+      "interval can not be greater than period"
     );
     return;
   }

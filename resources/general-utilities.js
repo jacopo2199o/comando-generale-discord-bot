@@ -6,7 +6,7 @@ import {
 } from "../events/ready.js";
 
 /**
- * @param {import("discord.js").GuildMember} member 
+ * @param {import("discord.js").GuildMember} member
  */
 function addMember(
   member
@@ -23,7 +23,7 @@ function addMember(
 }
 
 /**
- * @param {import("discord.js").GuildMember} member 
+ * @param {import("discord.js").GuildMember} member
  */
 function deleteMember(
   member
@@ -38,7 +38,7 @@ function deleteMember(
 
 /**
  * @param { String } path
- * @returns { JSON }  
+ * @returns { JSON }
  */
 function loadFile(
   path
@@ -57,28 +57,17 @@ function saveFile(
   path,
   data
 ) {
-  fs.writeFile(
+  fs.writeFileSync(
     path,
     JSON.stringify(
       data
-    ),
-    function (
-      error
-    ) {
-      if (
-        error
-      ) {
-        console.error(
-          error.message
-        );
-      }
-    }
+    )
   );
 }
 
 /**
- * @param { import("../community.js").Community } community 
- * @param { Array<String> } messages 
+ * @param { import("../community.js").Community } community
+ * @param { Array<String> } messages
  */
 async function sendMesseges(
   messages,
@@ -90,33 +79,50 @@ async function sendMesseges(
   ) {
     let characters = 0;
     let chunk = "";
-    let chunks = [];
-    for (let i = 0; i < messages.length; i++) {
+    const chunks = [];
+    for (
+      let i = 0;
+      i < messages.length;
+      i++
+    ) {
       characters += messages[i].length;
-      if (characters < size) {
+      if (
+        characters < size
+      ) {
         chunk += messages[i];
       }
       else {
-        chunks.push(chunk);
+        chunks.push(
+          chunk
+        );
         chunk = "";
         characters = 0;
       }
     }
-    if (!chunks.length) {
+    if (
+      !chunks.length
+    ) {
       return [chunk];
     }
     else {
       return chunks;
     }
   }
-  if (messages.length) {
-    let parts = splitMessages(messages, 2000);
-    for (const part of parts) {
+
+  if (
+    messages.length
+  ) {
+    const parts = splitMessages(messages, 2000);
+    for (
+      const part of parts
+    ) {
       const message = {
         content: part,
         flags: [4096]
       };
-      await channel.send(message);
+      await channel.send(
+        message
+      );
     }
   }
 }

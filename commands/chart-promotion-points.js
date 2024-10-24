@@ -13,7 +13,7 @@ import {
 } from "../resources/custom-roles.js";
 
 /**
- * @param {import("discord.js").Interaction} interaction 
+ * @param {import("discord.js").Interaction} interaction
  */
 async function chartPromotionPoints(
   interaction
@@ -23,12 +23,14 @@ async function chartPromotionPoints(
   for (
     const memberId in globalPoints[interaction.guild.id]
   ) {
-    const member = interaction.guild.members.cache.get(memberId);
+    const member = interaction.guild.members.cache.get(
+      memberId
+    );
     if (
       member === undefined
     ) {
       return console.error(
-        member
+        member, memberId
       );
     }
     if (

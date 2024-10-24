@@ -70,7 +70,7 @@ async function activity(
       updateResult = await updateRoleTo(
         member,
         "governatore",
-        "sottoprefetto"
+        "prefetto"
       );
     } else if (
       globalPoints[member.guild.id][member.id] >= 19000 &&
@@ -247,36 +247,29 @@ async function activity(
     if (
       updateResult !== undefined
     ) {
-      const message = new EmbedBuilder();
-      message.setTitle(
+      const message = new EmbedBuilder().setTitle(
         "🔰 promotion"
-      );
-      message.setDescription(
+      ).setDescription(
         `*${member}* reached ${customPoints.promotionPoints} *promotion points*`
-      );
-      message.addFields(
+      ).addFields(
         {
           name: "old role",
           value: `${updateResult.oldRole}`,
           inline: true
         }
-      );
-      message.addFields(
+      ).addFields(
         {
           name: "new role",
           value: `${updateResult.newRole}`,
           inline: true
         }
-      );
-      message.setThumbnail(
+      ).setThumbnail(
         member.displayAvatarURL(
           {
             dynamic: true
           }
         )
-      );
-      message.setTimestamp();
-      message.setColor(
+      ).setTimestamp().setColor(
         "DarkGreen"
       );
       channel.send(
@@ -491,36 +484,29 @@ async function activity(
     if (
       updateResult !== undefined
     ) {
-      const message = new EmbedBuilder();
-      message.setTitle(
+      const message = new EmbedBuilder().setTitle(
         "🔰 downgrade"
-      );
-      message.setDescription(
+      ).setDescription(
         `*${member}* no longer have *promotion points* for ${updateResult.oldRole}`
-      );
-      message.addFields(
+      ).addFields(
         {
           name: "old role",
           value: `${updateResult.oldRole}`,
           inline: true
         }
-      );
-      message.addFields(
+      ).addFields(
         {
           name: "new role",
           value: `${updateResult.newRole}`,
           inline: true
         }
-      );
-      message.setThumbnail(
+      ).setThumbnail(
         member.displayAvatarURL(
           {
             dynamic: true
           }
         )
-      );
-      message.setTimestamp();
-      message.setColor(
+      ).setTimestamp().setColor(
         "DarkRed"
       );
       channel.send(

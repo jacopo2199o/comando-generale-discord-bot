@@ -12,7 +12,7 @@ import {
 } from "../resources/custom-roles.js";
 
 /**
- * @param {import("discord.js").Interaction} interaction 
+ * @param {import("discord.js").Interaction} interaction
  */
 async function transfer(
   interaction

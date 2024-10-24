@@ -66,10 +66,10 @@ commands.push(
   ).setDescription(
     "transfer a member into threads"
   ).addUserOption(
-    (
+    function (
       option
-    ) => {
-      option.setName(
+    ) {
+      return option.setName(
         "member"
       ).setDescription(
         "member to give points"
