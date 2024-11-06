@@ -16,9 +16,6 @@ import {
   loadFile,
   saveFile
 } from "../resources/general-utilities.js";
-import {
-  canvasMain
-} from "../canvas.js";
 
 const cooldowns = {};
 const globalPoints = {};
@@ -244,10 +241,6 @@ async function ready(
           transfers[guild.id]
         );
       }
-      // initialize map game
-      canvasMain(
-        guild
-      );
       console.log(
         `logged in guild ${guild.name}`
       );

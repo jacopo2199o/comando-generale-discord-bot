@@ -19,7 +19,7 @@ const customPoints = {
   },
   promotionPoints: 1000,
   reputationPoints: {
-    maker: 1,
+    maker: 10,
     taker: 100,
     oldTaker: -100
   },

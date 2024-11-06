@@ -144,7 +144,7 @@ commands.push(
     function (
       option
     ) {
-      option.setName(
+      return option.setName(
         "period"
       ).setDescription(
         "time period (hours) to expiration"
@@ -160,7 +160,7 @@ commands.push(
     function (
       option
     ) {
-      option.setName(
+      return option.setName(
         "reason"
       ).setDescription(
         "reason description"
@@ -214,7 +214,7 @@ commands.push(
     function (
       option
     ) {
-      option.setName(
+      return option.setName(
         "member"
       ).setDescription(
         "member to give point"
@@ -247,7 +247,7 @@ commands.push(
     function (
       option
     ) {
-      option.setName(
+      return option.setName(
         "member"
       ).setDescription(
         "member points"
@@ -266,7 +266,7 @@ commands.push(
     function (
       option
     ) {
-      option.setName(
+      return option.setName(
         "member"
       ).setDescription(
         "member reputation points"
@@ -274,6 +274,122 @@ commands.push(
         false
       );
     }
+  )
+);
+commands.push(
+  new SlashCommandBuilder().setName(
+    "mg-join"
+  ).setDescription(
+    "map game - join game"
+  ).addStringOption(
+    function (
+      option
+    ) {
+      return option.setName(
+        "nickname"
+      ).setDescription(
+        "nickname, party or whatever you like"
+      ).setRequired(
+        true
+      );
+    }
+  ).addNumberOption(
+    function (
+      option
+    ) {
+      return option.setName(
+        "red"
+      ).setDescription(
+        "red channel value (0 to 128) for color to show on map"
+      ).setMinValue(
+        0
+      ).setMaxValue(
+        128
+      ).setRequired(
+        true
+      );
+    }
+  ).addNumberOption(
+    function (
+      option
+    ) {
+      return option.setName(
+        "green"
+      ).setDescription(
+        "green channel value (0 to 128) for color to show on map"
+      ).setMinValue(
+        0
+      ).setMaxValue(
+        128
+      ).setRequired(
+        true
+      );
+    }
+  ).addNumberOption(
+    function (
+      option
+    ) {
+      return option.setName(
+        "blue"
+      ).setDescription(
+        "blue channel value (0 to 128) for color to show on map"
+      ).setMinValue(
+        0
+      ).setMaxValue(
+        128
+      ).setRequired(
+        true
+      );
+    }
+  )
+);
+commands.push(
+  new SlashCommandBuilder().setName(
+    "mg-take-province"
+  ).setDescription(
+    "map game - take a province and assign action points to"
+  ).addStringOption(
+    function (
+      option
+    ) {
+      return option.setName(
+        "province-name"
+      ).setDescription(
+        "province name with no abbreviations"
+      ).setRequired(
+        true
+      );
+    }
+  ).addNumberOption(
+    function(
+      option
+    ) {
+      return option.setName(
+        "action-points"
+      ).setDescription(
+        "action points value (0 to 100) to defend your province"
+      ).setMinValue(
+        0
+      ).setMaxValue(
+        100
+      ).setRequired(
+        true
+      );
+    }
+  )
+);
+commands.push(
+  new SlashCommandBuilder().setName(
+    "mg-view-profile"
+  ).setDescription(
+    "map game - view profile game data"
+  )
+);
+commands.push(
+  new SlashCommandBuilder().setName(
+    "mg-view-map"
+  ).setDescription(
+    "map game - view map game image"
   )
 );
 for (
@@ -293,8 +409,10 @@ try {
   console.log(
     `successfully reloaded ${data.length} application slash commands`
   );
-} catch (error) {
+} catch (
+  __error
+) {
   console.error(
-    error
+    __error
   );
 }

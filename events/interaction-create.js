@@ -62,6 +62,18 @@ import {
 import {
   takePromotionPoints
 } from "./take-promotion-points.js";
+import {
+  join
+} from "../commands/map game/mg-join.js";
+import {
+  takeProvince
+} from "../commands/map game/mg-take-province.js";
+import {
+  viewProfile
+} from "../commands/map game/mg-view-profile.js";
+import {
+  viewMap
+} from "../commands/map game/mg-view-map.js";
 
 /**
  * @param {import("discord.js").Interaction} interaction
@@ -197,15 +209,39 @@ async function interactionCreate(
       viewReputationPoints(
         interaction
       );
-    } else {
-      console.error(
-        `no command matching ${interaction.commandName} was found`
+    } else if (
+      interaction.commandName === "mg-join"
+    ) {
+      join(
+        interaction
       );
+    } else if (
+      interaction.commandName === "mg-take-province"
+    ) {
+      takeProvince(
+        interaction
+      );
+    } else if (
+      interaction.commandName === "mg-view-profile"
+    ) {
+      viewProfile(
+        interaction
+      );
+    } else if (
+      interaction.commandName === "mg-view-map"
+    ) {
+      viewMap(
+        interaction
+      );
+    } else {
       interaction.reply(
         {
           content: `invalid command */${interaction.commandName}*`,
           ephemeral: true
         }
+      );
+      console.error(
+        `no command matching ${interaction.commandName} was found`
       );
       isValidCommand = false;
     }

@@ -10,6 +10,9 @@ import {
 import {
   drops
 } from "../resources/custom-points.js";
+import {
+  generalSettings
+} from "../resources/general-settings.js";
 
 /**
  * @param {import("discord.js").Channel} dropChannel
@@ -17,87 +20,69 @@ import {
 async function dropPromotionPoints(
   dropChannel
 ) {
-  const button = new ButtonBuilder();
-  button.setCustomId(
+  const button = new ButtonBuilder().setCustomId(
     "takePromotionPoints"
-  );
-  button.setLabel(
+  ).setLabel(
     "take"
-  );
-  button.setStyle(
+  ).setStyle(
     ButtonStyle.Success
   );
-  const actionRow = new ActionRowBuilder();
-  actionRow.addComponents(
+  const actionRow = new ActionRowBuilder().addComponents(
     button
   );
-  const dropMessage = new EmbedBuilder();
-  dropMessage.setTitle(
+  const dropMessage = new EmbedBuilder().setTitle(
     "📦 new drop"
-  );
-  dropMessage.setDescription(
-    "based on messages sent globally in this server. take it pressing the green button below (expires in 10 seconds)"
-  );
-  dropMessage.addFields(
+  ).setDescription(
+    "based on messages sent globally in this server. take it pressing the green button below" +
+    "(expires in " + generalSettings.promotionPointsMessageExpiration + " seconds)"
+  ).addFields(
     {
       name: "type",
       value: "promotion points",
       inline: true
     }
-  );
-  dropMessage.addFields(
+  ).addFields(
     {
       name: "value",
       value: `${drops.promotionPoints} ⭐`,
       inline: true
     }
-  );
-  dropMessage.setThumbnail(
+  ).setThumbnail(
     dropChannel.client.user.displayAvatarURL(
       {
         dynamic: true
       }
     )
-  );
-  dropMessage.setFooter(
+  ).setFooter(
     {
       text: "*use __/view-promotion-points__ to see yours*"
     }
-  );
-  dropMessage.setTimestamp();
-  dropMessage.setColor(
+  ).setTimestamp().setColor(
     "DarkGreen"
   );
-  const publicMessage = new EmbedBuilder();
-  publicMessage.setTitle(
+  const publicMessage = new EmbedBuilder().setTitle(
     "📦 new drop"
-  );
-  publicMessage.setDescription(
+  ).setDescription(
     `a *promotion points* drop spawned in *${dropChannel.name}*`
-  );
-  publicMessage.addFields(
+  ).addFields(
     {
       name: "type",
       value: "promotion points",
       inline: true
     }
-  );
-  publicMessage.addFields(
+  ).addFields(
     {
       name: "value",
       value: `${drops.promotionPoints} ⭐`,
       inline: true
     }
-  );
-  publicMessage.setThumbnail(
+  ).setThumbnail(
     dropChannel.client.user.displayAvatarURL(
       {
         dynamic: true
       }
     )
-  );
-  publicMessage.setTimestamp();
-  publicMessage.setColor(
+  ).setTimestamp().setColor(
     "DarkGreen"
   );
   const publicChannel = dropChannel.guild.channels.cache.find(
@@ -128,7 +113,7 @@ async function dropPromotionPoints(
     function () {
       dropMessageSent.delete();
     },
-    10000
+    generalSettings.promotionPointsMessageExpiration
   );
 }
 
