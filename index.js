@@ -46,6 +46,9 @@ import {
 import {
   threadCreate
 } from "./events/thread-create.js";
+import {
+  dropAnnounce
+} from "./events/dropAnnounce.js";
 
 dotenv.config();
 
@@ -78,6 +81,10 @@ client.on(
 client.on(
   "dropPromotionPoints",
   dropPromotionPoints
+);
+client.on(
+  "dropAnnounce",
+  dropAnnounce
 );
 client.on(
   "interactionCreate",

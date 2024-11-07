@@ -1,15 +1,9 @@
 import {
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
   EmbedBuilder
 } from "discord.js";
 import {
   customChannels
 } from "../resources/custom-channels.js";
-import {
-  drops
-} from "../resources/custom-points.js";
 import {
   generalSettings
 } from "../resources/general-settings.js";
@@ -17,36 +11,14 @@ import {
 /**
  * @param {import("discord.js").Channel} dropChannel
  */
-async function dropPromotionPoints(
+async function dropAnnounce(
   dropChannel
 ) {
-  const button = new ButtonBuilder().setCustomId(
-    "takePromotionPoints"
-  ).setLabel(
-    "take"
-  ).setStyle(
-    ButtonStyle.Success
-  );
-  const actionRow = new ActionRowBuilder().addComponents(
-    button
-  );
   const dropMessage = new EmbedBuilder().setTitle(
-    "📦 new drop"
+    "☕ announce"
   ).setDescription(
-    "based on messages sent globally in this server. take it pressing the green button below " +
-    "(expires in " + generalSettings.promotionPointsMessageExpiration / 1000 + " seconds)"
-  ).addFields(
-    {
-      name: "type",
-      value: "promotion points",
-      inline: true
-    }
-  ).addFields(
-    {
-      name: "value",
-      value: `${drops.promotionPoints} ⭐`,
-      inline: true
-    }
+    "*comando generale* released a mini-map game to play togheter and earn extra *promotion points* everyday, " +
+    "give it a try!\nhow to play in <#1303656931319087196>"
   ).setThumbnail(
     dropChannel.client.user.displayAvatarURL(
       {
@@ -55,27 +27,15 @@ async function dropPromotionPoints(
     )
   ).setFooter(
     {
-      text: "*use __/view-promotion-points__ to see yours*"
+      text: "*write __/mg-__ to see related commands*"
     }
   ).setTimestamp().setColor(
     "DarkGreen"
   );
   const publicMessage = new EmbedBuilder().setTitle(
-    "📦 new drop"
+    "☕ new announce"
   ).setDescription(
-    `a *promotion points* drop spawned in *${dropChannel.name}*`
-  ).addFields(
-    {
-      name: "type",
-      value: "promotion points",
-      inline: true
-    }
-  ).addFields(
-    {
-      name: "value",
-      value: `${drops.promotionPoints} ⭐`,
-      inline: true
-    }
+    `an *announce* spawned in *${dropChannel.name}*`
   ).setThumbnail(
     dropChannel.client.user.displayAvatarURL(
       {
@@ -103,9 +63,6 @@ async function dropPromotionPoints(
     {
       embeds: [
         dropMessage
-      ],
-      components: [
-        actionRow
       ]
     }
   );
@@ -118,6 +75,5 @@ async function dropPromotionPoints(
 }
 
 export {
-  dropPromotionPoints
+  dropAnnounce
 };
-

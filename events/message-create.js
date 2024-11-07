@@ -82,7 +82,7 @@ async function messageCreate(
     maker,
     makerPoints
   );
-  // point drop
+  // drops
   dropPromotionPointsCounter++;
   if (
     dropPromotionPointsCounter > drops.promotionPoints
@@ -90,6 +90,13 @@ async function messageCreate(
     dropPromotionPointsCounter = 0;
     newMessage.client.emit(
       "dropPromotionPoints",
+      newMessage.channel
+    );
+  } else if (
+    dropPromotionPointsCounter == 50
+  ) {
+    newMessage.client.emit(
+      "dropAnnounce",
       newMessage.channel
     );
   }

@@ -1,5 +1,4 @@
 import {
-  ActivityType,
   EmbedBuilder
 } from "discord.js";
 import fs from "node:fs";
@@ -254,9 +253,6 @@ async function ready(
       if (
         startDay !== actualDay
       ) {
-        console.log(
-          "a new day started"
-        );
         client.guilds.cache.forEach(
           function (
             guild
@@ -269,6 +265,9 @@ async function ready(
           }
         );
         startDay = actualDay;
+        console.log(
+          "a new day started"
+        );
       }
     },
     generalSettings.hourCheckInterval
@@ -298,25 +297,20 @@ async function ready(
                 member !== undefined &&
                 customRole !== undefined
               ) {
-                const message = new EmbedBuilder();
-                message.setDescription(
+                const message = new EmbedBuilder().setDescription(
                   `🛡️ ${customRole} *${member}* cooldown penalty expired`
-                );
-                message.setThumbnail(
+                ).setThumbnail(
                   member.displayAvatarURL(
                     {
                       dynamic: true
                     }
                   )
-                );
-                message.setFooter(
+                ).setFooter(
                   {
                     text: `${member}`,
                     iconURL: `${member.displayAvatarURL()}`
                   }
-                );
-                message.setTimestamp();
-                message.setColor(
+                ).setTimestamp().setColor(
                   "DarkGreen"
                 );
                 const channel = guild.channels.cache.find(
@@ -370,25 +364,20 @@ async function ready(
                 member !== undefined &&
                 customRole !== undefined
               ) {
-                const message = new EmbedBuilder();
-                message.setDescription(
+                const message = new EmbedBuilder().setDescription(
                   `🛡️ ${customRole} *${member}* transfer penalty expired`
-                );
-                message.setThumbnail(
+                ).setThumbnail(
                   member.displayAvatarURL(
                     {
                       dynamic: true
                     }
                   )
-                );
-                message.setFooter(
+                ).setFooter(
                   {
                     text: `${member}`,
                     iconURL: `${member.displayAvatarURL()}`
                   }
-                );
-                message.setTimestamp();
-                message.setColor(
+                ).setTimestamp().setColor(
                   "DarkGreen"
                 );
                 const channel = guild.channels.cache.find(
@@ -472,17 +461,6 @@ async function ready(
       );
     },
     generalSettings.backupInterval
-  );
-  client.user.setPresence(
-    {
-      activities: [
-        {
-          state: "",
-          name: "https://discord.gg/F7UTwWtwTV",
-          type: ActivityType.Watching
-        }
-      ]
-    }
   );
   console.log(
     `bot ready as ${client.user.username}`
