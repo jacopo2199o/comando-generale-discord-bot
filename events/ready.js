@@ -262,6 +262,10 @@ async function ready(
               guild,
               -24
             );
+            client.emit(
+              "pointsDistribution",
+              guild
+            );
           }
         );
         startDay = actualDay;

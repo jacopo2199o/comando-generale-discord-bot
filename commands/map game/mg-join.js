@@ -53,7 +53,7 @@ async function join(
             response.statusCode == 200
           ) {
             const message = new EmbedBuilder().setTitle(
-              "🗺️ map game"
+              "🗺️👑 map game"
             ).setDescription(
               `${role} *${maker}* joined *map game*`
             ).setFooter(

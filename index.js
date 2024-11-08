@@ -49,6 +49,9 @@ import {
 import {
   dropAnnounce
 } from "./events/dropAnnounce.js";
+import {
+  pointsDistribution
+} from "./events/points-distribution.js";
 
 dotenv.config();
 
@@ -125,6 +128,10 @@ client.on(
 client.on(
   "pointsDecay",
   pointsDecay
+);
+client.on(
+  "pointsDistribution",
+  pointsDistribution
 );
 client.on(
   "threadCreate",

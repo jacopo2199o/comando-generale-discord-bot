@@ -55,7 +55,7 @@ async function viewProfile(
               data
             );
             const message = new EmbedBuilder().setTitle(
-              "🗺️ map game"
+              "🗺️👤 map game"
             ).setDescription(
               `${role} ${maker} has:`
             ).addFields(
