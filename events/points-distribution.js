@@ -12,6 +12,13 @@ import http from "node:http";
 async function pointsDistribution(
   guild
 ) {
+  const channel = guild.channels.cache.find(
+    function (
+      channel
+    ) {
+      return channel.name === customChannels.public;
+    }
+  ) ?? guild.publicUpdatesChannel;
   const request = http.request(
     {
       host: "localhost",
@@ -33,13 +40,6 @@ async function pointsDistribution(
       ).on(
         "end",
         async function () {
-          const channel = guild.channels.cache.find(
-            function (
-              channel
-            ) {
-              return channel.name === customChannels.public;
-            }
-          ) ?? guild.publicUpdatesChannel;
           if (
             response.statusCode == 200
           ) {
@@ -60,7 +60,7 @@ async function pointsDistribution(
                 const member = guild.members.cache.get(
                   playerStatistics.id
                 );
-                member.client.emit(
+                guild.client.emit(
                   "activity",
                   member,
                   playerStatistics.score
@@ -105,6 +105,18 @@ async function pointsDistribution(
             );
           }
         }
+      );
+    }
+  ).on(
+    "error",
+    function (
+      error
+    ) {
+      channel.send(
+        "connection error, try again later"
+      );
+      console.error(
+        error.message
       );
     }
   );

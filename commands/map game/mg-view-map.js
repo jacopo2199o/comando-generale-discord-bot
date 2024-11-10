@@ -83,6 +83,18 @@ async function viewMap(
         }
       );
     }
+  ).on(
+    "error",
+    async function (
+      error
+    ) {
+      await interaction.editReply(
+        "connection error, try again later"
+      );
+      console.error(
+        error.message
+      );
+    }
   );
   request.end();
 }
