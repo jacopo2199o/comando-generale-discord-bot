@@ -276,6 +276,21 @@ async function ready(
     },
     generalSettings.hourCheckInterval
   );
+  // setInterval(
+  //   function () {
+  //     client.guilds.cache.forEach(
+  //       function (
+  //         guild
+  //       ) {
+  //         client.emit(
+  //           "pointsDistribution",
+  //           guild
+  //         );
+  //       }
+  //     );
+  //   },
+  //   1000
+  // );
   // cooldowns check for expirations
   setInterval(
     function () {

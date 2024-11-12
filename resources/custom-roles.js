@@ -58,7 +58,7 @@ const pointsRole = {
 };
 
 /**
- * @param {import("discord.js").GuildMember} member 
+ * @param {import("discord.js").GuildMember} member
  */
 async function addCustomBaseRoles(
   member
@@ -132,7 +132,7 @@ async function addCustomBaseRoles(
 }
 
 /**
-* @param {import("discord.js").GuildMember} member 
+* @param {import("discord.js").GuildMember} member
 * @returns {import("discord.js").Role}
 */
 function getCustomRole(
@@ -165,7 +165,7 @@ function getCustomRole(
 function getCustomRoles(
   member
 ) {
-  let result = [];
+  const result = [];
   member.roles.cache.forEach(
     function (
       role
@@ -210,7 +210,7 @@ function hasModerationRole(
 }
 
 /**
- * @param {import("discord.js").GuildMember} member 
+ * @param {import("discord.js").GuildMember} member
  */
 async function updateRoleTo(
   member,

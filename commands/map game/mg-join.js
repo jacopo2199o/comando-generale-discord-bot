@@ -52,10 +52,8 @@ async function join(
           if (
             response.statusCode == 200
           ) {
-            const message = new EmbedBuilder().setTitle(
-              "🗺️👑 map game"
-            ).setDescription(
-              `${role} *${maker}* joined *map game*`
+            const message = new EmbedBuilder().setDescription(
+              `🗺️👑 ${role} *${maker}* joined *map game*`
             ).setFooter(
               {
                 text: `${points} ⭐ to ${maker.displayName}`,
@@ -77,6 +75,18 @@ async function join(
             );
           }
         }
+      );
+    }
+  ).on(
+    "error",
+    async function (
+      error
+    ) {
+      await interaction.editReply(
+        "connection error, try again later"
+      );
+      console.error(
+        error.message
       );
     }
   );

@@ -48,7 +48,7 @@ import {
 } from "./events/thread-create.js";
 import {
   dropAnnounce
-} from "./events/dropAnnounce.js";
+} from "./events/drop-announce.js";
 import {
   pointsDistribution
 } from "./events/points-distribution.js";

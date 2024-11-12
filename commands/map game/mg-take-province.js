@@ -52,10 +52,8 @@ async function takeProvince(
           if (
             response.statusCode == 200
           ) {
-            const message = new EmbedBuilder().setTitle(
-              "🗺️🛖 map game"
-            ).setDescription(
-              `${role} *${maker}* try to take a province`
+            const message = new EmbedBuilder().setDescription(
+              `🗺️🛖 ${role} *${maker}* try to take a province`
             ).setFooter(
               {
                 text: `${points} ⭐ to ${maker.displayName}`,

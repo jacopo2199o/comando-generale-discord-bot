@@ -74,6 +74,7 @@ import {
 import {
   viewMap
 } from "../commands/map game/mg-view-map.js";
+import {chartPlayersScore} from "../commands/map game/mg-chart-players-score.js";
 
 /**
  * @param {import("discord.js").Interaction} interaction
@@ -231,6 +232,12 @@ async function interactionCreate(
       interaction.commandName === "mg-view-map"
     ) {
       viewMap(
+        interaction
+      );
+    } else if (
+      interaction.commandName === "mg-chart-players-score"
+    ) {
+      chartPlayersScore(
         interaction
       );
     } else {

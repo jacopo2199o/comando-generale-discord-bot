@@ -392,6 +392,13 @@ commands.push(
     "map game - view map game image"
   )
 );
+commands.push(
+  new SlashCommandBuilder().setName(
+    "mg-chart-players-score"
+  ).setDescription(
+    "map game - chart top 10 players score"
+  )
+);
 for (
   const command of commands
 ) {

@@ -53,10 +53,13 @@ async function pointsDistribution(
             }
             let pointsDistributed = 0;
             playersStatistics.forEach(
-              function (
+              async function (
                 playerStatistics
               ) {
                 pointsDistributed += playerStatistics.score;
+                await guild.members.fetch(
+                  playerStatistics.id
+                );
                 const member = guild.members.cache.get(
                   playerStatistics.id
                 );
@@ -68,9 +71,9 @@ async function pointsDistribution(
               }
             );
             const message = new EmbedBuilder().setTitle(
-              "🗺️⭐ map game"
+              "💰 points distributions"
             ).setDescription(
-              "map game points distribution to players have joined *map game, italy*"
+              "daily points distribution to players have joined <#1303656931319087196>"
             ).addFields(
               {
                 name: "promotion points",
@@ -80,7 +83,7 @@ async function pointsDistribution(
             ).addFields(
               {
                 name: "to",
-                value: "players",
+                value: `${playersStatistics.length} players`,
                 inline: true
               }
             ).setThumbnail(
