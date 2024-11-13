@@ -12,6 +12,7 @@ import http from "node:http";
 async function pointsDistribution(
   guild
 ) {
+  const members = await guild.members.fetch();
   const channel = guild.channels.cache.find(
     function (
       channel
@@ -57,12 +58,15 @@ async function pointsDistribution(
                 playerStatistics
               ) {
                 pointsDistributed += playerStatistics.score;
-                await guild.members.fetch(
+                const member = members.get(
                   playerStatistics.id
                 );
-                const member = guild.members.cache.get(
-                  playerStatistics.id
-                );
+                if (
+                  member == undefined
+                )
+                 {
+                  return;
+                }
                 guild.client.emit(
                   "activity",
                   member,
@@ -71,7 +75,7 @@ async function pointsDistribution(
               }
             );
             const message = new EmbedBuilder().setTitle(
-              "💰 points distributions"
+              "💰 points distribution"
             ).setDescription(
               "daily points distribution to players have joined <#1303656931319087196>"
             ).addFields(

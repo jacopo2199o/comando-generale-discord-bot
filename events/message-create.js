@@ -25,9 +25,6 @@ let dropPromotionPointsCounter = 0;
 async function messageCreate(
   newMessage
 ) {
-  await newMessage.guild.members.fetch(
-    newMessage.member.id
-  );
   if (
     newMessage.author.bot === true
   ) {

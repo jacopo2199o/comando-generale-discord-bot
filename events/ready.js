@@ -245,7 +245,7 @@ async function ready(
       );
     }
   );
-  // points decay
+  // daily actions
   let startDay = new Date().getDay();
   setInterval(
     function () {
@@ -277,9 +277,9 @@ async function ready(
     generalSettings.hourCheckInterval
   );
   // setInterval(
-  //   function () {
+  //    function () {
   //     client.guilds.cache.forEach(
-  //       function (
+  //       async function (
   //         guild
   //       ) {
   //         client.emit(
@@ -289,7 +289,7 @@ async function ready(
   //       }
   //     );
   //   },
-  //   1000
+  //   3000
   // );
   // cooldowns check for expirations
   setInterval(
