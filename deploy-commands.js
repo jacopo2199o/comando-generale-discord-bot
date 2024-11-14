@@ -358,7 +358,11 @@ commands.push(
         "province name with no abbreviations"
       ).setRequired(
         true
-      );
+      );/*.addChoices(
+				{ name: "Funny", value: "gif_funny" },
+				{ name: "Meme", value: "gif_meme" },
+				{ name: "Movie", value: "gif_movie" },
+      );*/
     }
   ).addNumberOption(
     function(
@@ -397,6 +401,61 @@ commands.push(
     "mg-chart-players-score"
   ).setDescription(
     "map game - chart top 10 players score"
+  )
+);
+commands.push(
+  new SlashCommandBuilder().setName(
+    "mg-change-color"
+  ).setDescription(
+    "map game - change color of your territories"
+  ).addNumberOption(
+    function (
+      option
+    ) {
+      return option.setName(
+        "red"
+      ).setDescription(
+        "red channel value (0 to 128) for color to show on map"
+      ).setMinValue(
+        0
+      ).setMaxValue(
+        128
+      ).setRequired(
+        true
+      );
+    }
+  ).addNumberOption(
+    function (
+      option
+    ) {
+      return option.setName(
+        "green"
+      ).setDescription(
+        "green channel value (0 to 128) for color to show on map"
+      ).setMinValue(
+        0
+      ).setMaxValue(
+        128
+      ).setRequired(
+        true
+      );
+    }
+  ).addNumberOption(
+    function (
+      option
+    ) {
+      return option.setName(
+        "blue"
+      ).setDescription(
+        "blue channel value (0 to 128) for color to show on map"
+      ).setMinValue(
+        0
+      ).setMaxValue(
+        128
+      ).setRequired(
+        true
+      );
+    }
   )
 );
 for (

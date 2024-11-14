@@ -57,16 +57,15 @@ async function pointsDistribution(
               async function (
                 playerStatistics
               ) {
-                pointsDistributed += playerStatistics.score;
                 const member = members.get(
                   playerStatistics.id
                 );
                 if (
                   member == undefined
-                )
-                 {
+                ) {
                   return;
                 }
+                pointsDistributed += playerStatistics.score;
                 guild.client.emit(
                   "activity",
                   member,

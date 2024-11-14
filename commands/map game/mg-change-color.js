@@ -1,38 +1,38 @@
+import http from "node:http";
 import {
   EmbedBuilder
 } from "discord.js";
 import {
-  reputationPoints
-} from "../../events/ready.js";
+  getCustomRole
+} from "../../resources/custom-roles.js";
 import {
   customPoints,
   getCalculatedPoints
 } from "../../resources/custom-points.js";
 import {
-  getCustomRole
-} from "../../resources/custom-roles.js";
-import http from "node:http";
+  reputationPoints
+} from "../../events/ready.js";
 
 /**
  * @param {import("discord.js").Interaction} interaction
  */
-async function takeProvince(
+async function changeColor(
   interaction
 ) {
   await interaction.deferReply();
   const maker = interaction.member;
   const role = getCustomRole(
-    maker
+    interaction.member
   );
   const points = getCalculatedPoints(
     customPoints.interactionCreate,
-    reputationPoints[interaction.guildId][maker.id].points
+    reputationPoints[maker.guild.id][maker.id].points
   );
   const request = http.request(
     {
       host: "localhost",
       port: "3000",
-      path: "/set_province?id=0",
+      path: "/set_color?id=0",
       method: "POST",
     },
     function (
@@ -52,26 +52,8 @@ async function takeProvince(
           if (
             response.statusCode == 200
           ) {
-            let message_description = "";
-            if (
-              data == "tried"
-            ) {
-              message_description = `🗺️⚔️ ${role} *${maker}* tried to conquer a province`;
-            } else if (
-              data == "occupied"
-            ) {
-              message_description = `🗺️🛖 ${role} *${maker}* occupied a province`;
-            } else if (
-              data == "reinforced"
-            ) {
-              message_description = `🗺️🛡️ ${role} *${maker}* reinforced a province`;
-            } else if (
-              data == "conquered"
-            ) {
-              message_description = `🗺️🔥 ${role} *${maker}* conquered a province`;
-            }
             const message = new EmbedBuilder().setDescription(
-              message_description
+              `🗺️🎨 ${role} *${maker}* changed color`
             ).setFooter(
               {
                 text: `${points} ⭐ to ${maker.displayName}`,
@@ -112,12 +94,17 @@ async function takeProvince(
     JSON.stringify(
       {
         player_id: maker.id,
-        province_name: interaction.options.getString(
-          "province-name"
-        ),
-        action_points: interaction.options.getNumber(
-          "action-points"
-        )
+        player_color: [
+          interaction.options.getNumber(
+            "red"
+          ),
+          interaction.options.getNumber(
+            "green"
+          ),
+          interaction.options.getNumber(
+            "blue"
+          )
+        ]
       }
     )
   );
@@ -125,5 +112,5 @@ async function takeProvince(
 }
 
 export {
-  takeProvince
+  changeColor
 };
