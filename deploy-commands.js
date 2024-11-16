@@ -391,6 +391,25 @@ commands.push(
 );
 commands.push(
   new SlashCommandBuilder().setName(
+    "mg-view-province"
+  ).setDescription(
+    "map game - view province game data"
+  ).addStringOption(
+    function(
+      option
+    ){
+      return option.setName(
+        "province-name"
+      ).setDescription(
+        "province name with no abbreviations"
+      ).setRequired(
+        true
+      );
+    }
+  )
+);
+commands.push(
+  new SlashCommandBuilder().setName(
     "mg-view-map"
   ).setDescription(
     "map game - view map game image"

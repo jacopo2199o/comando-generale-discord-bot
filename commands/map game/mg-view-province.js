@@ -1,39 +1,43 @@
-import http from "node:http";
 import {
   EmbedBuilder
 } from "discord.js";
 import {
-  getCustomRole
-} from "../../resources/custom-roles.js";
+  reputationPoints
+} from "../../events/ready.js";
 import {
   customPoints,
   getCalculatedPoints
 } from "../../resources/custom-points.js";
 import {
-  reputationPoints
-} from "../../events/ready.js";
-
+  getCustomRole
+} from "../../resources/custom-roles.js";
+import http from "node:http";
 /**
  * @param {import("discord.js").Interaction} interaction
  */
-async function join(
+async function viewProvince(
   interaction
 ) {
-  await interaction.deferReply();
+  await interaction.deferReply(
+    {
+      ephemeral: true
+    }
+  );
   const maker = interaction.member;
   const role = getCustomRole(
-    interaction.member
+    maker
   );
   const points = getCalculatedPoints(
     customPoints.interactionCreate,
-    reputationPoints[maker.guild.id][maker.id].points
+    reputationPoints[interaction.guildId][maker.id].points
   );
+  const provinceName = interaction.options.getString("province-name");
   const request = http.request(
     {
       host: "localhost",
       port: "3000",
-      path: "/join_map?id=0",
-      method: "POST",
+      path: `/province?map_id=0&player_id=${maker.id}&province_name=${provinceName}`,
+      method: "GET",
     },
     function (
       response
@@ -52,12 +56,21 @@ async function join(
           if (
             response.statusCode == 200
           ) {
+            if (
+              data == "not your province"
+            ) {
+              await interaction.editReply(
+                data
+              );
+              return;
+            }
             const message = new EmbedBuilder().setDescription(
-              `🗺️👑 ${role} *${maker}* joined *map game*`
+              `🗺️🛖 *${provinceName}* province has:`
             ).addFields(
               {
-                name: "\u200b",
-                value: "*use __/mg-view-map__ to see the map*"
+                name: "action points",
+                value: `${data}`,
+                inline: true
               }
             ).setFooter(
               {
@@ -95,30 +108,9 @@ async function join(
       );
     }
   );
-  request.write(
-    JSON.stringify(
-      {
-        player_id: maker.id,
-        player_nickname: interaction.options.getString(
-          "nickname"
-        ),
-        player_color: [
-          interaction.options.getNumber(
-            "red"
-          ),
-          interaction.options.getNumber(
-            "green"
-          ),
-          interaction.options.getNumber(
-            "blue"
-          )
-        ]
-      }
-    )
-  );
   request.end();
 }
 
 export {
-  join
+  viewProvince
 };

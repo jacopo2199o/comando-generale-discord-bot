@@ -52,26 +52,34 @@ async function takeProvince(
           if (
             response.statusCode == 200
           ) {
-            let message_description = "";
+            const responseData = JSON.parse(
+              data
+            );
+            let description = "";
             if (
-              data == "tried"
+              responseData.name == "tried"
             ) {
-              message_description = `🗺️⚔️ ${role} *${maker}* tried to conquer a province`;
+              description = `🗺️⚔️ ${role} *${maker}* tried to conquer *${responseData.province}*`;
             } else if (
-              data == "occupied"
+              responseData.name == "occupied"
             ) {
-              message_description = `🗺️🛖 ${role} *${maker}* occupied a province`;
+              description = `🗺️🛖 ${role} *${maker}* occupied *${responseData.province}*`;
             } else if (
-              data == "reinforced"
+              responseData.name == "reinforced"
             ) {
-              message_description = `🗺️🛡️ ${role} *${maker}* reinforced a province`;
+              description = `🗺️🛡️ ${role} *${maker}* reinforced *${responseData.province}*`;
             } else if (
-              data == "conquered"
+              responseData.name == "conquered"
             ) {
-              message_description = `🗺️🔥 ${role} *${maker}* conquered a province`;
+              description = `🗺️🔥 ${role} *${maker}* conquered *${responseData.province}*`;
+            } else if (
+              responseData.name == "defeated"
+            ) {
+              description = `🗺️💀 ${role} *${maker}* conquered *${responseData.province}* last province of ${responseData.previous_player}.
+              if no action is taken, next hour he will be declared defeated`;
             }
             const message = new EmbedBuilder().setDescription(
-              message_description
+              description
             ).setFooter(
               {
                 text: `${points} ⭐ to ${maker.displayName}`,

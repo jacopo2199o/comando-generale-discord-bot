@@ -55,7 +55,7 @@ async function viewProfile(
               data
             );
             const message = new EmbedBuilder().setDescription(
-              `🗺️👤 ${role} ${maker} has:`
+              `🗺️👤 ${role} *${maker}* has:`
             ).addFields(
               {
                 name: "action points",

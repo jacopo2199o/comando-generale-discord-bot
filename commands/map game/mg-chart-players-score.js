@@ -64,7 +64,7 @@ async function chartPlayersScore(
             const message = new EmbedBuilder().setTitle(
               "🗺️🏆 map game - score chart"
             ).setDescription(
-              `top 10 best players by score of *map game, italy*\n\n${row}`
+              `top 10 players by score of *map game, italy*\n\n${row}`
             ).addFields(
               {
                 name: "\u200b",

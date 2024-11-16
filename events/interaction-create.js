@@ -76,6 +76,7 @@ import {
 } from "../commands/map game/mg-view-map.js";
 import {chartPlayersScore} from "../commands/map game/mg-chart-players-score.js";
 import {changeColor} from "../commands/map game/mg-change-color.js";
+import {viewProvince} from "../commands/map game/mg-view-province.js";
 
 /**
  * @param {import("discord.js").Interaction} interaction
@@ -245,6 +246,12 @@ async function interactionCreate(
       interaction.commandName === "mg-change-color"
     ) {
       changeColor(
+        interaction
+      );
+    } else if (
+      interaction.commandName === "mg-view-province"
+    ) {
+      viewProvince(
         interaction
       );
     } else {
