@@ -74,7 +74,7 @@ import {
 import {
   viewMap
 } from "../commands/map game/mg-view-map.js";
-import {chartPlayersScore} from "../commands/map game/mg-chart-players-score.js";
+import {leaderboard} from "../commands/map game/mg-leaderboard.js";
 import {changeColor} from "../commands/map game/mg-change-color.js";
 import {viewProvince} from "../commands/map game/mg-view-province.js";
 
@@ -237,9 +237,9 @@ async function interactionCreate(
         interaction
       );
     } else if (
-      interaction.commandName === "mg-chart-players-score"
+      interaction.commandName === "mg-leaderboard"
     ) {
-      chartPlayersScore(
+      leaderboard(
         interaction
       );
     } else if (

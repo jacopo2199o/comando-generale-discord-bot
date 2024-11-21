@@ -417,9 +417,9 @@ commands.push(
 );
 commands.push(
   new SlashCommandBuilder().setName(
-    "mg-chart-players-score"
+    "mg-leaderboard"
   ).setDescription(
-    "map game - chart top 10 players score"
+    "map game - loaderboard of top 10 players score"
   )
 );
 commands.push(

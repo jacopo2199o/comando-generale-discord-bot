@@ -5,7 +5,7 @@ import http from "node:http";
 /**
  * @param {import("discord.js").Interaction} interaction
  */
-async function chartPlayersScore(
+async function leaderboard(
   interaction
 ) {
   await interaction.deferReply();
@@ -62,7 +62,7 @@ async function chartPlayersScore(
               return;
             }
             const message = new EmbedBuilder().setTitle(
-              "🗺️🏆 map game - score chart"
+              "🗺️🏆 map game - leaderboard"
             ).setDescription(
               `top 10 players by score of *map game, italy*\n\n${row}`
             ).addFields(
@@ -110,5 +110,5 @@ async function chartPlayersScore(
 }
 
 export {
-  chartPlayersScore
+  leaderboard
 };

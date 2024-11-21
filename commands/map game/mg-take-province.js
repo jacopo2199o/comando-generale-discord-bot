@@ -52,31 +52,30 @@ async function takeProvince(
           if (
             response.statusCode == 200
           ) {
-            const responseData = JSON.parse(
+            const action = JSON.parse(
               data
             );
             let description = "";
             if (
-              responseData.name == "tried"
+              action.name == "tried"
             ) {
-              description = `🗺️⚔️ ${role} *${maker}* tried to conquer *${responseData.province}*`;
+              description = `🗺️⚔️ ${role} *${maker}* failed to conquer *${action.province}*`;
             } else if (
-              responseData.name == "occupied"
+              action.name == "occupied"
             ) {
-              description = `🗺️🛖 ${role} *${maker}* occupied *${responseData.province}*`;
+              description = `🗺️🛖 ${role} *${maker}* occupied *${action.province}*`;
             } else if (
-              responseData.name == "reinforced"
+              action.name == "reinforced"
             ) {
-              description = `🗺️🛡️ ${role} *${maker}* reinforced *${responseData.province}*`;
+              description = `🗺️🛡️ ${role} *${maker}* reinforced *${action.province}*`;
             } else if (
-              responseData.name == "conquered"
+              action.name == "conquered"
             ) {
-              description = `🗺️🔥 ${role} *${maker}* conquered *${responseData.province}*`;
+              description = `🗺️🔥 ${role} *${maker}* conquered *${action.province}* of *${action.previous_player}*`;
             } else if (
-              responseData.name == "defeated"
+              action.name == "defeated"
             ) {
-              description = `🗺️💀 ${role} *${maker}* conquered *${responseData.province}* last province of ${responseData.previous_player}.
-              if no action is taken, next hour he will be declared defeated`;
+              description = `🗺️💀 ${role} *${maker}* conquered *${action.province}* last province of ${action.previous_player}. if no action is taken, next hour he will be declared defeated`;
             }
             const message = new EmbedBuilder().setDescription(
               description
