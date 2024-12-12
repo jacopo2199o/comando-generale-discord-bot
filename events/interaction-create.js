@@ -77,6 +77,7 @@ import {
 import {leaderboard} from "../commands/map game/mg-leaderboard.js";
 import {changeColor} from "../commands/map game/mg-change-color.js";
 import {viewProvince} from "../commands/map game/mg-view-province.js";
+import {changeNickname} from "../commands/map game/mg-change-nickname.js";
 
 /**
  * @param {import("discord.js").Interaction} interaction
@@ -246,6 +247,12 @@ async function interactionCreate(
       interaction.commandName === "mg-change-color"
     ) {
       changeColor(
+        interaction
+      );
+    } else if (
+      interaction.commandName === "mg-change-nickname"
+    ) {
+      changeNickname(
         interaction
       );
     } else if (

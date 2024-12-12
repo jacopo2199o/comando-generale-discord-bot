@@ -477,6 +477,29 @@ commands.push(
     }
   )
 );
+commands.push(
+  new SlashCommandBuilder().setName(
+    "mg-change-nickname"
+  ).setDescription(
+    "map game - change nickname of your profile"
+  ).addStringOption(
+    function (
+      option
+    ) {
+      return option.setName(
+        "nickname"
+      ).setDescription(
+        "nickname of your profile"
+      ).setMinLength(
+        0
+      ).setMaxLength(
+        24
+      ).setRequired(
+        true
+      );
+    }
+  )
+);
 for (
   const command of commands
 ) {
