@@ -70,7 +70,9 @@ async function messageCreate(
   if (
     makerRole === undefined
   ) {
-    return console.error("message create: maker role undefined");
+    return console.error(
+      "message create: maker role undefined"
+    );
   }
   const makerPoints = getCalculatedPoints(
     customPoints.messageCreate,

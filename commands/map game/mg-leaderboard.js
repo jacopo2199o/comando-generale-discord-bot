@@ -13,7 +13,7 @@ async function leaderboard(
     {
       host: "localhost",
       port: "3000",
-      path: "/map/players?id=0",
+      path: "/map/players?map_id=0",
       method: "GET",
     },
     function (

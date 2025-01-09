@@ -283,43 +283,23 @@ async function interactionCreate(
         makerPoints
       );
       const message = new EmbedBuilder();
-      message.setTitle(
-        "⚙️ command"
-      );
       if (
         interaction.channel.isThread() === true
       ) {
         message.setDescription(
-          `${makerRole} *${interaction.member}* used */${interaction.commandName}* in *${threadName}* of *${channelName}*`
+          `⚙️ ${makerRole} *${interaction.member}* used */${interaction.commandName}* in *${threadName}* of *${channelName}*`
         );
       } else {
         message.setDescription(
-          `${makerRole} *${interaction.member}* used */${interaction.commandName}* in *${channelName}*`
+          `⚙️ ${makerRole} *${interaction.member}* used */${interaction.commandName}* in *${channelName}*`
         );
       }
-      message.addFields(
+      message.setFooter(
         {
-          name: "promotion points",
-          value: `${makerPoints} ⭐`,
-          inline: true
+          text: `${makerPoints} ⭐ to ${maker.displayName}`,
+          iconURL: `${maker.displayAvatarURL()}`
         }
-      );
-      message.addFields(
-        {
-          name: "to",
-          value: `${interaction.member}`,
-          inline: true
-        }
-      );
-      message.setThumbnail(
-        interaction.member.displayAvatarURL(
-          {
-            dynamic: true
-          }
-        )
-      );
-      message.setTimestamp();
-      message.setColor(
+      ).setTimestamp().setColor(
         makerRole.color
       );
       const channel = interaction.guild.channels.cache.find(

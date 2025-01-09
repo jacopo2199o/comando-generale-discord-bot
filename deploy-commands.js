@@ -300,9 +300,9 @@ commands.push(
       return option.setName(
         "red"
       ).setDescription(
-        "red channel value (0 to 128) for color to show on map"
+        "red channel value (16 to 128) for color to show on map"
       ).setMinValue(
-        0
+        16
       ).setMaxValue(
         128
       ).setRequired(
@@ -316,9 +316,9 @@ commands.push(
       return option.setName(
         "green"
       ).setDescription(
-        "green channel value (0 to 128) for color to show on map"
+        "green channel value (16 to 128) for color to show on map"
       ).setMinValue(
-        0
+        16
       ).setMaxValue(
         128
       ).setRequired(
@@ -332,9 +332,9 @@ commands.push(
       return option.setName(
         "blue"
       ).setDescription(
-        "blue channel value (0 to 128) for color to show on map"
+        "blue channel value (16 to 128) for color to show on map"
       ).setMinValue(
-        0
+        16
       ).setMaxValue(
         128
       ).setRequired(
