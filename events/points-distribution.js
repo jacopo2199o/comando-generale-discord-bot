@@ -65,11 +65,11 @@ async function pointsDistribution(
                 ) {
                   return;
                 }
-                pointsDistributed += playerStatistics.score;
+                pointsDistributed += playerStatistics.valid_provinces + 1;
                 guild.client.emit(
                   "activity",
                   member,
-                  playerStatistics.score
+                  playerStatistics.valid_provinces + 1
                 );
               }
             );
