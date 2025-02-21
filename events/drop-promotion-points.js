@@ -55,7 +55,7 @@ async function dropPromotionPoints(
     )
   ).setFooter(
     {
-      text: "*use __/view-promotion-points__ to see yours*"
+      text: "*use */view-promotion-points* to see yours*"
     }
   ).setTimestamp().setColor(
     "DarkGreen"

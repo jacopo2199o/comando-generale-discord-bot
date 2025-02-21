@@ -27,7 +27,7 @@ async function dropAnnounce(
     )
   ).setFooter(
     {
-      text: "*write __/mg-__ to see related commands*"
+      text: "*write */mg-* to see related commands*"
     }
   ).setTimestamp().setColor(
     "DarkGreen"
