@@ -52,8 +52,15 @@ async function changeColor(
           if (
             response.statusCode == 200
           ) {
-            const message = new EmbedBuilder().setDescription(
-              `🗺️🎨 ${role} *${maker}* changed color`
+            const message = new EmbedBuilder().setTitle(
+              "🗺️ map game - europe"
+            ).setDescription(
+              `🎨 ${role} *${maker}* changed color`
+            ).addFields(
+              {
+                name: "\u200b",
+                value: "use */mg-change-nickname* to edit your nickname"
+              }
             ).setFooter(
               {
                 text: `${points} ⭐ to ${maker.displayName}`,

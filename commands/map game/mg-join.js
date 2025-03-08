@@ -52,12 +52,14 @@ async function join(
           if (
             response.statusCode == 200
           ) {
-            const message = new EmbedBuilder().setDescription(
-              `🗺️👑 ${role} *${maker}* joined *map game*`
+            const message = new EmbedBuilder().setTitle(
+              "🗺️ map game - europe"
+            ).setDescription(
+              `👑 ${role} *${maker}* joined`
             ).addFields(
               {
                 name: "\u200b",
-                value: "*use __/mg-view-map__ to see the map*"
+                value: "use */mg-view-map* to see the map"
               }
             ).setFooter(
               {

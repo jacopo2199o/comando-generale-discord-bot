@@ -63,22 +63,22 @@ async function takeProvince(
             } else if (
               action.name == "occupied"
             ) {
-              description = `🗺️🛖 ${role} *${maker}* occupied *${action.province}*`;
+              description = `🛖 ${role} *${maker}* occupied *${action.province}*`;
             } else if (
               action.name == "reinforced"
             ) {
-              description = `🗺️🛡️ ${role} *${maker}* reinforced *${action.province}*`;
+              description = `🛡️ ${role} *${maker}* reinforced *${action.province}*`;
             } else if (
               action.name == "conquered"
             ) {
-              description = `🗺️🔥 ${role} *${maker}* conquered *${action.province}* of *${action.previous_player}*`;
+              description = `🔥 ${role} *${maker}* conquered *${action.province}* of *${action.previous_player}*`;
             } else if (
               action.name == "defeated"
             ) {
-              description = `🗺️💀 ${role} *${maker}* conquered *${action.province}* last province of ${action.previous_player}. if no action is taken, next hour he will be declared defeated`;
+              description = `💀 ${role} *${maker}* conquered *${action.province}* last province of ${action.previous_player}. if no action is taken, next hour he will be declared defeated`;
             }
             const message = new EmbedBuilder().setDescription(
-              description
+              `🗺️ map game - europe: ${description}`
             ).setFooter(
               {
                 text: `${points} ⭐ to ${maker.displayName}`,

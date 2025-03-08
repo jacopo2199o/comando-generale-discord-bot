@@ -64,8 +64,10 @@ async function viewProvince(
               );
               return;
             }
-            const message = new EmbedBuilder().setDescription(
-              `🗺️🛖 *${provinceName}* province has:`
+            const message = new EmbedBuilder().setTitle(
+              "🗺️ map game - europe"
+            ).setDescription(
+              `🛖 *${provinceName}* province has:`
             ).addFields(
               {
                 name: "action points",

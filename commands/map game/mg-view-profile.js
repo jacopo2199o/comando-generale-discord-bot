@@ -54,8 +54,10 @@ async function viewProfile(
             const player = JSON.parse(
               data
             );
-            const message = new EmbedBuilder().setDescription(
-              `🗺️👤 ${role} *${maker}* has:`
+            const message = new EmbedBuilder().setTitle(
+              "🗺️ map game - europe"
+            ).setDescription(
+              `👤 ${role} *${maker}* has:`
             ).addFields(
               {
                 name: "action points",

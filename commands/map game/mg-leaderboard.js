@@ -62,9 +62,9 @@ async function leaderboard(
               return;
             }
             const message = new EmbedBuilder().setTitle(
-              "🗺️🏆 map game - leaderboard"
+              "🗺️ map game - europe"
             ).setDescription(
-              `top 10 players by score of *map game, italy*\n\n${row}`
+              `🏆 top 10 players leaderboard\n\n${row}`
             ).addFields(
               {
                 name: "\u200b",
