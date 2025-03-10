@@ -14,13 +14,6 @@ async function viewMap(
   interaction
 ) {
   await interaction.deferReply();
-  const canvas = Canvas.createCanvas(
-    512,
-    512
-  );
-  const context = canvas.getContext(
-    "2d"
-  );
   const request = http.request(
     {
       host: "localhost",
@@ -46,16 +39,20 @@ async function viewMap(
             response.statusCode == 200
           ) {
             const base_64_uri = Buffer.from(
-              decodeURI(
-                encodeURI(
-                  data
-                )
-              )
+              data
             ).toString(
               "base64"
             );
+            let canvas = undefined;
             const image = new Image();
             image.onload = function () {
+              canvas = Canvas.createCanvas(
+                image.width,
+                image.height
+              );
+              const context = canvas.getContext(
+                "2d"
+              );
               context.drawImage(
                 image,
                 0,
