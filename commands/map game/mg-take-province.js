@@ -19,6 +19,15 @@ import http from "node:http";
 async function takeProvince(
   interaction
 ) {
+  // Aggiungi gli ID dei canali consentiti
+  const allowed_channels = ["1168970952311328768", "1165937736121860198"];
+  if (!allowed_channels.includes(interaction.channelId)) {
+    await interaction.reply({
+      content: "*map game* commands can only be used in *int-roleplay* channel",
+      ephemeral: true
+    });
+    return;
+  }
   await interaction.deferReply();
   const maker = interaction.member;
   const role = getCustomRole(
