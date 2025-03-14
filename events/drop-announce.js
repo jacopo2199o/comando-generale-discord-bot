@@ -17,7 +17,7 @@ async function dropAnnounce(
   const dropMessage = new EmbedBuilder().setTitle(
     "☕ announce"
   ).setDescription(
-    "*comando generale* released a mini-map game to play togheter and earn extra *promotion points* everyday, " +
+    "*comando generale* released a *mini-map game* to play togheter and earn extra *promotion points* everyday, " +
     "give it a try!\nhow to play in <#1070638455769550848>"
   ).setThumbnail(
     dropChannel.client.user.displayAvatarURL(

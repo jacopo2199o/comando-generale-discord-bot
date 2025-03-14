@@ -20,8 +20,15 @@ async function takeProvince(
   interaction
 ) {
   // Aggiungi gli ID dei canali consentiti
-  const allowed_channels = ["1168970952311328768", "1165937736121860198"];
-  if (!allowed_channels.includes(interaction.channelId)) {
+  const allowed_channels = [
+    "1168970952311328768",
+    "1165937736121860198"
+  ];
+  if (
+    !allowed_channels.includes(
+      interaction.channelId
+    )
+  ) {
     await interaction.reply({
       content: "*map game* commands can only be used in *int-roleplay* channel",
       ephemeral: true
@@ -66,7 +73,7 @@ async function takeProvince(
             );
             let description = "";
             if (
-              action.name == "tried"
+              action.name == "failed"
             ) {
               description = `🗺️⚔️ ${role} *${maker}* failed to conquer *${action.province}*`;
             } else if (

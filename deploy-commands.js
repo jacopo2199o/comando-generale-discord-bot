@@ -365,7 +365,7 @@ commands.push(
       );*/
     }
   ).addNumberOption(
-    function(
+    function (
       option
     ) {
       return option.setName(
@@ -395,9 +395,9 @@ commands.push(
   ).setDescription(
     "map game - view province game data"
   ).addStringOption(
-    function(
+    function (
       option
-    ){
+    ) {
       return option.setName(
         "province-name"
       ).setDescription(
@@ -500,6 +500,27 @@ commands.push(
     }
   )
 );
+commands.push(
+  new SlashCommandBuilder()
+    .setName("mg-move-action-points")
+    .setDescription("move action points between provinces")
+    .addStringOption(option =>
+      option.setName("from-province")
+        .setDescription("name of the province you are transferring from")
+        .setRequired(true)
+    )
+    .addStringOption(option =>
+      option.setName("to-province")
+        .setDescription("name of the province you are transferring to")
+        .setRequired(true)
+    )
+    .addNumberOption(option =>
+      option.setName("action-points")
+        .setDescription("number of action points to transfer")
+        .setMinValue(1)
+        .setRequired(true)
+    )
+);
 for (
   const command of commands
 ) {
@@ -518,7 +539,7 @@ try {
     `successfully reloaded ${data.length} application slash commands`
   );
 } catch (
-  __error
+__error
 ) {
   console.error(
     __error

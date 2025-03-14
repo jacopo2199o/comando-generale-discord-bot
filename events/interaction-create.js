@@ -78,6 +78,7 @@ import {leaderboard} from "../commands/map game/mg-leaderboard.js";
 import {changeColor} from "../commands/map game/mg-change-color.js";
 import {viewProvince} from "../commands/map game/mg-view-province.js";
 import {changeNickname} from "../commands/map game/mg-change-nickname.js";
+import {moveActionPoints} from "../commands/map game/mg-move-action-points.js";
 
 /**
  * @param {import("discord.js").Interaction} interaction
@@ -259,6 +260,12 @@ async function interactionCreate(
       interaction.commandName === "mg-view-province"
     ) {
       viewProvince(
+        interaction
+      );
+    } else if (
+      interaction.commandName === "mg-move-action-points"
+    ){
+      moveActionPoints(
         interaction
       );
     } else {

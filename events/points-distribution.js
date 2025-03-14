@@ -76,7 +76,7 @@ async function pointsDistribution(
             const message = new EmbedBuilder().setTitle(
               "💰 points distribution"
             ).setDescription(
-              "daily points distribution to players have joined <#1303656931319087196>"
+              "last points distribution to players have joined *mini-map game - europe*"
             ).addFields(
               {
                 name: "promotion points",
