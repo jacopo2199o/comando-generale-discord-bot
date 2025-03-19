@@ -19,8 +19,15 @@ async function viewProfile(
   interaction
 ) {
   // Aggiungi gli ID dei canali consentiti
-  const allowed_channels = ["1168970952311328768", "1165937736121860198"];
-  if (!allowed_channels.includes(interaction.channelId)) {
+  const allowed_channels = [
+    "1168970952311328768",
+    "1165937736121860198"
+  ];
+  if (
+    !allowed_channels.includes(
+      interaction.channelId
+    )
+  ) {
     await interaction.reply({
       content: "*map game* commands can only be used in *int-roleplay* channel",
       ephemeral: true
@@ -41,7 +48,7 @@ async function viewProfile(
       host: "localhost",
       port: "3000",
       path: `/map/player?map_id=0&player_id=${maker.id}`,
-      method: "GET",
+      method: "GET"
     },
     function (
       response
@@ -60,40 +67,36 @@ async function viewProfile(
           if (
             response.statusCode == 200
           ) {
-            const player = JSON.parse(
+            const {
+              nickname,
+              points: action_points,
+              score
+            } = JSON.parse(
               data
             );
             const message = new EmbedBuilder().setTitle(
               "🗺️ map game - europe"
             ).setDescription(
-              `👤 ${role} *${maker}* has:`
-            ).addFields(
-              {
-                name: "action points",
-                value: `${player.points}`,
-                inline: true
-              }
-            ).addFields(
-              {
-                name: "score",
-                value: `${player.score}`,
-                inline: true
-              }
-            ).setFooter(
-              {
-                text: `${points} ⭐ to ${maker.displayName}`,
-                iconURL: `${maker.displayAvatarURL()}`
-              }
-            ).setColor(
+              `👤 *${nickname}* has:`
+            ).addFields({
+              name: "action points",
+              value: `${action_points}`,
+              inline: true
+            }).addFields({
+              name: "score",
+              value: `${score}`,
+              inline: true
+            }).setFooter({
+              text: `${points} ⭐ to ${maker.displayName}`,
+              iconURL: `${maker.displayAvatarURL()}`
+            }).setColor(
               role.color
             ).setTimestamp();
-            await interaction.editReply(
-              {
-                embeds: [
-                  message
-                ]
-              }
-            );
+            await interaction.editReply({
+              embeds: [
+                message
+              ]
+            });
           } else {
             await interaction.editReply(
               data

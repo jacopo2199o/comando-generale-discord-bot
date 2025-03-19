@@ -40,7 +40,11 @@ async function viewProvince(
     customPoints.interactionCreate,
     reputationPoints[interaction.guildId][maker.id].points
   );
-  const provinceName = interaction.options.getString("province-name");
+  const provinceName = encodeURIComponent(
+    interaction.options.getString(
+      "province-name"
+    )
+  );
   const request = http.request(
     {
       host: "localhost",
@@ -65,14 +69,7 @@ async function viewProvince(
           if (
             response.statusCode == 200
           ) {
-            if (
-              data == "not your province"
-            ) {
-              await interaction.editReply(
-                data
-              );
-              return;
-            }
+            const response = JSON.parse(data);
             const message = new EmbedBuilder().setTitle(
               "🗺️ map game - europe"
             ).setDescription(
@@ -80,7 +77,7 @@ async function viewProvince(
             ).addFields(
               {
                 name: "action points",
-                value: `${data}`,
+                value: `${response}`,
                 inline: true
               }
             ).setFooter(

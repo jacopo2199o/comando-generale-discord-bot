@@ -10,7 +10,9 @@ async function leaderboard(
 ) {
   // Aggiungi gli ID dei canali consentiti
   const allowed_channels = ["1168970952311328768", "1165937736121860198"];
-  if (!allowed_channels.includes(interaction.channelId)) {
+  if (
+    !allowed_channels.includes(interaction.channelId)
+  ) {
     await interaction.reply({
       content: "*map game* commands can only be used in *int-roleplay* channel",
       ephemeral: true
@@ -74,26 +76,17 @@ async function leaderboard(
               "🗺️ map game - europe"
             ).setDescription(
               `🏆 top 10 players leaderboard\n\n${row}`
-            ).addFields(
-              {
-                name: "\u200b",
-                value: "*use __/mg-view-profile__ to see yours*"
-              }
-            ).setFooter(
-              {
-                text: `${interaction.member.displayName}`,
-                iconURL: `${interaction.member.displayAvatarURL()}`
-              }
-            ).setTimestamp().setColor(
+            ).setFooter({
+              text: `${interaction.member.displayName}`,
+              iconURL: `${interaction.member.displayAvatarURL()}`
+            }).setTimestamp().setColor(
               "DarkGreen"
             );
-            await interaction.editReply(
-              {
-                embeds: [
-                  message
-                ]
-              }
-            );
+            await interaction.editReply({
+              embeds: [
+                message
+              ]
+            });
           } else {
             await interaction.editReply(
               data

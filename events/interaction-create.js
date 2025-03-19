@@ -79,6 +79,9 @@ import {changeColor} from "../commands/map game/mg-change-color.js";
 import {viewProvince} from "../commands/map game/mg-view-province.js";
 import {changeNickname} from "../commands/map game/mg-change-nickname.js";
 import {moveActionPoints} from "../commands/map game/mg-move-action-points.js";
+import {fortifyAll} from "../commands/map game/mg-fortify-all.js";
+import {setCapital} from "../commands/map game/mg-set-capital.js";
+import {viewCapitals} from "../commands/map game/mg-view-capitals.js";
 
 /**
  * @param {import("discord.js").Interaction} interaction
@@ -227,6 +230,18 @@ async function interactionCreate(
         interaction
       );
     } else if (
+      interaction.commandName === "mg-fortify-all"
+    ) {
+      fortifyAll(
+        interaction
+      );
+    } else if (
+      interaction.commandName === "mg-set-capital"
+    ) {
+      setCapital(
+        interaction
+      );
+    } else if (
       interaction.commandName === "mg-view-profile"
     ) {
       viewProfile(
@@ -239,6 +254,12 @@ async function interactionCreate(
         interaction
       );
     } else if (
+      interaction.commandName === "mg-view-capitals"
+    ){
+      viewCapitals(
+        interaction
+      );
+    }else if (
       interaction.commandName === "mg-leaderboard"
     ) {
       leaderboard(
@@ -264,7 +285,7 @@ async function interactionCreate(
       );
     } else if (
       interaction.commandName === "mg-move-action-points"
-    ){
+    ) {
       moveActionPoints(
         interaction
       );

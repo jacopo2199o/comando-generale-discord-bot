@@ -68,48 +68,50 @@ async function takeProvince(
           if (
             response.statusCode == 200
           ) {
-            const action = JSON.parse(
+            const {
+              name,
+              province,
+              attacker,
+              defender,
+              damage
+            } = JSON.parse(
               data
             );
             let description = "";
             if (
-              action.name == "failed"
+              name == "failed"
             ) {
-              description = `🗺️⚔️ ${role} *${maker}* failed to conquer *${action.province}*`;
+              description = `⚔️ *${attacker}* failed to conquer *${province}* of *${defender}*: defense lost ${damage} *action points*`;
             } else if (
-              action.name == "occupied"
+              name == "occupied"
             ) {
-              description = `🛖 ${role} *${maker}* occupied *${action.province}*`;
+              description = `🛖 *${attacker}* occupied *${province}*`;
             } else if (
-              action.name == "reinforced"
+              name == "reinforced"
             ) {
-              description = `🛡️ ${role} *${maker}* reinforced *${action.province}*`;
+              description = `🛡️ *${attacker}* reinforced *${province}*`;
             } else if (
-              action.name == "conquered"
+              name == "conquered"
             ) {
-              description = `🔥 ${role} *${maker}* conquered *${action.province}* of *${action.previous_player}*`;
+              description = `🔥 *${attacker}* conquered *${province}* of *${defender}*`;
             } else if (
-              action.name == "defeated"
+              name == "defeated"
             ) {
-              description = `💀 ${role} *${maker}* conquered *${action.province}* last province of ${action.previous_player}. if no action is taken, next hour he will be declared defeated`;
+              description = `💀 *${attacker}* conquered *${province}* last province of ${defender}. if no action is taken, next hour he will be declared defeated`;
             }
             const message = new EmbedBuilder().setDescription(
               `🗺️ map game - europe: ${description}`
-            ).setFooter(
-              {
-                text: `${points} ⭐ to ${maker.displayName}`,
-                iconURL: `${maker.displayAvatarURL()}`
-              }
-            ).setColor(
+            ).setFooter({
+              text: `${points} ⭐ to ${maker.displayName}`,
+              iconURL: `${maker.displayAvatarURL()}`
+            }).setColor(
               role.color
             ).setTimestamp();
-            await interaction.editReply(
-              {
-                embeds: [
-                  message
-                ]
-              }
-            );
+            await interaction.editReply({
+              embeds: [
+                message
+              ]
+            });
           } else {
             await interaction.editReply(
               data

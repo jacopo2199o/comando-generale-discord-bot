@@ -14,7 +14,7 @@ import {
 /**
  * @param {import("discord.js").Interaction} interaction
  */
-async function moveActionPoints(
+async function fortifyAll(
   interaction
 ) {
   // Aggiungi gli ID dei canali consentiti
@@ -22,7 +22,6 @@ async function moveActionPoints(
     "1168970952311328768", // int-roleplay
     "1165937736121860198" // bot-testing
   ];
-
   if (
     !allowed_channels.includes(
       interaction.channelId
@@ -34,14 +33,7 @@ async function moveActionPoints(
     });
     return;
   }
-
   await interaction.deferReply();
-  const fromProvince = interaction.options.getString(
-    "from-province"
-  );
-  const toProvince = interaction.options.getString(
-    "to-province"
-  );
   const actionPoints = interaction.options.getNumber(
     "action-points"
   );
@@ -50,25 +42,24 @@ async function moveActionPoints(
   const role = getCustomRole(
     maker
   );
-  const points = getCalculatedPoints(
+  const promotionPoints = getCalculatedPoints(
     customPoints.interactionCreate,
     reputationPoints[interaction.guildId][maker.id].points
   );
-
   try {
     const response = await fetch(
-      "http://localhost:3000/move_action_points", {
+      "http://localhost:3000/fortify-all", {
       method: "POST",
       headers: {
         "content-type": "application/json"
       },
-      body: JSON.stringify({
-        map_id: 0,
-        player_id: playerId,
-        from_province: fromProvince,
-        to_province: toProvince,
-        action_points: actionPoints
-      })
+      body: JSON.stringify(
+        {
+          map_id: 0,
+          player_id: playerId,
+          action_points: actionPoints
+        }
+      )
     });
     const contentType = response.headers.get(
       "content-type"
@@ -100,26 +91,27 @@ async function moveActionPoints(
       );
     } else {
       const {
-        from,
-        to,
-        sender,
-        receiver,
-        action_points
+        nickname,
+        cost
       } = data;
-      const ap = action_points > 1 ? "points" : "point";
+      const ap = cost > 1 ? "points" : "point";
       const message = new EmbedBuilder().setDescription(
-        `🗺️ map game - europe: 👤 *${sender.nickname}* moves ${action_points} *action ${ap}* from *${from}* to *${to}* of *${receiver.nickname}*`
-      ).setFooter({
-        text: `${points} ⭐ to ${maker.displayName}`,
-        iconURL: `${maker.displayAvatarURL()}`
-      }).setColor(
+        `🗺️ map game - europe: 🛡️ *${nickname}* has fortified its territories by ${cost} *action* ${ap}`
+      ).setFooter(
+        {
+          text: `${promotionPoints} ⭐ to ${maker.displayName}`,
+          iconURL: `${maker.displayAvatarURL()}`
+        }
+      ).setColor(
         role.color
       ).setTimestamp();
-      await interaction.editReply({
-        embeds: [
-          message
-        ]
-      });
+      await interaction.editReply(
+        {
+          embeds: [
+            message
+          ]
+        }
+      );
     }
   } catch (
   __error
@@ -131,5 +123,5 @@ async function moveActionPoints(
 }
 
 export {
-  moveActionPoints
+  fortifyAll
 };

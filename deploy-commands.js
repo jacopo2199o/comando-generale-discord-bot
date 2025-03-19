@@ -280,7 +280,7 @@ commands.push(
   new SlashCommandBuilder().setName(
     "mg-join"
   ).setDescription(
-    "map game - join game"
+    "join game"
   ).addStringOption(
     function (
       option
@@ -347,7 +347,7 @@ commands.push(
   new SlashCommandBuilder().setName(
     "mg-take-province"
   ).setDescription(
-    "map game - take a province and assign action points to"
+    "take a province and assign action points to"
   ).addStringOption(
     function (
       option
@@ -358,11 +358,7 @@ commands.push(
         "province name with no abbreviations"
       ).setRequired(
         true
-      );/*.addChoices(
-				{ name: "Funny", value: "gif_funny" },
-				{ name: "Meme", value: "gif_meme" },
-				{ name: "Movie", value: "gif_movie" },
-      );*/
+      );
     }
   ).addNumberOption(
     function (
@@ -384,16 +380,37 @@ commands.push(
 );
 commands.push(
   new SlashCommandBuilder().setName(
+    "mg-fortify-all"
+  ).setDescription(
+    "fortify equally all regions of your nations"
+  ).addNumberOption(
+    function (
+      option
+    ) {
+      return option.setName(
+        "action-points"
+      ).setDescription(
+        "action points per region"
+      ).setMinValue(
+        1
+      ).setRequired(
+        true
+      );
+    }
+  )
+);
+commands.push(
+  new SlashCommandBuilder().setName(
     "mg-view-profile"
   ).setDescription(
-    "map game - view profile game data"
+    "view profile game data"
   )
 );
 commands.push(
   new SlashCommandBuilder().setName(
     "mg-view-province"
   ).setDescription(
-    "map game - view province game data"
+    "view province game data"
   ).addStringOption(
     function (
       option
@@ -412,7 +429,14 @@ commands.push(
   new SlashCommandBuilder().setName(
     "mg-view-map"
   ).setDescription(
-    "map game - view map game image"
+    "view map game image"
+  )
+);
+commands.push(
+  new SlashCommandBuilder().setName(
+    "mg-view-capitals"
+  ).setDescription(
+    "view a map game image of capitals"
   )
 );
 commands.push(
@@ -426,7 +450,7 @@ commands.push(
   new SlashCommandBuilder().setName(
     "mg-change-color"
   ).setDescription(
-    "map game - change color of your territories"
+    "change color of your territories"
   ).addNumberOption(
     function (
       option
@@ -481,7 +505,7 @@ commands.push(
   new SlashCommandBuilder().setName(
     "mg-change-nickname"
   ).setDescription(
-    "map game - change nickname of your profile"
+    "change nickname of your profile"
   ).addStringOption(
     function (
       option
@@ -518,6 +542,16 @@ commands.push(
       option.setName("action-points")
         .setDescription("number of action points to transfer")
         .setMinValue(1)
+        .setRequired(true)
+    )
+);
+commands.push(
+  new SlashCommandBuilder()
+    .setName("mg-set-capital")
+    .setDescription("set a province as your capital")
+    .addStringOption(option =>
+      option.setName("province-name")
+        .setDescription("name of the province to set as capital")
         .setRequired(true)
     )
 );

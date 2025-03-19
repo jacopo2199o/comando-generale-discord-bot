@@ -21,7 +21,11 @@ async function join(
 ) {
   // Aggiungi gli ID dei canali consentiti
   const allowed_channels = ["1168970952311328768", "1165937736121860198"];
-  if (!allowed_channels.includes(interaction.channelId)) {
+  if (
+    !allowed_channels.includes(
+      interaction.channelId
+    )
+  ) {
     await interaction.reply({
       content: "*map game* commands can only be used in *int-roleplay* channel",
       ephemeral: true
@@ -61,30 +65,27 @@ async function join(
           if (
             response.statusCode == 200
           ) {
+            const result = JSON.parse(
+              data
+            );
             const message = new EmbedBuilder().setTitle(
               "🗺️ map game - europe"
             ).setDescription(
-              `👑 ${role} *${maker}* joined`
-            ).addFields(
-              {
-                name: "\u200b",
-                value: "use */mg-view-map* to see the map"
-              }
-            ).setFooter(
-              {
-                text: `${points} ⭐ to ${maker.displayName}`,
-                iconURL: `${maker.displayAvatarURL()}`
-              }
-            ).setColor(
+              `👑 *${result.nickname}* joined`
+            ).addFields({
+              name: "\u200b",
+              value: "use */mg-view-map* to see the map"
+            }).setFooter({
+              text: `${points} ⭐ to ${maker.displayName}`,
+              iconURL: `${maker.displayAvatarURL()}`
+            }).setColor(
               role.color
             ).setTimestamp();
-            await interaction.editReply(
-              {
-                embeds: [
-                  message
-                ]
-              }
-            );
+            await interaction.editReply({
+              embeds: [
+                message
+              ]
+            });
           } else {
             await interaction.editReply(
               data
@@ -107,25 +108,23 @@ async function join(
     }
   );
   request.write(
-    JSON.stringify(
-      {
-        player_id: maker.id,
-        player_nickname: interaction.options.getString(
-          "nickname"
+    JSON.stringify({
+      player_id: maker.id,
+      player_nickname: interaction.options.getString(
+        "nickname"
+      ),
+      player_color: [
+        interaction.options.getNumber(
+          "red"
         ),
-        player_color: [
-          interaction.options.getNumber(
-            "red"
-          ),
-          interaction.options.getNumber(
-            "green"
-          ),
-          interaction.options.getNumber(
-            "blue"
-          )
-        ]
-      }
-    )
+        interaction.options.getNumber(
+          "green"
+        ),
+        interaction.options.getNumber(
+          "blue"
+        )
+      ]
+    })
   );
   request.end();
 }
