@@ -53,16 +53,16 @@ function loadFile(
 /**
  * @param { String } path
  */
-function saveFile(
-  path,
-  data
-) {
-  fs.writeFileSync(
-    path,
-    JSON.stringify(
-      data
-    )
-  );
+function saveFile(filePath, data) {
+  if (data === undefined) {
+    console.error(`Data is undefined for file: ${filePath}`);
+    return;
+  }
+  try {
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2)); // Aggiungi formattazione per leggibilità
+  } catch (error) {
+    console.error(`Failed to save file ${filePath}:`, error.message);
+  }
 }
 
 /**

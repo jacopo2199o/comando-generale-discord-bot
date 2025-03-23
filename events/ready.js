@@ -30,12 +30,6 @@ const transfers = {};
 async function ready(
   client
 ) {
-  console.log(
-    await get_bitcoin_valuation(
-      "https://api.crypto.com/exchange/v1/public/get-valuations?instrument_name=BTCUSD-INDEX&valuation_type=index_price&count=1"
-    )
-  );
-
   client.guilds.cache.map(
     async function (
       guild
@@ -414,25 +408,36 @@ async function ready(
   setInterval(
     function () {
       client.guilds.cache.forEach(
-        function (
-          guild
-        ) {
-          saveFile(
-            `./resources/database/cooldowns-${guild.id}.json`,
-            cooldowns[guild.id]
-          );
-          saveFile(
-            `./resources/database/points-${guild.id}.json`,
-            globalPoints[guild.id]
-          );
-          saveFile(
-            `./resources/database/reputation-${guild.id}.json`,
-            reputationPoints[guild.id]
-          );
-          saveFile(
-            `./resources/database/transfers-${guild.id}.json`,
-            transfers[guild.id]
-          );
+        function (guild) {
+          const guildId = guild.id;
+
+          // Verifica e salva cooldowns
+          if (cooldowns[guildId]) {
+            saveFile(`./resources/database/cooldowns-${guildId}.json`, cooldowns[guildId]);
+          } else {
+            console.warn(`Cooldowns for guild ${guildId} are undefined. Skipping save.`);
+          }
+
+          // Verifica e salva globalPoints
+          if (globalPoints[guildId]) {
+            saveFile(`./resources/database/points-${guildId}.json`, globalPoints[guildId]);
+          } else {
+            console.warn(`Global points for guild ${guildId} are undefined. Skipping save.`);
+          }
+
+          // Verifica e salva reputationPoints
+          if (reputationPoints[guildId]) {
+            saveFile(`./resources/database/reputation-${guildId}.json`, reputationPoints[guildId]);
+          } else {
+            console.warn(`Reputation points for guild ${guildId} are undefined. Skipping save.`);
+          }
+
+          // Verifica e salva transfers
+          if (transfers[guildId]) {
+            saveFile(`./resources/database/transfers-${guildId}.json`, transfers[guildId]);
+          } else {
+            console.warn(`Transfers for guild ${guildId} are undefined. Skipping save.`);
+          }
         }
       );
     },
@@ -469,16 +474,6 @@ async function ready(
   console.log(
     `bot ready as ${client.user.username}`
   );
-}
-
-async function get_bitcoin_valuation(
-  complete_url
-) {
-  const response = await fetch(
-    complete_url
-  );
-  const json = await response.json();
-  return json.result.data[0].v;
 }
 
 export {
