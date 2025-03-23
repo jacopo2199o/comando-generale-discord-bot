@@ -82,11 +82,21 @@ async function leaderboard(
             }).setTimestamp().setColor(
               "DarkGreen"
             );
-            await interaction.editReply({
-              embeds: [
-                message
-              ]
-            });
+            try {
+              await interaction.editReply(
+                {
+                  embeds: [
+                    message
+                  ]
+                }
+              );
+            } catch (
+              __error
+            ) {
+              console.warn(
+                __error.code
+              );
+            }
           } else {
             await interaction.editReply(
               data
