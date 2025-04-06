@@ -27,10 +27,12 @@ async function fortifyAll(
       interaction.channelId
     )
   ) {
-    await interaction.reply({
-      content: "*map game* commands can only be used in *int-roleplay* channel",
-      ephemeral: true
-    });
+    await interaction.reply(
+      {
+        content: "*map game* commands can only be used in *int-roleplay* channel",
+        ephemeral: true
+      }
+    );
     return;
   }
   await interaction.deferReply();
@@ -66,7 +68,7 @@ async function fortifyAll(
     );
     let data = undefined;
     if (
-      contentType != undefined &&
+      contentType &&
       contentType.includes(
         "text/plain"
       )
@@ -76,7 +78,7 @@ async function fortifyAll(
       data = await response.json();
     }
     if (
-      response.status != 200
+      response.status !== 200
     ) {
       await interaction.editReply(
         data

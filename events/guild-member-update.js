@@ -101,7 +101,9 @@ async function guildMemberUpdate(
     const customRole = getCustomRole(
       newMember
     );
-    if (customRole === undefined) {
+    if (
+      customRole === undefined
+    ) {
       return console.error(
         "guild member update: custom role undefined"
       );
@@ -109,19 +111,15 @@ async function guildMemberUpdate(
     const message = new EmbedBuilder();
     message.setTitle(
       "🪪 new nickname"
-    );
-    message.setDescription(
-      `${customRole} *${oldMember}* changed his nickname in ${newMember}`
-    );
-    message.setThumbnail(
+    ).setDescription(
+      `${customRole} *${oldMember.displayName}* changed his nickname in ${newMember.displayName}`
+    ).setThumbnail(
       newMember.displayAvatarURL(
         {
           dynamic: true
         }
       )
-    );
-    message.setTimestamp();
-    message.setColor(
+    ).setTimestamp().setColor(
       customRole.color
     );
     channel.send(

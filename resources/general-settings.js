@@ -1,7 +1,7 @@
 const generalSettings = {
-  backupInterval: 8000,
+  backupInterval: 16000,
   hourCheckInterval: 1000 * 60,
-  saveInterval: 4000,
+  saveInterval: 8000,
   promotionPointsMessageExpiration: 16000
 };
 

@@ -1,7 +1,7 @@
-import { EmbedBuilder } from "discord.js";
-import { reputationPoints } from "../../events/ready.js";
-import { customPoints, getCalculatedPoints } from "../../resources/custom-points.js";
-import { getCustomRole } from "../../resources/custom-roles.js";
+import {EmbedBuilder} from "discord.js";
+import {reputationPoints} from "../../events/ready.js";
+import {customPoints, getCalculatedPoints} from "../../resources/custom-points.js";
+import {getCustomRole} from "../../resources/custom-roles.js";
 import http from "node:http";
 
 async function takeProvince(interaction) {
@@ -14,7 +14,6 @@ async function takeProvince(interaction) {
     return;
   }
 
-  await interaction.deferReply();
   const maker = interaction.member;
   const role = getCustomRole(maker);
   const roleColor = role ? role.color : "#FFFFFF";
@@ -34,34 +33,58 @@ async function takeProvince(interaction) {
     return;
   }
 
+  // Differisci la risposta PRIMA di operazioni lunghe
+  await interaction.deferReply({ephemeral: false}).catch(console.error);
+
   const request = http.request(
     {
       host: "localhost",
       port: "3000",
       path: "/set_province?id=0",
       method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      }
     },
     function (response) {
       let data = "";
+      const contentType = response.headers["content-type"] || "";
+
       response.on("data", function (chunk) {
         data += chunk;
       }).on("end", async function () {
         try {
-          const parsedData = JSON.parse(data);
+          // Gestione basata sul Content-Type
+          let responseData;
+          if (contentType.includes("application/json")) {
+            responseData = JSON.parse(data);
+          } else {
+            // Se non è JSON, tratta la risposta come testo
+            responseData = {
+              message: data,
+              isTextResponse: true
+            };
+          }
+
           if (response.statusCode === 200) {
-            const { name, province, attacker, defender, damage } = parsedData;
-            let description = "";
-            if (name === "failed") {
-              description = `⚔️ *${attacker}* failed to conquer *${province}* of *${defender}*: defense lost ${damage} *action points*`;
-            } else if (name === "occupied") {
-              description = `🛖 *${attacker}* occupied *${province}*`;
-            } else if (name === "reinforced") {
-              description = `🛡️ *${attacker}* reinforced *${province}*`;
-            } else if (name === "conquered") {
-              description = `🔥 *${attacker}* conquered *${province}* of *${defender}*`;
-            } else if (name === "defeated") {
-              description = `💀 *${attacker}* conquered *${province}* last province of ${defender}. if no action is taken, next hour he will be declared defeated`;
+            // Gestione risposta di successo (JSON)
+            if (responseData.isTextResponse) {
+              await interaction.editReply(`success: ${responseData.message}`);
+              return;
             }
+
+            const {name, province, attacker, defender, damage} = responseData;
+            let description = "";
+
+            const responses = {
+              failed: `⚔️ *${attacker}* failed to conquer *${province}* of *${defender}*: defense lost ${damage} *action points*`,
+              occupied: `🛖 *${attacker}* occupied *${province}*`,
+              reinforced: `🛡️ *${attacker}* reinforced *${province}*`,
+              conquered: `🔥 *${attacker}* conquered *${province}* of *${defender}*`,
+              defeated: `💀 *${attacker}* conquered *${province}* last province of ${defender}. if no action is taken, next hour he will be declared defeated`
+            };
+
+            description = responses[name] || `Unknown response type: ${name}`;
 
             const message = new EmbedBuilder()
               .setDescription(`🗺️ map game - europe: ${description}`)
@@ -72,30 +95,24 @@ async function takeProvince(interaction) {
               .setColor(roleColor)
               .setTimestamp();
 
-            try {
-              await interaction.editReply({ embeds: [message] });
-            } catch (error) {
-              console.error("Failed to send message:", error.message);
-              await interaction.followUp({ content: "Failed to send message, please try again.", ephemeral: true });
-            }
+            await interaction.editReply({embeds: [message]});
           } else {
-            await interaction.editReply(`Server returned an error: ${parsedData.message || data}`);
+            // Gestione errori (può essere JSON o testo)
+            const errorMessage = responseData.isTextResponse
+              ? responseData.message
+              : responseData.message || "unknown server error";
+
+            await interaction.editReply(errorMessage);
           }
         } catch (error) {
-          await interaction.editReply("Invalid response from the server");
-          console.error("JSON parsing error:", error.message);
+          console.error("response processing error:", error.message);
+          await interaction.editReply("there was an error processing the server response");
         }
       });
     }
   ).on("error", async function (error) {
-    await interaction.editReply("Connection error, try again later");
-    console.error("HTTP request error:", error.message);
-  });
-
-  request.setTimeout(5000, () => {
-    request.destroy();
-    interaction.editReply("Request timed out, please try again later.");
-    console.error("HTTP request timed out");
+    await interaction.editReply("connection error, please try again later");
+    console.error("http request error:", error.message);
   });
 
   request.write(JSON.stringify({
@@ -106,4 +123,4 @@ async function takeProvince(interaction) {
   request.end();
 }
 
-export { takeProvince };
+export {takeProvince};

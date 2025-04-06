@@ -555,6 +555,23 @@ commands.push(
         .setRequired(true)
     )
 );
+commands.push(
+  new SlashCommandBuilder()
+    .setName("mg-donate-province")
+    .setDescription("donate a province to another player")
+    .addStringOption(option =>
+      option.setName("province-name")
+        .setDescription("name of the province you want to donate")
+        .setRequired(true)
+    )
+    .addStringOption(option =>
+      option.setName("player-nickname")
+        .setDescription("player who will receive the province")
+        .setRequired(true)
+        .setAutocomplete(true) // abilita l'autocompletamento
+    )
+);
+
 for (
   const command of commands
 ) {

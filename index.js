@@ -8,6 +8,9 @@ import {
   activity
 } from "./events/activity.js";
 import {
+  dropAnnounce
+} from "./events/drop-announce.js";
+import {
   dropPromotionPoints
 } from "./events/drop-promotion-points.js";
 import {
@@ -41,103 +44,88 @@ import {
   pointsDecay
 } from "./events/points-decay.js";
 import {
+  pointsDistribution
+} from "./events/points-distribution.js";
+import {
   ready
 } from "./events/ready.js";
 import {
   threadCreate
 } from "./events/thread-create.js";
-import {
-  dropAnnounce
-} from "./events/drop-announce.js";
-import {
-  pointsDistribution
-} from "./events/points-distribution.js";
 
+// Configurazione
 dotenv.config();
 
+if (
+  !process.env.bot_token
+) {
+  throw new Error(
+    "il token del bot non è configurato nel file .env"
+  );
+}
+
+const clientConfig = {
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildInvites,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildMessageReactions,
+    GatewayIntentBits.GuildPresences
+  ],
+  partials: [
+    Partials.Channel,
+    Partials.GuildMember,
+    Partials.Message,
+  ]
+};
 const client = new Client(
-  {
-    intents: [
-      GatewayIntentBits.Guilds,
-      GatewayIntentBits.GuildInvites,
-      GatewayIntentBits.GuildMembers,
-      GatewayIntentBits.GuildMessages,
-      GatewayIntentBits.MessageContent,
-      GatewayIntentBits.GuildMessageReactions,
-      GatewayIntentBits.GuildPresences
-    ],
-    partials: [
-      Partials.Channel,
-      Partials.GuildMember,
-      Partials.Message,
-    ],
+  clientConfig
+);
+// Registrazione eventi
+const events = {
+  ready,
+  activity,
+  dropPromotionPoints,
+  dropAnnounce,
+  interactionCreate,
+  inviteCreate,
+  guildMemberAdd,
+  guildMemberRemove,
+  guildMemberUpdate,
+  messageCreate,
+  messageDelete,
+  messageReactionAdd,
+  messageReactionRemove,
+  pointsDecay,
+  pointsDistribution,
+  threadCreate
+};
+
+Object.entries(
+  events
+).forEach(
+  (
+    [eventName, handler]
+  ) => {
+    client.on(
+      eventName,
+      handler
+    );
   }
 );
 
-client.once(
-  "ready",
-  ready
-);
-client.on(
-  "activity",
-  activity
-);
-client.on(
-  "dropPromotionPoints",
-  dropPromotionPoints
-);
-client.on(
-  "dropAnnounce",
-  dropAnnounce
-);
-client.on(
-  "interactionCreate",
-  interactionCreate
-);
-client.on(
-  "inviteCreate",
-  inviteCreate
-);
-client.on(
-  "guildMemberAdd",
-  guildMemberAdd
-);
-client.on(
-  "guildMemberRemove",
-  guildMemberRemove
-);
-client.on(
-  "guildMemberUpdate",
-  guildMemberUpdate
-);
-client.on(
-  "messageCreate",
-  messageCreate
-);
-client.on(
-  "messageDelete",
-  messageDelete
-);
-client.on(
-  "messageReactionAdd",
-  messageReactionAdd
-);
-client.on(
-  "messageReactionRemove",
-  messageReactionRemove
-);
-client.on(
-  "pointsDecay",
-  pointsDecay
-);
-client.on(
-  "pointsDistribution",
-  pointsDistribution
-);
-client.on(
-  "threadCreate",
-  threadCreate
-);
-client.login(
-  process.env.bot_token
-);
+// Gestione errori globali
+process.on("unhandledRejection", (error) => {
+  console.error("Unhandled promise rejection:", error);
+});
+
+process.on("uncaughtException", (error) => {
+  console.error("Uncaught exception:", error);
+});
+
+// Login
+client.login(process.env.bot_token)
+  .then(() => console.log("Login effettuato con successo"))
+  .catch(error => console.error("Errore durante il login:", error));

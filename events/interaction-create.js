@@ -31,6 +31,27 @@ import {
 import {
   giveReputationPoint
 } from "../commands/give-reputation-point.js";
+import {changeColor} from "../commands/map game/mg-change-color.js";
+import {changeNickname} from "../commands/map game/mg-change-nickname.js";
+import {donateProvince, donateProvinceAutocomplete} from "../commands/map game/mg-donate-province.js";
+import {fortifyAll} from "../commands/map game/mg-fortify-all.js";
+import {
+  join
+} from "../commands/map game/mg-join.js";
+import {leaderboard} from "../commands/map game/mg-leaderboard.js";
+import {moveActionPoints} from "../commands/map game/mg-move-action-points.js";
+import {setCapital} from "../commands/map game/mg-set-capital.js";
+import {
+  takeProvince
+} from "../commands/map game/mg-take-province.js";
+import {viewCapitals} from "../commands/map game/mg-view-capitals.js";
+import {
+  viewMap
+} from "../commands/map game/mg-view-map.js";
+import {
+  viewProfile
+} from "../commands/map game/mg-view-profile.js";
+import {viewProvince} from "../commands/map game/mg-view-province.js";
 import {
   rollDice
 } from "../commands/roll-dice.js";
@@ -62,26 +83,6 @@ import {
 import {
   takePromotionPoints
 } from "./take-promotion-points.js";
-import {
-  join
-} from "../commands/map game/mg-join.js";
-import {
-  takeProvince
-} from "../commands/map game/mg-take-province.js";
-import {
-  viewProfile
-} from "../commands/map game/mg-view-profile.js";
-import {
-  viewMap
-} from "../commands/map game/mg-view-map.js";
-import {leaderboard} from "../commands/map game/mg-leaderboard.js";
-import {changeColor} from "../commands/map game/mg-change-color.js";
-import {viewProvince} from "../commands/map game/mg-view-province.js";
-import {changeNickname} from "../commands/map game/mg-change-nickname.js";
-import {moveActionPoints} from "../commands/map game/mg-move-action-points.js";
-import {fortifyAll} from "../commands/map game/mg-fortify-all.js";
-import {setCapital} from "../commands/map game/mg-set-capital.js";
-import {viewCapitals} from "../commands/map game/mg-view-capitals.js";
 
 /**
  * @param {import("discord.js").Interaction} interaction
@@ -99,6 +100,19 @@ async function interactionCreate(
     );
     return;
   }
+
+  if (
+    interaction.isAutocomplete()
+  ) {
+    if (
+      interaction.commandName === "mg-donate-province"
+    ) {
+      donateProvinceAutocomplete(
+        interaction
+      );
+    }
+  }
+
   if (
     interaction.isChatInputCommand()
   ) {
@@ -255,11 +269,11 @@ async function interactionCreate(
       );
     } else if (
       interaction.commandName === "mg-view-capitals"
-    ){
+    ) {
       viewCapitals(
         interaction
       );
-    }else if (
+    } else if (
       interaction.commandName === "mg-leaderboard"
     ) {
       leaderboard(
@@ -287,6 +301,12 @@ async function interactionCreate(
       interaction.commandName === "mg-move-action-points"
     ) {
       moveActionPoints(
+        interaction
+      );
+    } else if (
+      interaction.commandName === "mg-donate-province"
+    ) {
+      donateProvince(
         interaction
       );
     } else {

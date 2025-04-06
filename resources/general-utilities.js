@@ -4,6 +4,7 @@ import {
   reputationPoints,
   seniority
 } from "../events/ready.js";
+import http from "node:http";
 
 /**
  * @param {import("discord.js").GuildMember} member
@@ -59,7 +60,7 @@ function saveFile(filePath, data) {
     return;
   }
   try {
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2)); // Aggiungi formattazione per leggibilità
+    fs.writeFileSync(filePath, JSON.stringify(data)); // Aggiungi formattazione per leggibilità
   } catch (error) {
     console.error(`Failed to save file ${filePath}:`, error.message);
   }
@@ -127,9 +128,88 @@ async function sendMesseges(
   }
 }
 
+/**
+ * Ottieni la lista dei giocatori attivi su una mappa tramite API.
+ * @param {number} map_id - ID della mappa
+ * @returns {Promise<Array<{name: string, value: string}>>} Lista di giocatori per l'autocompletamento
+ */
+async function getPlayersNicknames(
+  map_id
+) {
+  return new Promise(
+    (
+      resolve,
+      reject
+    ) => {
+      const options = {
+        host: "localhost",
+        port: "3000",
+        path: `/map/players?map_id=${map_id}`,
+        method: "GET",
+        timout: 5000
+      };
+      const req = http.request(
+        options,
+        res => {
+          let data = "";
+          res.on(
+            "data",
+            chunk => {
+              data += chunk;
+            }
+          ).on(
+            "end",
+            () => {
+              try {
+                // formatta i giocatori per l'autocompletamento di Discord
+                const players = JSON.parse(
+                  data
+                ).map(
+                  player => (
+                    {
+                      name: player.nickname,  // testo visibile nel menu
+                      value: player.id        // valore restituito al bot (può essere l'ID o il nickname)
+                    }
+                  )
+                );
+                resolve(
+                  players
+                );
+              } catch (
+              __error
+              ) {
+                reject(
+                  "failed to parse player data"
+                );
+              }
+            }
+          );
+        }
+      ).on(
+        "error",
+        error => {
+          reject(
+            error
+          );
+        }
+      ).on(
+        "timeout",
+        () => {
+          req.destroy();
+          reject(
+            "request timout"
+          );
+        }
+      );
+      req.end();
+    }
+  );
+}
+
 export {
   addMember,
   deleteMember,
+  getPlayersNicknames,
   loadFile,
   saveFile,
   sendMesseges
