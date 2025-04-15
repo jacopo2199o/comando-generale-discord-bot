@@ -17,11 +17,12 @@ import {
 async function fortifyAll(
   interaction
 ) {
-  // Aggiungi gli ID dei canali consentiti
+  // aggiungi gli ID dei canali consentiti
   const allowed_channels = [
     "1168970952311328768", // int-roleplay
     "1165937736121860198" // bot-testing
   ];
+
   if (
     !allowed_channels.includes(
       interaction.channelId
@@ -35,11 +36,7 @@ async function fortifyAll(
     );
     return;
   }
-  await interaction.deferReply();
-  const actionPoints = interaction.options.getNumber(
-    "action-points"
-  );
-  const playerId = interaction.user.id; // id del giocatore su Discord
+
   const maker = interaction.member;
   const role = getCustomRole(
     maker
@@ -48,73 +45,76 @@ async function fortifyAll(
     customPoints.interactionCreate,
     reputationPoints[interaction.guildId][maker.id].points
   );
+  const playerId = interaction.user.id; // id del giocatore su discord
+  const actionPoints = interaction.options.getNumber(
+    "action-points"
+  );
+  const receiverId = interaction.options.getString(
+    "player-nickname"
+  );
+
   try {
+    await interaction.deferReply();
     const response = await fetch(
-      "http://localhost:3000/fortify-all", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json"
-      },
-      body: JSON.stringify(
-        {
-          map_id: 0,
-          player_id: playerId,
-          action_points: actionPoints
-        }
-      )
-    });
-    const contentType = response.headers.get(
-      "content-type"
+      "http://localhost:3000/fortify-all",
+      {
+        method: "POST",
+        headers: {
+          "content-type": "application/json"
+        },
+        body: JSON.stringify(
+          {
+            map_id: 0,
+            player_id: playerId,
+            receiver_id: receiverId,
+            action_points: actionPoints
+          }
+        )
+      }
     );
-    let data = undefined;
-    if (
-      contentType &&
-      contentType.includes(
-        "text/plain"
-      )
-    ) {
-      data = await response.text();
-    } else {
-      data = await response.json();
-    }
+
     if (
       response.status !== 200
     ) {
       await interaction.editReply(
-        data
+        await response.text()
       );
       return;
     }
+
+    const {
+      donor,
+      receiver,
+      cost
+    } = await response.json();
+    const pointString = cost > 1 ? "points" : "point";
+    let messageDescription = "";
+
     if (
-      data.error
+      donor === receiver
     ) {
-      await interaction.editReply(
-        `something goes wrong: ${data.error}`
-      );
+      messageDescription = `🗺️ map game - europe: 🛡️ *${donor}* has fortified its territories by ${cost} *action* ${pointString}`;
     } else {
-      const {
-        nickname,
-        cost
-      } = data;
-      const ap = cost > 1 ? "points" : "point";
-      const message = new EmbedBuilder().setDescription(
-        `🗺️ map game - europe: 🛡️ *${nickname}* has fortified its territories by ${cost} *action* ${ap}`
-      ).setFooter(
-        {
-          text: `${promotionPoints} ⭐ to ${maker.displayName}`,
-          iconURL: `${maker.displayAvatarURL()}`
-        }
-      ).setColor(
-        role.color
-      ).setTimestamp();
-      await interaction.editReply(
-        {
-          embeds: [
-            message
-          ]
-        }
-      );
+      messageDescription = `🗺️ map game - europe: 🛡️ *${donor}* has fortified territories of *${receiver}* by ${cost} *action* ${pointString}`;
     }
+
+    const message = new EmbedBuilder().setDescription(
+      messageDescription
+    ).setFooter(
+      {
+        text: `${promotionPoints} ⭐ to ${maker.displayName}`,
+        iconURL: `${maker.displayAvatarURL()}`
+      }
+    ).setColor(
+      role.color
+    ).setTimestamp();
+    await interaction.editReply(
+      {
+        embeds: [
+          message
+        ]
+      }
+    );
   } catch (
   __error
   ) {

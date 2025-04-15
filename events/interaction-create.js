@@ -110,6 +110,12 @@ async function interactionCreate(
       donateProvinceAutocomplete(
         interaction
       );
+    } else if (
+      interaction.commandName === "mg-fortify-all"
+    ) {
+      donateProvinceAutocomplete(
+        interaction
+      );
     }
   }
 

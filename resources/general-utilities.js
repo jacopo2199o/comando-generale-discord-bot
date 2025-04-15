@@ -1,10 +1,10 @@
 import fs from "node:fs";
+import http from "node:http";
 import {
   globalPoints,
   reputationPoints,
   seniority
 } from "../events/ready.js";
-import http from "node:http";
 
 /**
  * @param {import("discord.js").GuildMember} member
@@ -54,15 +54,32 @@ function loadFile(
 /**
  * @param { String } path
  */
-function saveFile(filePath, data) {
-  if (data === undefined) {
-    console.error(`Data is undefined for file: ${filePath}`);
+function saveFile(
+  filePath,
+  data
+) {
+  if (
+    !data
+  ) {
+    console.error(
+      `data is undefined for file: ${filePath}`
+    );
     return;
   }
+
   try {
-    fs.writeFileSync(filePath, JSON.stringify(data)); // Aggiungi formattazione per leggibilità
-  } catch (error) {
-    console.error(`Failed to save file ${filePath}:`, error.message);
+    fs.writeFileSync(
+      filePath,
+      JSON.stringify(
+        data
+      )
+    ); // non aggiungere la formattazione per non rallentare le prestazioni
+  } catch (
+  __error
+  ) {
+    console.error(
+      `failed to save file ${filePath}:`, __error.message
+    );
   }
 }
 
@@ -81,18 +98,17 @@ async function sendMesseges(
     let characters = 0;
     let chunk = "";
     const chunks = [];
+
     for (
-      let i = 0;
-      i < messages.length;
-      i++
+      let i = 0; i < messages.length; i++
     ) {
       characters += messages[i].length;
+
       if (
         characters < size
       ) {
         chunk += messages[i];
-      }
-      else {
+      } else {
         chunks.push(
           chunk
         );
@@ -100,12 +116,14 @@ async function sendMesseges(
         characters = 0;
       }
     }
+
     if (
       !chunks.length
     ) {
-      return [chunk];
-    }
-    else {
+      return [
+        chunk
+      ];
+    } else {
       return chunks;
     }
   }
@@ -113,13 +131,19 @@ async function sendMesseges(
   if (
     messages.length
   ) {
-    const parts = splitMessages(messages, 2000);
+    const parts = splitMessages(
+      messages,
+      2000
+    );
+
     for (
       const part of parts
     ) {
       const message = {
         content: part,
-        flags: [4096]
+        flags: [
+          4096
+        ]
       };
       await channel.send(
         message
@@ -137,38 +161,36 @@ async function getPlayersNicknames(
   map_id
 ) {
   return new Promise(
-    (
+    function (
       resolve,
       reject
-    ) => {
+    ) {
       const options = {
         host: "localhost",
         port: "3000",
         path: `/map/players?map_id=${map_id}`,
         method: "GET",
-        timout: 5000
+        timout: 2900
       };
-      const req = http.request(
+      const request = http.request(
         options,
-        res => {
+        response => {
           let data = "";
-          res.on(
+          response.on(
             "data",
-            chunk => {
-              data += chunk;
-            }
+            chunk => data += chunk
           ).on(
             "end",
             () => {
               try {
-                // formatta i giocatori per l'autocompletamento di Discord
+                // formatta i giocatori per l'autocompletamento di discord
                 const players = JSON.parse(
                   data
                 ).map(
                   player => (
                     {
                       name: player.nickname,  // testo visibile nel menu
-                      value: player.id        // valore restituito al bot (può essere l'ID o il nickname)
+                      value: player.id        // valore restituito al bot
                     }
                   )
                 );
@@ -179,7 +201,7 @@ async function getPlayersNicknames(
               __error
               ) {
                 reject(
-                  "failed to parse player data"
+                  __error
                 );
               }
             }
@@ -187,21 +209,24 @@ async function getPlayersNicknames(
         }
       ).on(
         "error",
-        error => {
-          reject(
-            error
-          );
-        }
+        error => reject(
+          error
+        )
       ).on(
         "timeout",
         () => {
-          req.destroy();
+          request.destroy();
+          console.error(
+            "request timed out"
+          );
           reject(
-            "request timout"
+            new Error(
+              "request timeout"
+            )
           );
         }
       );
-      req.end();
+      request.end();
     }
   );
 }

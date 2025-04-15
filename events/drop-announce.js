@@ -70,7 +70,7 @@ async function dropAnnounce(
     function () {
       dropMessageSent.delete();
     },
-    generalSettings.promotionPointsMessageExpiration
+    generalSettings.messageExpirationTime
   );
 }
 

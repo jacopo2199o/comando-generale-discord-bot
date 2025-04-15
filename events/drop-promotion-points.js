@@ -34,7 +34,7 @@ async function dropPromotionPoints(
     "📦 new drop"
   ).setDescription(
     "based on messages sent globally in this server. take it pressing the green button below " +
-    "(expires in " + generalSettings.promotionPointsMessageExpiration / 1000 + " seconds)"
+    "(expires in " + generalSettings.messageExpirationTime / 1000 + " seconds)"
   ).addFields(
     {
       name: "type",
@@ -113,7 +113,7 @@ async function dropPromotionPoints(
     function () {
       dropMessageSent.delete();
     },
-    generalSettings.promotionPointsMessageExpiration
+    generalSettings.messageExpirationTime
   );
 }
 

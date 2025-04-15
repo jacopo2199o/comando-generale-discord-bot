@@ -20,16 +20,22 @@ async function join(
   interaction
 ) {
   // Aggiungi gli ID dei canali consentiti
-  const allowed_channels = ["1168970952311328768", "1165937736121860198"];
+  const allowed_channels = [
+    "1168970952311328768",
+    "1165937736121860198"
+  ];
+
   if (
     !allowed_channels.includes(
       interaction.channelId
     )
   ) {
-    await interaction.reply({
-      content: "*map game* commands can only be used in *int-roleplay* channel",
-      ephemeral: true
-    });
+    await interaction.reply(
+      {
+        content: "*map game* commands can only be used in *int-roleplay* channel",
+        ephemeral: true
+      }
+    );
     return;
   }
   await interaction.deferReply();
@@ -48,22 +54,16 @@ async function join(
       path: "/join_map?id=0",
       method: "POST",
     },
-    function (
-      response
-    ) {
+    response => {
       let data = "";
       response.on(
         "data",
-        function (
-          chunk
-        ) {
-          data += chunk;
-        }
+        chunk => data += chunk
       ).on(
         "end",
-        async function () {
+        async () => {
           if (
-            response.statusCode == 200
+            response.statusCode === 200
           ) {
             const result = JSON.parse(
               data
@@ -72,23 +72,32 @@ async function join(
               "🗺️ map game - europe"
             ).setDescription(
               `👑 *${result.nickname}* joined`
-            ).addFields({
-              name: "\u200b",
-              value: "use */mg-view-map* to see the map"
-            }).setFooter({
-              text: `${points} ⭐ to ${maker.displayName}`,
-              iconURL: `${maker.displayAvatarURL()}`
-            }).setColor(
+            ).addFields(
+              {
+                name: "\u200b",
+                value: "use */mg-view-map* to see the map"
+              }
+            ).setFooter(
+              {
+                text: `${points} ⭐ to ${maker.displayName}`,
+                iconURL: `${maker.displayAvatarURL()}`
+              }
+            ).setColor(
               role.color
             ).setTimestamp();
-            await interaction.editReply({
-              embeds: [
-                message
-              ]
-            });
-          } else {
             await interaction.editReply(
-              data
+              {
+                embeds: [
+                  message
+                ]
+              }
+            );
+          } else {
+            const errorMessage = data || "An unknown error occurred. Please try again later.";
+            await interaction.editReply(
+              {
+                content: errorMessage// Rendi il messaggio visibile solo all'utente
+              }
             );
           }
         }

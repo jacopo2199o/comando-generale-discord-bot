@@ -1,5 +1,5 @@
 const customChannels = {
-  activity: "💬ufficio-del-personale",
+  activity: "💬members-log",
   private: "⛲presidenza",
   public: "💬activity-log",
   internal: "🤖bot-testing",

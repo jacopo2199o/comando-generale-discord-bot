@@ -30,41 +30,39 @@ async function messageReactionRemove(
   ) {
     return;
   }
+
   const maker = reaction.message.guild.members.cache.get(
     user?.id
   );
   const taker = reaction.message.guild.members.cache.get(
     reaction.message.author?.id
   );
+
   if (
-    maker === undefined ||
-    taker === undefined
+    !maker ||
+    !taker
   ) {
     return console.error(
       "message reaction remove: maker or taker undefined"
     );
   }
+
   const makerRole = getCustomRole(
     maker
   );
   const takerRole = getCustomRole(
     taker
   );
+
   if (
-    makerRole === undefined ||
-    takerRole === undefined
+    !makerRole ||
+    !takerRole
   ) {
     return console.error(
       "maker role or taker role undefined"
     );
   }
-  const isResponsabile = maker.roles.cache.some(
-    function (
-      role
-    ) {
-      return role.name === "responsabile";
-    }
-  );
+
   const makerPoints = getCalculatedPoints(
     customPoints.messageReactionAdd.maker,
     reputationPoints[maker.guild.id][maker.id].points
@@ -73,11 +71,11 @@ async function messageReactionRemove(
     customPoints.messageReactionAdd.taker,
     reputationPoints[taker.guild.id][taker.id].points
   );
+
   if (
     reaction.emoji.name === "⚠️" &&
     hasModerationRole(
-      makerRole,
-      isResponsabile
+      makerRole
     ) === true
   ) {
     user.client.emit(
@@ -90,50 +88,38 @@ async function messageReactionRemove(
       taker,
       takerPoints
     );
-    const message = new EmbedBuilder();
-    message.setTitle(
+    const message = new EmbedBuilder().setTitle(
       "⚠️ violation removed"
-    );
-    message.setDescription(
+    ).setDescription(
       `${makerRole} *${maker}* removed a violation of ${takerRole} *${taker}* in *${reaction.message.channel.name}*`
-    );
-    message.addFields(
+    ).addFields(
       {
         name: "promotion points",
         value: `${-takerPoints} ⭐`,
         inline: true
       }
-    );
-    message.addFields(
+    ).addFields(
       {
         name: "to",
         value: `${taker}`,
         inline: true
       }
-    );
-    message.setThumbnail(
+    ).setThumbnail(
       taker.displayAvatarURL(
         {
           dynamic: true
         }
       )
-    );
-    message.setFooter(
+    ).setFooter(
       {
         text: `${makerPoints} ⭐ to ${maker.displayName}`,
         iconURL: `${maker.displayAvatarURL()}`
       }
-    );
-    message.setTimestamp();
-    message.setColor(
+    ).setTimestamp().setColor(
       "DarkGreen"
     );
     const channel = reaction.message.guild.channels.cache.find(
-      function (
-        channel
-      ) {
-        return channel.name === customChannels.private;
-      }
+      channel => channel.name === customChannels.private
     ) ?? reaction.message.guild.publicUpdatesChannel;
     channel.send(
       {
@@ -153,50 +139,38 @@ async function messageReactionRemove(
       taker,
       -takerPoints
     );
-    const message = new EmbedBuilder();
-    message.setTitle(
+    const message = new EmbedBuilder().setTitle(
       "🧸 reaction"
-    );
-    message.setDescription(
+    ).setDescription(
       `${makerRole} *${maker}* removed ${reaction.emoji} to message sent by ${takerRole} *${taker}* in *${reaction.message.channel.name}*`
-    );
-    message.addFields(
+    ).addFields(
       {
         name: "promotion points",
         value: `${-takerPoints} ⭐`,
         inline: true
       }
-    );
-    message.addFields(
+    ).addFields(
       {
         name: "to",
         value: `${taker}`,
         inline: true
       }
-    );
-    message.setThumbnail(
+    ).setThumbnail(
       taker.displayAvatarURL(
         {
           dynamic: true
         }
       )
-    );
-    message.setFooter(
+    ).setFooter(
       {
         text: `${-makerPoints} ⭐ to ${maker.displayName}`,
         iconURL: `${maker.displayAvatarURL()}`
       }
-    );
-    message.setTimestamp();
-    message.setColor(
+    ).setTimestamp().setColor(
       makerRole.color
     );
     const channel = reaction.message.guild.channels.cache.find(
-      function (
-        channel
-      ) {
-        return channel.name === customChannels.public;
-      }
+      channel => channel.name === customChannels.public
     ) ?? reaction.message.guild.publicUpdatesChannel;
     channel.send(
       {

@@ -1,17 +1,17 @@
 import {
+  globalPoints
+} from "../events/ready.js";
+import {
   customChannels
 } from "../resources/custom-channels.js";
 import {
-  pointsRole,
   getCustomRole,
-  getCustomRoles
+  getCustomRoles,
+  pointsRole
 } from "../resources/custom-roles.js";
 import {
   sendMesseges
 } from "../resources/general-utilities.js";
-import {
-  globalPoints
-} from "../events/ready.js";
 
 /**
  * @param {import("discord.js").Interaction} interaction
@@ -21,17 +21,16 @@ async function checkMembers(
 ) {
   await interaction.deferReply();
   const members = await interaction.guild.members.fetch();
-  let messages = [];
+  const messages = [];
   members.forEach(
-    function (
-      member
-    ) {
+    member => {
       const customRole = getCustomRole(
         member
       );
       const customRoles = getCustomRoles(
         member
       );
+
       if (
         member.user.bot === false &&
         interaction.guild.ownerId !== member.id
@@ -43,27 +42,17 @@ async function checkMembers(
             `member with more than one custom roles: *${member}*\n`
           );
         }
+
         const isItaliano = member.roles.cache.some(
-          function (
-            role
-          ) {
-            return role.name === "italiano";
-          }
+          role => role.name === "italiano"
         );
         const isEnglish = member.roles.cache.some(
-          function (
-            role
-          ) {
-            return role.name === "english";
-          }
+          role => role.name === "english"
         );
         const isInternational = member.roles.cache.some(
-          function (
-            role
-          ) {
-            return role.name === "international";
-          }
+          role => role.name === "international"
         );
+
         if (
           isItaliano === false &&
           isEnglish === false &&
@@ -73,6 +62,7 @@ async function checkMembers(
             `member with missing language role: *${member}*\n`
           );
         }
+
         if (
           isItaliano === true &&
           isInternational === true
@@ -81,6 +71,7 @@ async function checkMembers(
             `member with *italiano* and *international* role: *${member}*\n`
           );
         }
+
         if (
           isItaliano === true &&
           isEnglish === true
@@ -89,6 +80,7 @@ async function checkMembers(
             `member with *italiano* and *english* role: *${member}*\n`
           );
         }
+
         if (
           isEnglish === true &&
           isInternational === true
@@ -97,6 +89,7 @@ async function checkMembers(
             `member with *english* and *international* role: *${member}*\n`
           );
         }
+
         if (
           globalPoints[member.guild.id][member.id] >= pointsRole["ministro"]
         ) {
@@ -374,15 +367,12 @@ async function checkMembers(
       }
     }
   );
+
   if (
     messages.length > 0
   ) {
     const channel = interaction.guild.channels.cache.find(
-      function (
-        channel
-      ) {
-        return channel.name === customChannels.internal;
-      }
+      channel => channel.name === customChannels.internal
     ) ?? interaction.guild.publicUpdatesChannel;
     sendMesseges(
       messages,

@@ -6,7 +6,7 @@ import {getCalculatedPoints} from "../../resources/custom-points.js";
 import {getPlayersNicknames} from "../../resources/general-utilities.js";
 import {EmbedBuilder} from "discord.js";
 
-const test_map_id = 0;
+const map_id = 0;
 
 async function donateProvince(
   interaction
@@ -37,8 +37,7 @@ async function donateProvince(
   );
   const roleColor = role ? role.color : "#FFFFFF";
   const points = getCalculatedPoints(
-    customPoints.interactionCreate,
-    reputationPoints[maker.guild.id][maker.id].points
+    customPoints.interactionCreate, reputationPoints[maker.guild.id][maker.id].points
   );
   const provinceName = interaction.options.getString(
     "province-name"
@@ -50,10 +49,7 @@ async function donateProvince(
   try {
     await interaction.deferReply();
     const result = await sendRequest(
-      test_map_id,
-      interaction.user.id,
-      provinceName,
-      receiverId
+      map_id, interaction.user.id, provinceName, receiverId
     );
 
     // se la risposta è una stringa game logic error
@@ -68,27 +64,37 @@ async function donateProvince(
 
     const message = new EmbedBuilder().setDescription(
       `🗺️ map game - europe: 📜 *${result.donor}* donate *${result.province}* to *${result.receiver}*`
-    ).setFooter({
-      text: `${points} ⭐ to ${maker.displayName}`,
-      iconURL: `${maker.displayAvatarURL()}`
-    }).setColor(
+    ).setFooter(
+      {
+        text: `${points} ⭐ to ${maker.displayName}`,
+        iconURL: `${maker.displayAvatarURL()}`
+      }
+    ).setColor(
       roleColor
     ).setTimestamp();
-    await interaction.editReply({
-      embeds: [
-        message
-      ]
-    });
+    await interaction.editReply(
+      {
+        embeds: [
+          message
+        ]
+      }
+    );
   } catch (
   __error
   ) {
-    console.error("mg-donate-province failed:", __error);
+    console.error(
+      "mg-donate-province failed:", __error
+    );
     let errorMessage = "something goes wrong. try again later";
 
     // gestione specifica degli errori
-    if (__error === "request timeout") {
+    if (
+      __error === "request timeout"
+    ) {
       errorMessage = "the server took too long to respond. please try again later.";
-    } else if (__error.message) {
+    } else if (
+      __error.message
+    ) {
       errorMessage = __error.message;
     }
 
@@ -109,10 +115,12 @@ async function donateProvinceAutocomplete(
     focusedOption.name === "player-nickname"
   ) {
     const players = await getPlayersNicknames(
-      test_map_id
+      map_id
     );
     const filteredPlayers = players.filter(
-      player => player.name.toLowerCase().includes(focusedOption.value.toLowerCase())
+      player => player.name.toLowerCase().includes(
+        focusedOption.value.toLowerCase()
+      )
     ).map(
       player => (
         {
@@ -123,11 +131,11 @@ async function donateProvinceAutocomplete(
     );
     await interaction.respond(
       filteredPlayers.slice(
-        0,
-        8
+        0, 8
       ) // massimo 25
     );
   }
+
   return; // esci dopo l'autocompletamento!
 }
 
@@ -142,55 +150,46 @@ function sendRequest(
       resolve,
       reject
     ) => {
-      const data = JSON.stringify(
-        {
-          map_id: mapId,
-          donor_id: donorId,
-          receiver_id: receiverId,
-          province_name: provinceName,
-        }
-      );
-      const req = http.request(
-        {
-          host: "localhost",
-          port: 3000,
-          path: "/donate_province",
-          method: "POST",
-          headers: {"content-type": "application/json"},
-          timeout: 5000
-        },
-        res => {
-          let responseData = "";
-          res.on(
-            "data",
-            chunk => (responseData += chunk)
-          ).on(
-            "end",
-            () => {
-              if (
-                res.headers["content-type"].includes(
-                  "application/json"
-                )
-              ) {
-                resolve(
-                  JSON.parse(
-                    responseData
-                  )
-                );
-              } else {
-                resolve(
+      const data = JSON.stringify({
+        map_id: mapId,
+        donor_id: donorId,
+        receiver_id: receiverId,
+        province_name: provinceName,
+      });
+      const req = http.request({
+        host: "localhost",
+        port: 3000,
+        path: "/donate_province",
+        method: "POST",
+        headers: {"content-type": "application/json"},
+        timeout: 5000
+      }, res => {
+        let responseData = "";
+        res.on(
+          "data", chunk => responseData += chunk
+        ).on(
+          "end", () => {
+            if (
+              res.headers["content-type"].includes(
+                "application/json"
+              )
+            ) {
+              resolve(
+                JSON.parse(
                   responseData
-                );
-              }
+                )
+              );
+            } else {
+              resolve(
+                responseData
+              );
             }
-          );
-        }
+          }
+        );
+      }).on(
+        "error", reject
       ).on(
-        "error",
-        reject
-      ).on(
-        "timeout",
-        () => {
+        "timeout", () => {
           req.destroy();
           reject(
             "request timeout"
@@ -201,8 +200,7 @@ function sendRequest(
         data
       );
       req.end();
-    }
-  );
+    });
 }
 
 export {

@@ -80,10 +80,23 @@ const clientConfig = {
     Partials.Message,
   ]
 };
+// login
 const client = new Client(
   clientConfig
 );
-// Registrazione eventi
+client.login(
+  process.env.bot_token
+).then(
+  () => console.log(
+    "login effettuato con successo"
+  )
+).catch(
+  error => console.error(
+    "errore durante il login:",
+    error
+  )
+);
+// registrazione eventi
 const events = {
   ready,
   activity,
@@ -102,12 +115,14 @@ const events = {
   pointsDistribution,
   threadCreate
 };
-
 Object.entries(
   events
 ).forEach(
   (
-    [eventName, handler]
+    [
+      eventName,
+      handler
+    ]
   ) => {
     client.on(
       eventName,
@@ -115,17 +130,22 @@ Object.entries(
     );
   }
 );
-
-// Gestione errori globali
-process.on("unhandledRejection", (error) => {
-  console.error("Unhandled promise rejection:", error);
-});
-
-process.on("uncaughtException", (error) => {
-  console.error("Uncaught exception:", error);
-});
-
-// Login
-client.login(process.env.bot_token)
-  .then(() => console.log("Login effettuato con successo"))
-  .catch(error => console.error("Errore durante il login:", error));
+// gestione errori globali
+process.on(
+  "unhandledRejection",
+  error => {
+    console.error(
+      "unhandled promise rejection:",
+      error
+    );
+  }
+);
+process.on(
+  "uncaughtException",
+  error => {
+    console.error(
+      "uncaught exception:",
+      error
+    );
+  }
+);

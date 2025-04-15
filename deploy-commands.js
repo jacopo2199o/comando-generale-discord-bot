@@ -66,45 +66,33 @@ commands.push(
   ).setDescription(
     "transfer a member into threads"
   ).addUserOption(
-    function (
-      option
-    ) {
-      return option.setName(
-        "member"
-      ).setDescription(
-        "member to give points"
-      ).setRequired(
-        true
-      );
-    }
+    option => option.setName(
+      "member"
+    ).setDescription(
+      "member to give points"
+    ).setRequired(
+      true
+    )
   ).addNumberOption(
-    function (
-      option
-    ) {
-      return option.setName(
-        "period"
-      ).setDescription(
-        "time period (hours) to expiration"
-      ).setMinValue(
-        1
-      ).setMaxValue(
-        10000
-      ).setRequired(
-        true
-      );
-    }
+    option => option.setName(
+      "period"
+    ).setDescription(
+      "time period (hours) to expiration"
+    ).setMinValue(
+      1
+    ).setMaxValue(
+      10000
+    ).setRequired(
+      true
+    )
   ).addStringOption(
-    function (
-      option
-    ) {
-      return option.setName(
-        "reason"
-      ).setDescription(
-        "reason description"
-      ).setRequired(
-        true
-      );
-    }
+    option => option.setName(
+      "reason"
+    ).setDescription(
+      "reason description"
+    ).setRequired(
+      true
+    )
   )
 );
 commands.push(
@@ -113,61 +101,45 @@ commands.push(
   ).setDescription(
     "apply cooldown penalty to a member"
   ).addUserOption(
-    function (
-      option
-    ) {
-      return option.setName(
-        "member"
-      ).setDescription(
-        "member to give points"
-      ).setRequired(
-        true
-      );
-    }
+    option => option.setName(
+      "member"
+    ).setDescription(
+      "member to give points"
+    ).setRequired(
+      true
+    )
   ).addNumberOption(
-    function (
-      option
-    ) {
-      return option.setName(
-        "interval"
-      ).setDescription(
-        "time interval (hours) between messages"
-      ).setMinValue(
-        1
-      ).setMaxValue(
-        10000
-      ).setRequired(
-        true
-      );
-    }
+    option => option.setName(
+      "interval"
+    ).setDescription(
+      "time interval (hours) between messages"
+    ).setMinValue(
+      1
+    ).setMaxValue(
+      10000
+    ).setRequired(
+      true
+    )
   ).addNumberOption(
-    function (
-      option
-    ) {
-      return option.setName(
-        "period"
-      ).setDescription(
-        "time period (hours) to expiration"
-      ).setMinValue(
-        2
-      ).setMaxValue(
-        10000
-      ).setRequired(
-        true
-      );
-    }
+    option => option.setName(
+      "period"
+    ).setDescription(
+      "time period (hours) to expiration"
+    ).setMinValue(
+      2
+    ).setMaxValue(
+      10000
+    ).setRequired(
+      true
+    )
   ).addStringOption(
-    function (
-      option
-    ) {
-      return option.setName(
-        "reason"
-      ).setDescription(
-        "reason description"
-      ).setRequired(
-        true
-      );
-    }
+    option => option.setName(
+      "reason"
+    ).setDescription(
+      "reason description"
+    ).setRequired(
+      true
+    )
   )
 );
 commands.push(
@@ -176,33 +148,25 @@ commands.push(
   ).setDescription(
     "give promotion points to a member"
   ).addUserOption(
-    function (
-      option
-    ) {
-      return option.setName(
-        "member"
-      ).setDescription(
-        "member to give points"
-      ).setRequired(
-        true
-      );
-    }
+    option => option.setName(
+      "member"
+    ).setDescription(
+      "member to give points"
+    ).setRequired(
+      true
+    )
   ).addNumberOption(
-    function (
-      option
-    ) {
-      return option.setName(
-        "points"
-      ).setDescription(
-        "points amount to give"
-      ).setMinValue(
-        -100000
-      ).setMaxValue(
-        100000
-      ).setRequired(
-        true
-      );
-    }
+    option => option.setName(
+      "points"
+    ).setDescription(
+      "points amount to give"
+    ).setMinValue(
+      -100000
+    ).setMaxValue(
+      100000
+    ).setRequired(
+      true
+    )
   )
 );
 commands.push(
@@ -211,24 +175,20 @@ commands.push(
   ).setDescription(
     "give reputation point to a member"
   ).addUserOption(
-    function (
-      option
-    ) {
-      return option.setName(
-        "member"
-      ).setDescription(
-        "member to give point"
-      ).setRequired(
-        true
-      );
-    }
+    option => option.setName(
+      "member"
+    ).setDescription(
+      "member to give point"
+    ).setRequired(
+      true
+    )
   )
 );
 commands.push(
   new SlashCommandBuilder().setName(
     "roll-dice"
   ).setDescription(
-    "roll dice 6"
+    "roll dice and get a random number between 1 and 6 included"
   )
 );
 commands.push(
@@ -244,17 +204,13 @@ commands.push(
   ).setDescription(
     "view points to next rank"
   ).addUserOption(
-    function (
-      option
-    ) {
-      return option.setName(
-        "member"
-      ).setDescription(
-        "member points"
-      ).setRequired(
-        false
-      );
-    }
+    option => option.setName(
+      "member"
+    ).setDescription(
+      "member points"
+    ).setRequired(
+      false
+    )
   )
 );
 commands.push(
@@ -263,17 +219,13 @@ commands.push(
   ).setDescription(
     "view reputation points of a member"
   ).addUserOption(
-    function (
-      option
-    ) {
-      return option.setName(
-        "member"
-      ).setDescription(
-        "member reputation points"
-      ).setRequired(
-        false
-      );
-    }
+    option => option.setName(
+      "member"
+    ).setDescription(
+      "member reputation points"
+    ).setRequired(
+      false
+    )
   )
 );
 commands.push(
@@ -282,65 +234,49 @@ commands.push(
   ).setDescription(
     "join game"
   ).addStringOption(
-    function (
-      option
-    ) {
-      return option.setName(
-        "nickname"
-      ).setDescription(
-        "nickname, party or whatever you like"
-      ).setRequired(
-        true
-      );
-    }
+    option => option.setName(
+      "nickname"
+    ).setDescription(
+      "nickname, party or whatever you like"
+    ).setRequired(
+      true
+    )
   ).addNumberOption(
-    function (
-      option
-    ) {
-      return option.setName(
-        "red"
-      ).setDescription(
-        "red channel value (16 to 128) for color to show on map"
-      ).setMinValue(
-        16
-      ).setMaxValue(
-        128
-      ).setRequired(
-        true
-      );
-    }
+    option => option.setName(
+      "red"
+    ).setDescription(
+      "red channel value (16 to 128) for color to show on map"
+    ).setMinValue(
+      16
+    ).setMaxValue(
+      128
+    ).setRequired(
+      true
+    )
   ).addNumberOption(
-    function (
-      option
-    ) {
-      return option.setName(
-        "green"
-      ).setDescription(
-        "green channel value (16 to 128) for color to show on map"
-      ).setMinValue(
-        16
-      ).setMaxValue(
-        128
-      ).setRequired(
-        true
-      );
-    }
+    option => option.setName(
+      "green"
+    ).setDescription(
+      "green channel value (16 to 128) for color to show on map"
+    ).setMinValue(
+      16
+    ).setMaxValue(
+      128
+    ).setRequired(
+      true
+    )
   ).addNumberOption(
-    function (
-      option
-    ) {
-      return option.setName(
-        "blue"
-      ).setDescription(
-        "blue channel value (16 to 128) for color to show on map"
-      ).setMinValue(
-        16
-      ).setMaxValue(
-        128
-      ).setRequired(
-        true
-      );
-    }
+    option => option.setName(
+      "blue"
+    ).setDescription(
+      "blue channel value (16 to 128) for color to show on map"
+    ).setMinValue(
+      16
+    ).setMaxValue(
+      128
+    ).setRequired(
+      true
+    )
   )
 );
 commands.push(
@@ -349,33 +285,25 @@ commands.push(
   ).setDescription(
     "take a province and assign action points to"
   ).addStringOption(
-    function (
-      option
-    ) {
-      return option.setName(
-        "province-name"
-      ).setDescription(
-        "province name with no abbreviations"
-      ).setRequired(
-        true
-      );
-    }
+    option => option.setName(
+      "province-name"
+    ).setDescription(
+      "province name with no abbreviations"
+    ).setRequired(
+      true
+    )
   ).addNumberOption(
-    function (
-      option
-    ) {
-      return option.setName(
-        "action-points"
-      ).setDescription(
-        "action points value (0 to 100) to defend your province"
-      ).setMinValue(
-        0
-      ).setMaxValue(
-        100
-      ).setRequired(
-        true
-      );
-    }
+    option => option.setName(
+      "action-points"
+    ).setDescription(
+      "action points value (0 to 100) to defend your province"
+    ).setMinValue(
+      0
+    ).setMaxValue(
+      100
+    ).setRequired(
+      true
+    )
   )
 );
 commands.push(
@@ -384,19 +312,25 @@ commands.push(
   ).setDescription(
     "fortify equally all regions of your nations"
   ).addNumberOption(
-    function (
-      option
-    ) {
-      return option.setName(
-        "action-points"
-      ).setDescription(
-        "action points per region"
-      ).setMinValue(
-        1
-      ).setRequired(
-        true
-      );
-    }
+    option => option.setName(
+      "action-points"
+    ).setDescription(
+      "action points per region"
+    ).setMinValue(
+      1
+    ).setRequired(
+      true
+    )
+  ).addStringOption(
+    option => option.setName(
+      "player-nickname"
+    ).setDescription(
+      "player who will receive reinforces"
+    ).setRequired(
+      true
+    ).setAutocomplete(
+      true
+    ) // abilita l'autocompletamento
   )
 );
 commands.push(
@@ -412,17 +346,13 @@ commands.push(
   ).setDescription(
     "view province game data"
   ).addStringOption(
-    function (
-      option
-    ) {
-      return option.setName(
-        "province-name"
-      ).setDescription(
-        "province name with no abbreviations"
-      ).setRequired(
-        true
-      );
-    }
+    option => option.setName(
+      "province-name"
+    ).setDescription(
+      "province name with no abbreviations"
+    ).setRequired(
+      true
+    )
   )
 );
 commands.push(
@@ -443,7 +373,7 @@ commands.push(
   new SlashCommandBuilder().setName(
     "mg-leaderboard"
   ).setDescription(
-    "map game - loaderboard of top 10 players score"
+    "view top 10 players by score"
   )
 );
 commands.push(
@@ -452,53 +382,41 @@ commands.push(
   ).setDescription(
     "change color of your territories"
   ).addNumberOption(
-    function (
-      option
-    ) {
-      return option.setName(
-        "red"
-      ).setDescription(
-        "red channel value (16 to 128) for color to show on map"
-      ).setMinValue(
-        16
-      ).setMaxValue(
-        128
-      ).setRequired(
-        true
-      );
-    }
+    option => option.setName(
+      "red"
+    ).setDescription(
+      "red channel value (16 to 128) for color to show on map"
+    ).setMinValue(
+      16
+    ).setMaxValue(
+      128
+    ).setRequired(
+      true
+    )
   ).addNumberOption(
-    function (
-      option
-    ) {
-      return option.setName(
-        "green"
-      ).setDescription(
-        "green channel value (16 to 128) for color to show on map"
-      ).setMinValue(
-        16
-      ).setMaxValue(
-        128
-      ).setRequired(
-        true
-      );
-    }
+    option => option.setName(
+      "green"
+    ).setDescription(
+      "green channel value (16 to 128) for color to show on map"
+    ).setMinValue(
+      16
+    ).setMaxValue(
+      128
+    ).setRequired(
+      true
+    )
   ).addNumberOption(
-    function (
-      option
-    ) {
-      return option.setName(
-        "blue"
-      ).setDescription(
-        "blue channel value (16 to 128) for color to show on map"
-      ).setMinValue(
-        16
-      ).setMaxValue(
-        128
-      ).setRequired(
-        true
-      );
-    }
+    option => option.setName(
+      "blue"
+    ).setDescription(
+      "blue channel value (16 to 128) for color to show on map"
+    ).setMinValue(
+      16
+    ).setMaxValue(
+      128
+    ).setRequired(
+      true
+    )
   )
 );
 commands.push(
@@ -507,69 +425,91 @@ commands.push(
   ).setDescription(
     "change nickname of your profile"
   ).addStringOption(
-    function (
-      option
-    ) {
-      return option.setName(
-        "nickname"
-      ).setDescription(
-        "nickname of your profile"
-      ).setMinLength(
-        0
-      ).setMaxLength(
-        24
-      ).setRequired(
-        true
-      );
-    }
+    option => option.setName(
+      "nickname"
+    ).setDescription(
+      "nickname of your profile"
+    ).setMinLength(
+      0
+    ).setMaxLength(
+      24
+    ).setRequired(
+      true
+    )
   )
 );
 commands.push(
-  new SlashCommandBuilder()
-    .setName("mg-move-action-points")
-    .setDescription("move action points between provinces")
-    .addStringOption(option =>
-      option.setName("from-province")
-        .setDescription("name of the province you are transferring from")
-        .setRequired(true)
+  new SlashCommandBuilder().setName(
+    "mg-move-action-points"
+  ).setDescription(
+    "move action points between provinces"
+  ).addStringOption(
+    option => option.setName(
+      "from-province"
+    ).setDescription(
+      "name of the province you are transferring from"
+    ).setRequired(
+      true
     )
-    .addStringOption(option =>
-      option.setName("to-province")
-        .setDescription("name of the province you are transferring to")
-        .setRequired(true)
+  ).addStringOption(
+    option => option.setName(
+      "to-province"
+    ).setDescription(
+      "name of the province you are transferring to"
+    ).setRequired(
+      true
     )
-    .addNumberOption(option =>
-      option.setName("action-points")
-        .setDescription("number of action points to transfer")
-        .setMinValue(1)
-        .setRequired(true)
+  ).addNumberOption(
+    option => option.setName(
+      "action-points"
+    ).setDescription(
+      "number of action points to transfer"
+    ).setMinValue(
+      1
+    ).setRequired(
+      true
     )
+  )
 );
 commands.push(
-  new SlashCommandBuilder()
-    .setName("mg-set-capital")
-    .setDescription("set a province as your capital")
-    .addStringOption(option =>
-      option.setName("province-name")
-        .setDescription("name of the province to set as capital")
-        .setRequired(true)
+  new SlashCommandBuilder().setName(
+    "mg-set-capital"
+  ).setDescription(
+    "set a province as your capital"
+  ).addStringOption(
+    option => option.setName(
+      "province-name"
+    ).setDescription(
+      "name of the province to set as capital"
+    ).setRequired(
+      true
     )
+  )
 );
 commands.push(
-  new SlashCommandBuilder()
-    .setName("mg-donate-province")
-    .setDescription("donate a province to another player")
-    .addStringOption(option =>
-      option.setName("province-name")
-        .setDescription("name of the province you want to donate")
-        .setRequired(true)
+  new SlashCommandBuilder().setName(
+    "mg-donate-province"
+  ).setDescription(
+    "donate a province to another player"
+  ).addStringOption(
+    option => option.setName(
+      "province-name"
+    ).setDescription(
+      "name of the province you want to donate"
+    ).setRequired(
+      true
     )
-    .addStringOption(option =>
-      option.setName("player-nickname")
-        .setDescription("player who will receive the province")
-        .setRequired(true)
-        .setAutocomplete(true) // abilita l'autocompletamento
-    )
+  ).addStringOption(
+    option => option.setName(
+      "player-nickname"
+    ).setDescription(
+      "player who will receive the province"
+    ).setRequired(
+      true
+    ).setAutocomplete(
+      true
+    ) // abilita l'autocompletamento
+  )
 );
 
 for (
@@ -577,6 +517,7 @@ for (
 ) {
   command.toJSON();
 }
+
 try {
   const data = await rest.put(
     Routes.applicationCommands(
