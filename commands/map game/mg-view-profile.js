@@ -1,6 +1,7 @@
 import {
   EmbedBuilder
 } from "discord.js";
+import http from "node:http";
 import {
   reputationPoints
 } from "../../events/ready.js";
@@ -11,35 +12,42 @@ import {
 import {
   getCustomRole
 } from "../../resources/custom-roles.js";
-import http from "node:http";
 /**
  * @param {import("discord.js").Interaction} interaction
  */
 async function viewProfile(
   interaction
 ) {
-  // Aggiungi gli ID dei canali consentiti
+  // aggiungi gli id dei canali consentiti
   const allowed_channels = [
     "1168970952311328768",
     "1165937736121860198"
   ];
+
   if (
     !allowed_channels.includes(
       interaction.channelId
     )
   ) {
-    await interaction.reply({
-      content: "*map game* commands can only be used in *int-roleplay* channel",
-      ephemeral: true
-    });
+    await interaction.reply(
+      {
+        content: "*map game* commands can only be used in *int-roleplay* channel",
+        ephemeral: true
+      }
+    );
     return;
   }
-  await interaction.deferReply();
+
+  await interaction.deferReply(
+    {
+      ephemeral: true
+    }
+  );
   const maker = interaction.member;
   const role = getCustomRole(
     maker
   );
-  const points = getCalculatedPoints(
+  const activity_points = getCalculatedPoints(
     customPoints.interactionCreate,
     reputationPoints[interaction.guildId][maker.id].points
   );
@@ -48,28 +56,23 @@ async function viewProfile(
       host: "localhost",
       port: "3000",
       path: `/map/player?map_id=0&player_id=${maker.id}`,
-      method: "GET"
+      method: "GET",
+      timeout: 2900
     },
-    function (
-      response
-    ) {
+    response => {
       let data = "";
       response.on(
         "data",
-        function (
-          chunk
-        ) {
-          data += chunk;
-        }
+        chunk => data += chunk
       ).on(
         "end",
-        async function () {
+        async () => {
           if (
-            response.statusCode == 200
+            response.statusCode === 200
           ) {
             const {
               nickname,
-              points: action_points,
+              points: actionPoints,
               score
             } = JSON.parse(
               data
@@ -78,27 +81,38 @@ async function viewProfile(
               "🗺️ map game - europe"
             ).setDescription(
               `👤 *${nickname}* has:`
-            ).addFields({
-              name: "action points",
-              value: `${action_points}`,
-              inline: true
-            }).addFields({
-              name: "score",
-              value: `${score}`,
-              inline: true
-            }).setFooter({
-              text: `${points} ⭐ to ${maker.displayName}`,
-              iconURL: `${maker.displayAvatarURL()}`
-            }).setColor(
+            ).addFields(
+              {
+                name: "action points",
+                value: `${actionPoints}`,
+                inline: true
+              }
+            ).addFields(
+              {
+                name: "score",
+                value: `${score}`,
+                inline: true
+              }
+            ).setFooter(
+              {
+                text: `${activity_points} ⭐ to ${maker.displayName}`,
+                iconURL: `${maker.displayAvatarURL()}`
+              }
+            ).setColor(
               role.color
             ).setTimestamp();
-            await interaction.editReply({
-              embeds: [
-                message
-              ]
-            });
+            await interaction.editReply(
+              {
+                embeds: [
+                  message
+                ]
+              }
+            );
           } else {
             await interaction.editReply(
+              data
+            );
+            console.log(
               data
             );
           }
@@ -107,14 +121,23 @@ async function viewProfile(
     }
   ).on(
     "error",
-    async function (
-      error
-    ) {
+    async error => {
       await interaction.editReply(
         "connection error, try again later"
       );
       console.error(
         error.message
+      );
+    }
+  ).on(
+    "timeout",
+    async () => {
+      request.destroy();
+      await interaction.editReply(
+        "connection timeout, try again later"
+      );
+      console.error(
+        "connection timeout"
       );
     }
   );

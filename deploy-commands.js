@@ -291,6 +291,8 @@ commands.push(
       "province name with no abbreviations"
     ).setRequired(
       true
+    ).setAutocomplete(
+      true
     )
   ).addNumberOption(
     option => option.setName(
@@ -299,8 +301,6 @@ commands.push(
       "action points value (0 to 100) to defend your province"
     ).setMinValue(
       0
-    ).setMaxValue(
-      100
     ).setRequired(
       true
     )
@@ -509,6 +509,23 @@ commands.push(
     ).setAutocomplete(
       true
     ) // abilita l'autocompletamento
+  )
+);
+commands.push(
+  new SlashCommandBuilder().setName(
+    "mg-view-player"
+  ).setDescription(
+    "view player's regions on map and other useful data"
+  ).addStringOption(
+    option => option.setName(
+      "player-nickname"
+    ).setDescription(
+      "in game player nickname to inspect"
+    ).setRequired(
+      true
+    ).setAutocomplete(
+      true
+    )
   )
 );
 

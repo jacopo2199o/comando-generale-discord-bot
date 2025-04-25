@@ -141,9 +141,9 @@ function getCustomRoles(
   return member.roles.cache.filter(
     role => customRoles.includes(
       role.name
-    ).map(
-      role => role // per restituire un array invece di una collection
     )
+  ).map(
+    role => role // per restituire un array invece di una collection
   );
 }
 
@@ -168,10 +168,10 @@ function hasModerationRole(
 
 /**
  * aggiorna il ruolo di un membro da un ruolo precedente a uno nuovo
- * @param {import("discord.js").GuildMember} member
+ * @param {import("discord.js").GuildMember} member - il membro di cui aggiornare il ruolo
  * @param {string} newRoleName - nome del nuovo ruolo
  * @param {string} oldRoleName - nome del vecchio ruolo
- * @returns {{ newRole: import("discord.js").Role, oldRole: import("discord.js").Role } | null}
+ * @returns {Promise<{ newRole: import("discord.js").Role, oldRole: import("discord.js").Role } | null>} una promise che restituisce i ruoli aggiornati o `null` in caso di errore
  */
 async function updateRoleTo(
   member,
@@ -186,13 +186,14 @@ async function updateRoleTo(
   );
 
   if (
-    !oldRole ||
-    !newRole
+    !oldRole || !newRole
   ) {
     console.error(
       `updateRoleTo: missing role(s). old role: ${oldRoleName || "undefined"}, new role: ${newRoleName || "undefined"}`
     );
-    return null; // restituisce null in caso di errore
+    return Promise.resolve(
+      null
+    ); // restituisce una rromise risolta con `null`
   }
 
   try {
@@ -202,10 +203,12 @@ async function updateRoleTo(
     await member.roles.add(
       newRole.id
     );
-    return {
-      newRole,
-      oldRole
-    }; // restituisce i ruoli aggiornati
+    return Promise.resolve(
+      {
+        newRole,
+        oldRole
+      }
+    ); // restituisce una promise risolta con i ruoli aggiornati
   } catch (
   __error
   ) {
@@ -213,7 +216,9 @@ async function updateRoleTo(
       "updateRoleTo: failed to update roles:",
       __error.message
     );
-    return null; // restituisce null in caso di errore
+    return Promise.resolve(
+      null
+    ); // restituisce una promise risolta con `null` in caso di errore
   }
 }
 

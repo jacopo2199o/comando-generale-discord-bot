@@ -6,12 +6,10 @@ import {getCalculatedPoints} from "../../resources/custom-points.js";
 import {getPlayersNicknames} from "../../resources/general-utilities.js";
 import {EmbedBuilder} from "discord.js";
 
-const map_id = 0;
-
 async function donateProvince(
   interaction
 ) {
-  // aggiungi gli ID dei canali consentiti
+  // aggiungi gli id dei canali consentiti
   const allowed_channels = [
     "1168970952311328768",
     "1165937736121860198"
@@ -31,77 +29,113 @@ async function donateProvince(
     return;
   }
 
+  await interaction.deferReply();
   const maker = interaction.member;
   const role = getCustomRole(
     interaction.member
   );
-  const roleColor = role ? role.color : "#FFFFFF";
-  const points = getCalculatedPoints(
+  const activity_points = getCalculatedPoints(
     customPoints.interactionCreate, reputationPoints[maker.guild.id][maker.id].points
   );
-  const provinceName = interaction.options.getString(
-    "province-name"
-  );
-  const receiverId = interaction.options.getString(
-    "player-nickname"
-  );
-
-  try {
-    await interaction.deferReply();
-    const result = await sendRequest(
-      map_id, interaction.user.id, provinceName, receiverId
-    );
-
-    // se la risposta è una stringa game logic error
-    if (
-      typeof result === "string"
-    ) {
-      await interaction.editReply(
-        result
+  const request = http.request(
+    {
+      host: "localhost",
+      port: "3000",
+      path: "/donate_province?map_id=0",
+      method: "POST",
+      timeout: 2900
+    },
+    response => {
+      let data = "";
+      response.on(
+        "data",
+        chunk => data += chunk
+      ).on(
+        "end",
+        async () => {
+          if (
+            response.statusCode === 200
+          ) {
+            const {
+              donor,
+              receiver,
+              province,
+              cost
+            } = JSON.parse(
+              data
+            );
+            const message = new EmbedBuilder().setTitle(
+              "🗺️ map game - europe"
+            ).setDescription(
+              `📜 *${donor}* donate *${province}* to *${receiver}*`
+            ).addFields(
+              {
+                name: "administrative cost",
+                value: cost
+              }
+            ).setFooter(
+              {
+                text: `${activity_points} ⭐ to ${maker.displayName}`,
+                iconURL: `${maker.displayAvatarURL()}`
+              }
+            ).setColor(
+              role.color
+            ).setTimestamp();
+            await interaction.editReply(
+              {
+                embeds: [
+                  message
+                ]
+              }
+            );
+          } else {
+            await interaction.editReply(
+              data
+            );
+            console.log(
+              data
+            );
+          }
+        }
+      ).on(
+        "error",
+        async error => {
+          await interaction.editReply(
+            "connection error, try again later"
+          );
+          console.error(
+            error.message
+          );
+        }
+      ).on(
+        "timeout",
+        async () => {
+          request.destroy();
+          await interaction.editReply(
+            "connection timeout, try again later"
+          );
+          console.error(
+            "connection timeout"
+          );
+        }
       );
-      return;
     }
+  );
 
-    const message = new EmbedBuilder().setDescription(
-      `🗺️ map game - europe: 📜 *${result.donor}* donate *${result.province}* to *${result.receiver}*`
-    ).setFooter(
+  request.write(
+    JSON.stringify(
       {
-        text: `${points} ⭐ to ${maker.displayName}`,
-        iconURL: `${maker.displayAvatarURL()}`
+        donor_id: maker.id,
+        receiver_id: interaction.options.getString(
+          "player-nickname"
+        ),
+        province_name: interaction.options.getString(
+          "province-name"
+        ),
       }
-    ).setColor(
-      roleColor
-    ).setTimestamp();
-    await interaction.editReply(
-      {
-        embeds: [
-          message
-        ]
-      }
-    );
-  } catch (
-  __error
-  ) {
-    console.error(
-      "mg-donate-province failed:", __error
-    );
-    let errorMessage = "something goes wrong. try again later";
-
-    // gestione specifica degli errori
-    if (
-      __error === "request timeout"
-    ) {
-      errorMessage = "the server took too long to respond. please try again later.";
-    } else if (
-      __error.message
-    ) {
-      errorMessage = __error.message;
-    }
-
-    await interaction.editReply(
-      errorMessage
-    );
-  }
+    )
+  );
+  request.end();
 }
 
 async function donateProvinceAutocomplete(
@@ -115,7 +149,7 @@ async function donateProvinceAutocomplete(
     focusedOption.name === "player-nickname"
   ) {
     const players = await getPlayersNicknames(
-      map_id
+      0 // map_id
     );
     const filteredPlayers = players.filter(
       player => player.name.toLowerCase().includes(
@@ -137,70 +171,6 @@ async function donateProvinceAutocomplete(
   }
 
   return; // esci dopo l'autocompletamento!
-}
-
-function sendRequest(
-  mapId,
-  donorId,
-  provinceName,
-  receiverId
-) {
-  return new Promise(
-    (
-      resolve,
-      reject
-    ) => {
-      const data = JSON.stringify({
-        map_id: mapId,
-        donor_id: donorId,
-        receiver_id: receiverId,
-        province_name: provinceName,
-      });
-      const req = http.request({
-        host: "localhost",
-        port: 3000,
-        path: "/donate_province",
-        method: "POST",
-        headers: {"content-type": "application/json"},
-        timeout: 5000
-      }, res => {
-        let responseData = "";
-        res.on(
-          "data", chunk => responseData += chunk
-        ).on(
-          "end", () => {
-            if (
-              res.headers["content-type"].includes(
-                "application/json"
-              )
-            ) {
-              resolve(
-                JSON.parse(
-                  responseData
-                )
-              );
-            } else {
-              resolve(
-                responseData
-              );
-            }
-          }
-        );
-      }).on(
-        "error", reject
-      ).on(
-        "timeout", () => {
-          req.destroy();
-          reject(
-            "request timeout"
-          );
-        }
-      );
-      req.write(
-        data
-      );
-      req.end();
-    });
 }
 
 export {

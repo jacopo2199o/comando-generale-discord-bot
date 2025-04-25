@@ -45,7 +45,7 @@ async function moveActionPoints(
   const actionPoints = interaction.options.getNumber(
     "action-points"
   );
-  const playerId = interaction.user.id; // id del giocatore su Discord
+  const playerId = interaction.user.id;
   const maker = interaction.member;
   const role = getCustomRole(
     maker
@@ -57,19 +57,20 @@ async function moveActionPoints(
 
   try {
     const response = await fetch(
-      "http://localhost:3000/move_action_points", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json"
-      },
-      body: JSON.stringify({
-        map_id: 0,
-        player_id: playerId,
-        from_province: fromProvince,
-        to_province: toProvince,
-        action_points: actionPoints
-      })
-    });
+      "http://localhost:3000/move_action_points",
+      {
+        method: "POST",
+        body: JSON.stringify(
+          {
+            map_id: 0,
+            player_id: playerId,
+            from_province: fromProvince,
+            to_province: toProvince,
+            action_points: actionPoints
+          }
+        )
+      }
+    );
     const contentType = response.headers.get(
       "content-type"
     );
@@ -100,26 +101,35 @@ async function moveActionPoints(
       );
     } else {
       const {
-        from,
-        to,
         sender,
         receiver,
+        from,
+        to,
         action_points
       } = data;
-      const ap = action_points > 1 ? "points" : "point";
+      const s = action_points > 1
+        ? "points"
+        : "point";
+      const description = sender.nickname === receiver.nickname
+        ? `🗺️ map game - europe: 👤 *${sender.nickname}* moves ${action_points} *action ${s}* from *${from}* to *${to}*`
+        : `🗺️ map game - europe: 👤 *${sender.nickname}* moves ${action_points} *action ${s}* from *${from}* to *${to}* of *${receiver.nickname}*`;
       const message = new EmbedBuilder().setDescription(
-        `🗺️ map game - europe: 👤 *${sender.nickname}* moves ${action_points} *action ${ap}* from *${from}* to *${to}* of *${receiver.nickname}*`
-      ).setFooter({
-        text: `${points} ⭐ to ${maker.displayName}`,
-        iconURL: `${maker.displayAvatarURL()}`
-      }).setColor(
+        description
+      ).setFooter(
+        {
+          text: `${points} ⭐ to ${maker.displayName}`,
+          iconURL: `${maker.displayAvatarURL()}`
+        }
+      ).setColor(
         role.color
       ).setTimestamp();
-      await interaction.editReply({
-        embeds: [
-          message
-        ]
-      });
+      await interaction.editReply(
+        {
+          embeds: [
+            message
+          ]
+        }
+      );
     }
   } catch (
   __error

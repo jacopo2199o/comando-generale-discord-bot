@@ -153,27 +153,26 @@ async function sendMesseges(
 }
 
 /**
- * Ottieni la lista dei giocatori attivi su una mappa tramite API.
- * @param {number} map_id - ID della mappa
- * @returns {Promise<Array<{name: string, value: string}>>} Lista di giocatori per l'autocompletamento
+ * ottieni la lista dei giocatori attivi su una mappa tramite API
+ * @param {number} mapId - ID della mappa
+ * @returns {Promise<Array<{name: string, value: string}>>} lista di giocatori per l'autocompletamento
  */
 async function getPlayersNicknames(
-  map_id
+  mapId
 ) {
   return new Promise(
     function (
       resolve,
       reject
     ) {
-      const options = {
-        host: "localhost",
-        port: "3000",
-        path: `/map/players?map_id=${map_id}`,
-        method: "GET",
-        timout: 2900
-      };
       const request = http.request(
-        options,
+        {
+          host: "localhost",
+          port: "3000",
+          path: `/map/players?map_id=${mapId}`,
+          method: "GET",
+          timout: 2900
+        },
         response => {
           let data = "";
           response.on(
@@ -189,8 +188,8 @@ async function getPlayersNicknames(
                 ).map(
                   player => (
                     {
-                      name: player.nickname,  // testo visibile nel menu
-                      value: player.id        // valore restituito al bot
+                      name: player.nickname, // testo visibile nel menu
+                      value: player.id // valore restituito al bot
                     }
                   )
                 );
@@ -231,10 +230,83 @@ async function getPlayersNicknames(
   );
 }
 
+async function getProvinceNames(
+  mapId
+) {
+  return new Promise(
+    function (
+      resolve,
+      reject
+    ) {
+      const request = http.request(
+        {
+          host: "localhost",
+          port: "3000",
+          path: `/map/province_names?map_id=${mapId}`,
+          method: "GET",
+          timout: 2900
+        },
+        response => {
+          let data = "";
+          response.on(
+            "data",
+            chunk => data += chunk
+          ).on(
+            "end",
+            () => {
+              try {
+                const provinces = JSON.parse(
+                  data
+                ).map(
+                  province => (
+                    {
+                      name: province, // testo visibile nel menu
+                      value: province // valore restituito al bot
+                    }
+                  )
+                );
+                resolve(
+                  provinces
+                );
+              } catch (
+              __error
+              ) {
+                reject(
+                  __error
+                );
+              }
+            }
+          );
+        }
+      ).on(
+        "error",
+        error => reject(
+          error
+        )
+      ).on(
+        "timeout",
+        () => {
+          request.destroy();
+          console.error(
+            "request timed out"
+          );
+          reject(
+            new Error(
+              "request timeout"
+            )
+          );
+        }
+      );
+      request.end();
+    }
+  );
+}
+
 export {
   addMember,
   deleteMember,
   getPlayersNicknames,
+  getProvinceNames,
   loadFile,
   saveFile,
   sendMesseges

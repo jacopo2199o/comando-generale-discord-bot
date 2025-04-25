@@ -88,11 +88,11 @@ client.login(
   process.env.bot_token
 ).then(
   () => console.log(
-    "login effettuato con successo"
+    "logged in successfully"
   )
 ).catch(
   error => console.error(
-    "errore durante il login:",
+    "login failed:",
     error
   )
 );
@@ -123,12 +123,10 @@ Object.entries(
       eventName,
       handler
     ]
-  ) => {
-    client.on(
-      eventName,
-      handler
-    );
-  }
+  ) => client.on(
+    eventName,
+    handler
+  )
 );
 // gestione errori globali
 process.on(

@@ -1,17 +1,17 @@
-import http from "node:http";
 import {
   EmbedBuilder
 } from "discord.js";
+import http from "node:http";
 import {
-  getCustomRole
-} from "../../resources/custom-roles.js";
+  reputationPoints
+} from "../../events/ready.js";
 import {
   customPoints,
   getCalculatedPoints
 } from "../../resources/custom-points.js";
 import {
-  reputationPoints
-} from "../../events/ready.js";
+  getCustomRole
+} from "../../resources/custom-roles.js";
 
 /**
  * @param {import("discord.js").Interaction} interaction
@@ -19,11 +19,11 @@ import {
 async function changeNickname(
   interaction
 ) {
-  // Aggiungi gli ID dei canali consentiti
   const allowed_channels = [
     "1168970952311328768",
     "1165937736121860198"
   ];
+
   if (
     !allowed_channels.includes(
       interaction.channelId
@@ -35,76 +35,87 @@ async function changeNickname(
     });
     return;
   }
+
   await interaction.deferReply();
   const maker = interaction.member;
   const role = getCustomRole(
     interaction.member
   );
-  const points = getCalculatedPoints(
+  const action_points = getCalculatedPoints(
     customPoints.interactionCreate,
     reputationPoints[maker.guild.id][maker.id].points
   );
-  const request = http.request({
-    host: "localhost",
-    port: "3000",
-    path: "/set_nickname?id=0",
-    method: "POST",
-  }, function (
-    response
-  ) {
-    let data = "";
-    response.on(
-      "data",
-      function (
-        chunk
-      ) {
-        data += chunk;
-      }
-    ).on(
-      "end",
-      async function () {
-        if (
-          response.statusCode == 200
-        ) {
-          const result = JSON.parse(
-            data
-          );
-          const message = new EmbedBuilder().setTitle(
-            "🗺️ map game - europe"
-          ).setDescription(
-            `👤 *${result.nickname}* changed nickname`
-          ).addFields({
-            name: "\u200b",
-            value: "use */mg-change-color* to edit your color"
-          }).setFooter({
-            text: `${points} ⭐ to ${maker.displayName}`,
-            iconURL: `${maker.displayAvatarURL()}`
-          }).setColor(
-            role.color
-          ).setTimestamp();
-          await interaction.editReply({
-            embeds: [
-              message
-            ]
-          });
-        } else {
-          await interaction.editReply(
-            data
-          );
+  const request = http.request(
+    {
+      host: "localhost",
+      port: "3000",
+      path: "/set_nickname?id=0",
+      method: "POST",
+      timeout: 2900
+    },
+    response => {
+      let data = "";
+      response.on(
+        "data",
+        chunk => data += chunk
+      ).on(
+        "end",
+        async () => {
+          if (
+            response.statusCode == 200
+          ) {
+            const {
+              new_nickname,
+              old_nickname
+            } = JSON.parse(
+              data
+            );
+            const message = new EmbedBuilder().setTitle(
+              "🗺️ map game - europe"
+            ).setDescription(
+              `👤 *${old_nickname}* changed nickname in ${new_nickname}`
+            ).setFooter(
+              {
+                text: `${action_points} ⭐ to ${maker.displayName}`,
+                iconURL: `${maker.displayAvatarURL()}`
+              }
+            ).setColor(
+              role.color
+            ).setTimestamp();
+            await interaction.editReply(
+              {
+                embeds: [
+                  message
+                ]
+              }
+            );
+          } else {
+            await interaction.editReply(
+              data
+            );
+          }
         }
-      }
-    );
-  }
+      );
+    }
   ).on(
     "error",
-    async function (
-      error
-    ) {
+    async error => {
       await interaction.editReply(
         "connection error, try again later"
       );
       console.error(
         error.message
+      );
+    }
+  ).on(
+    "timeout",
+    async () => {
+      request.destroy();
+      await interaction.editReply(
+        "connection timeout, try again later"
+      );
+      console.error(
+        "connection timeout"
       );
     }
   );

@@ -93,10 +93,9 @@ async function join(
               }
             );
           } else {
-            const errorMessage = data || "An unknown error occurred. Please try again later.";
             await interaction.editReply(
               {
-                content: errorMessage// Rendi il messaggio visibile solo all'utente
+                data
               }
             );
           }

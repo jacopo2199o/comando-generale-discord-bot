@@ -17,36 +17,27 @@ async function guildMemberUpdate(
   newMember
 ) {
   const channel = newMember.guild.channels.cache.find(
-    function (
-      channel
-    ) {
-      return channel.name === customChannels.activity;
-    }
+    channel => channel.name === customChannels.activity
   ) ?? newMember.guild.publicUpdatesChannel;
+
   if (
     oldMember.roles.cache.size > newMember.roles.cache.size
   ) {
     oldMember.roles.cache.forEach(
-      function (
-        role
-      ) {
+      role => {
         if (
           !newMember.roles.cache.has(
             role.id
           )
         ) {
-          const message = new EmbedBuilder();
-          message.setDescription(
+          const message = new EmbedBuilder().setDescription(
             `🔰 ${role} has been removed from *${newMember}*`
-          );
-          message.setFooter(
+          ).setFooter(
             {
               text: `${newMember.displayName}`,
               iconURL: `${newMember.displayAvatarURL()}`
             }
-          );
-          message.setTimestamp();
-          message.setColor(
+          ).setTimestamp().setColor(
             "DarkRed"
           );
           channel.send(
@@ -63,26 +54,20 @@ async function guildMemberUpdate(
     oldMember.roles.cache.size < newMember.roles.cache.size
   ) {
     newMember.roles.cache.forEach(
-      function (
-        role
-      ) {
+      role => {
         if (
           !oldMember.roles.cache.has(
             role.id
           )
         ) {
-          const message = new EmbedBuilder();
-          message.setDescription(
+          const message = new EmbedBuilder().setDescription(
             `🔰 ${role} has been added to *${newMember}*`
-          );
-          message.setFooter(
+          ).setFooter(
             {
               text: `${newMember.displayName}`,
               iconURL: `${newMember.displayAvatarURL()}`
             }
-          );
-          message.setTimestamp();
-          message.setColor(
+          ).setTimestamp().setColor(
             "DarkGreen"
           );
           channel.send(
@@ -101,15 +86,16 @@ async function guildMemberUpdate(
     const customRole = getCustomRole(
       newMember
     );
+
     if (
-      customRole === undefined
+      !customRole
     ) {
       return console.error(
         "guild member update: custom role undefined"
       );
     }
-    const message = new EmbedBuilder();
-    message.setTitle(
+
+    const message = new EmbedBuilder().setTitle(
       "🪪 new nickname"
     ).setDescription(
       `${customRole} *${oldMember.displayName}* changed his nickname in ${newMember.displayName}`

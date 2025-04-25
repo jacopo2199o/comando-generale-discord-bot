@@ -42,12 +42,17 @@ import {leaderboard} from "../commands/map game/mg-leaderboard.js";
 import {moveActionPoints} from "../commands/map game/mg-move-action-points.js";
 import {setCapital} from "../commands/map game/mg-set-capital.js";
 import {
-  takeProvince
+  takeProvince,
+  takeProvinceAutocomplete
 } from "../commands/map game/mg-take-province.js";
 import {viewCapitals} from "../commands/map game/mg-view-capitals.js";
 import {
   viewMap
 } from "../commands/map game/mg-view-map.js";
+import {
+  viewPlayer,
+  viewPlayerAutocomplete
+} from "../commands/map game/mg-view-player.js";
 import {
   viewProfile
 } from "../commands/map game/mg-view-profile.js";
@@ -114,6 +119,18 @@ async function interactionCreate(
       interaction.commandName === "mg-fortify-all"
     ) {
       donateProvinceAutocomplete(
+        interaction
+      );
+    } else if (
+      interaction.commandName === "mg-take-province"
+    ) {
+      takeProvinceAutocomplete(
+        interaction
+      );
+    } else if (
+      interaction.commandName === "mg-view-player"
+    ) {
+      viewPlayerAutocomplete(
         interaction
       );
     }
@@ -313,6 +330,12 @@ async function interactionCreate(
       interaction.commandName === "mg-donate-province"
     ) {
       donateProvince(
+        interaction
+      );
+    } else if (
+      interaction.commandName === "mg-view-player"
+    ) {
+      viewPlayer(
         interaction
       );
     } else {

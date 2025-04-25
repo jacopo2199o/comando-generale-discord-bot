@@ -27,24 +27,26 @@ async function activity(
   const customRole = getCustomRole(
     member
   );
+
   if (
-    customRole === undefined
+    !customRole
   ) {
-    return;
+    return new Error(
+      "activity: custom role not found"
+    );
   }
+
   globalPoints[member.guild.id][member.id] += points;
-  let updateResult = undefined;
   const channel = member.guild.channels.cache.find(
-    function (
-      channel
-    ) {
-      return channel.name === customChannels.activity;
-    }
+    channel => channel.name === customChannels.activity
   ) ?? member.guild.publicUpdatesChannel;
+  let updateResult = undefined;
+
   if (
     points > 0
   ) {
     pointsLastMove[member.guild.id][member.id] = 1;
+
     if (
       globalPoints[member.guild.id][member.id] >= 22000 &&
       customRole.name === "senatore"
@@ -244,8 +246,9 @@ async function activity(
         "membro"
       );
     }
+
     if (
-      updateResult !== undefined
+      updateResult
     ) {
       const message = new EmbedBuilder().setTitle(
         "🔰 promotion"
@@ -482,7 +485,7 @@ async function activity(
       );
     }
     if (
-      updateResult !== undefined
+      updateResult
     ) {
       const message = new EmbedBuilder().setTitle(
         "🔰 downgrade"
@@ -518,6 +521,7 @@ async function activity(
       );
     }
   }
+
   if (
     globalPoints[member.guild.id][member.id] < 0
   ) {
