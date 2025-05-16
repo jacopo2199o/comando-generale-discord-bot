@@ -1,4 +1,9 @@
 import {
+  createCanvas,
+  loadImage
+} from "canvas";
+import {
+  AttachmentBuilder,
   EmbedBuilder
 } from "discord.js";
 import http from "node:http";
@@ -12,13 +17,13 @@ import {
 import {
   getCustomRole
 } from "../../resources/custom-roles.js";
+
 /**
  * @param {import("discord.js").Interaction} interaction
  */
 async function viewProfile(
   interaction
 ) {
-  // aggiungi gli id dei canali consentiti
   const allowed_channels = [
     "1168970952311328768",
     "1165937736121860198"
@@ -72,7 +77,8 @@ async function viewProfile(
           ) {
             const {
               nickname,
-              points: actionPoints,
+              points,
+              global_relationships,
               score
             } = JSON.parse(
               data
@@ -84,14 +90,20 @@ async function viewProfile(
             ).addFields(
               {
                 name: "action points",
-                value: `${actionPoints}`,
+                value: `${points}`,
+                inline: true
+              }
+            ).addFields(
+              {
+                name: "global relationships",
+                value: `${global_relationships}`,
                 inline: true
               }
             ).addFields(
               {
                 name: "score",
                 value: `${score}`,
-                inline: true
+                inline: false
               }
             ).setFooter(
               {
@@ -108,6 +120,106 @@ async function viewProfile(
                 ]
               }
             );
+            const imageRequest = http.request(
+              {
+                host: "localhost",
+                port: "3000",
+                path: `/view_action_points_map?map_id=0&player_id=${maker.id}`,
+                method: "GET",
+                timeout: 2900
+              },
+              imageResponse => {
+                let imageData = "";
+                imageResponse.on(
+                  "data",
+                  chunk => imageData += chunk
+                ).on(
+                  "end",
+                  async () => {
+                    if (
+                      imageResponse.statusCode === 200
+                    ) {
+                      try {
+                        // converti l'svg in png
+                        const canvas = createCanvas(
+                          800,
+                          600
+                        );
+                        const context = canvas.getContext(
+                          "2d"
+                        );
+                        const image = await loadImage(
+                          `data:image/svg+xml;base64,${Buffer.from(imageData).toString("base64")}`
+                        );
+                        context.drawImage(
+                          image,
+                          0,
+                          0,
+                          canvas.width,
+                          canvas.height
+                        );
+                        // ottieni il buffer png
+                        const pngBuffer = canvas.toBuffer(
+                          "image/png"
+                        );
+                        // invia l'immagine come allegato
+                        const attachment = new AttachmentBuilder(
+                          pngBuffer,
+                          {
+                            name: "profile.png"
+                          }
+                        );
+                        await interaction.followUp(
+                          {
+                            content: "action points map (brighter regions have more action points)",
+                            files: [
+                              attachment
+                            ],
+                            ephemeral: true
+                          }
+                        );
+                      } catch (__error) {
+                        console.error(
+                          "error rendering svg to png:", __error
+                        );
+                        await interaction.followUp(
+                          {
+                            content: "failed to render the svg as an image",
+                            ephemeral: true
+                          }
+                        );
+                      }
+                    } else {
+                      await interaction.followUp(
+                        data
+                      );
+                    }
+                  }
+                );
+              }
+            ).on(
+              "error",
+              async error => {
+                await interaction.followUp(
+                  "connection error, try again later"
+                );
+                console.error(
+                  `connection error, try again later: ${error.message}`,
+                );
+              }
+            ).on(
+              "timeout",
+              async () => {
+                request.destroy();
+                await interaction.followUp(
+                  "connection timeout, try again later"
+                );
+                console.error(
+                  "connection timeout"
+                );
+              }
+            );
+            imageRequest.end();
           } else {
             await interaction.editReply(
               data
@@ -126,7 +238,7 @@ async function viewProfile(
         "connection error, try again later"
       );
       console.error(
-        error.message
+        `connection error, try again later: ${error.message}`,
       );
     }
   ).on(
@@ -147,3 +259,4 @@ async function viewProfile(
 export {
   viewProfile
 };
+

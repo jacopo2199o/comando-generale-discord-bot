@@ -1,4 +1,5 @@
 import {
+  ChannelType,
   EmbedBuilder
 } from "discord.js";
 import {
@@ -101,8 +102,21 @@ async function messageCreate(
       newMessage.channel
     );
   }
+
+  let description = "";
+
+  if (
+    newMessage.channel.isThread()
+  ) {
+    description = newMessage.channel.type === ChannelType.PublicThread
+      ? `💬 ${makerRole} *${maker}* sended a new message in *${newMessage.channel.name}* of ${newMessage.channel.parent.name}`
+      : `💬 ${makerRole} *${maker}* sended a new message in ${newMessage.channel.parent.name}`;
+  } else {
+    description = `💬 ${makerRole} *${maker}* sended a new message in ${newMessage.channel.name}`;
+  }
+
   const message = new EmbedBuilder().setDescription(
-    `💬 ${makerRole} *${maker}* sended a new message in *${newMessage.channel.name}*`
+    description
   ).setFooter(
     {
       text: `${makerPoints} ⭐ to ${maker.displayName}`,
@@ -112,11 +126,7 @@ async function messageCreate(
     makerRole.color
   );
   const channel = newMessage.guild.channels.cache.find(
-    function (
-      channel
-    ) {
-      return channel.name === customChannels.public;
-    }
+    channel => channel.name === customChannels.public
   ) ?? newMessage.guild.publicUpdatesChannel;
   channel.send(
     {

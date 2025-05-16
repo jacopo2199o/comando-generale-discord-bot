@@ -1,9 +1,20 @@
-import {EmbedBuilder} from "discord.js";
-import {reputationPoints} from "../../events/ready.js";
-import {customPoints, getCalculatedPoints} from "../../resources/custom-points.js";
-import {getCustomRole} from "../../resources/custom-roles.js";
+import {
+  EmbedBuilder
+} from "discord.js";
 import http from "node:http";
-import {getProvinceNames} from "../../resources/general-utilities.js";
+import {
+  reputationPoints
+} from "../../events/ready.js";
+import {
+  customPoints,
+  getCalculatedPoints
+} from "../../resources/custom-points.js";
+import {
+  getCustomRole
+} from "../../resources/custom-roles.js";
+import {
+  getProvinceNames
+} from "../../resources/general-utilities.js";
 
 async function takeProvince(
   interaction
@@ -73,8 +84,10 @@ async function takeProvince(
               defeated: `💀 *${attacker}* conquered *${province}* last province of ${defender}. if no action is taken, next hour he will be declared defeated`
             };
             const description = responses[name];
-            const message = new EmbedBuilder().setDescription(
-              `🗺️ map game - europe: ${description}`
+            const message = new EmbedBuilder().setTitle(
+              "🗺️ map game - europe"
+            ).setDescription(
+              description
             ).setFooter(
               {
                 text: `${activityPoints} ⭐ to ${maker.displayName}`,
@@ -124,19 +137,16 @@ async function takeProvince(
       );
     }
   );
-
-  const provinceName = interaction.options.getString(
-    "province-name"
-  );
-  const actionPoints = interaction.options.getNumber(
-    "action-points"
-  );
   request.write(
     JSON.stringify(
       {
         player_id: maker.id,
-        province_name: provinceName,
-        action_points: actionPoints
+        province_name: interaction.options.getString(
+          "province-name"
+        ),
+        action_points: interaction.options.getNumber(
+          "action-points"
+        )
       }
     )
   );

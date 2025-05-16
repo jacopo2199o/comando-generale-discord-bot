@@ -39,7 +39,7 @@ import {
   join
 } from "../commands/map game/mg-join.js";
 import {leaderboard} from "../commands/map game/mg-leaderboard.js";
-import {moveActionPoints} from "../commands/map game/mg-move-action-points.js";
+import {moveActionPoints, moveActionPointsAutocomplete} from "../commands/map game/mg-move-action-points.js";
 import {setCapital} from "../commands/map game/mg-set-capital.js";
 import {
   takeProvince,
@@ -88,6 +88,7 @@ import {
 import {
   takePromotionPoints
 } from "./take-promotion-points.js";
+import {setDiplomacy, setDiplomacyAutocomplete} from "../commands/map game/mg-set-diplomacy.js";
 
 /**
  * @param {import("discord.js").Interaction} interaction
@@ -131,6 +132,18 @@ async function interactionCreate(
       interaction.commandName === "mg-view-player"
     ) {
       viewPlayerAutocomplete(
+        interaction
+      );
+    } else if (
+      interaction.commandName === "mg-move-action-points"
+    ) {
+      moveActionPointsAutocomplete(
+        interaction
+      );
+    } else if (
+      interaction.commandName === "mg-set-diplomacy"
+    ) {
+      setDiplomacyAutocomplete(
         interaction
       );
     }
@@ -336,6 +349,12 @@ async function interactionCreate(
       interaction.commandName === "mg-view-player"
     ) {
       viewPlayer(
+        interaction
+      );
+    } else if (
+      interaction.commandName === "mg-set-diplomacy"
+    ) {
+      setDiplomacy(
         interaction
       );
     } else {

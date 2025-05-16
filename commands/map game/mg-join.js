@@ -72,11 +72,6 @@ async function join(
               "🗺️ map game - europe"
             ).setDescription(
               `👑 *${result.nickname}* joined`
-            ).addFields(
-              {
-                name: "\u200b",
-                value: "use */mg-view-map* to see the map"
-              }
             ).setFooter(
               {
                 text: `${points} ⭐ to ${maker.displayName}`,

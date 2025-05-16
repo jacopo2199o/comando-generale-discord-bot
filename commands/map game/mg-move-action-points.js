@@ -11,16 +11,21 @@ import {
 import {
   getCustomRole
 } from "../../resources/custom-roles.js";
+import {
+  getProvinceNames
+} from "../../resources/general-utilities.js";
+import http from "node:http";
+
 /**
  * @param {import("discord.js").Interaction} interaction
  */
 async function moveActionPoints(
   interaction
 ) {
-  // Aggiungi gli ID dei canali consentiti
+  // aggiungi gli id dei canali consentiti
   const allowed_channels = [
-    "1168970952311328768", // int-roleplay
-    "1165937736121860198" // bot-testing
+    "1168970952311328768",
+    "1165937736121860198"
   ];
 
   if (
@@ -28,118 +33,171 @@ async function moveActionPoints(
       interaction.channelId
     )
   ) {
-    await interaction.reply({
-      content: "*map game* commands can only be used in *int-roleplay* channel",
-      ephemeral: true
-    });
+    await interaction.reply(
+      {
+        content: "*map game* commands can only be used in *int-roleplay* channel",
+        ephemeral: true
+      }
+    );
     return;
   }
 
   await interaction.deferReply();
-  const fromProvince = interaction.options.getString(
-    "from-province"
-  );
-  const toProvince = interaction.options.getString(
-    "to-province"
-  );
-  const actionPoints = interaction.options.getNumber(
-    "action-points"
-  );
-  const playerId = interaction.user.id;
   const maker = interaction.member;
   const role = getCustomRole(
     maker
   );
-  const points = getCalculatedPoints(
+  const activity_points = getCalculatedPoints(
     customPoints.interactionCreate,
     reputationPoints[interaction.guildId][maker.id].points
   );
 
-  try {
-    const response = await fetch(
-      "http://localhost:3000/move_action_points",
-      {
-        method: "POST",
-        body: JSON.stringify(
-          {
-            map_id: 0,
-            player_id: playerId,
-            from_province: fromProvince,
-            to_province: toProvince,
-            action_points: actionPoints
+  const request = http.request(
+    {
+      host: "localhost",
+      port: "3000",
+      path: "/move_action_points?map_id=0",
+      method: "POST",
+      timeout: 2900
+    },
+    response => {
+      let data = "";
+      response.on(
+        "data",
+        chunk => data += chunk
+      ).on(
+        "end",
+        async () => {
+          if (
+            response.statusCode === 200
+          ) {
+            const {
+              sender,
+              receiver,
+              from,
+              to,
+              action_points,
+              cost
+            } = JSON.parse(
+              data
+            );
+            const point_s = action_points > 1
+              ? "points"
+              : "point";
+            const description = sender.nickname === receiver.nickname
+              ? `👤 *${sender.nickname}* moves ${action_points} *action ${point_s}* from *${from}* to *${to}*`
+              : `👤 *${sender.nickname}* moves ${action_points} *action ${point_s}* from *${from}* to *${to}* of *${receiver.nickname}*`;
+            const message = new EmbedBuilder().setTitle(
+              "🗺️ map game - europe"
+            ).setDescription(
+              description
+            ).addFields(
+              {
+                name: "operation cost",
+                value: `${cost} 🪙`,
+                inline: false
+              }
+            ).setFooter(
+              {
+                text: `${activity_points} ⭐ to ${maker.displayName}`,
+                iconURL: `${maker.displayAvatarURL()}`
+              }
+            ).setColor(
+              role.color
+            ).setTimestamp();
+            await interaction.editReply(
+              {
+                embeds: [
+                  message
+                ]
+              }
+            );
+          } else {
+            await interaction.editReply(
+              data
+            );
           }
+        }
+      );
+    }
+  ).on(
+    "error",
+    async error => {
+      await interaction.editReply(
+        "connection error, try again later"
+      );
+      console.error(
+        `connection error, try again later: ${error.message}`,
+      );
+    }
+  ).on(
+    "timeout",
+    async () => {
+      request.destroy();
+      await interaction.editReply(
+        "connection timeout, try again later"
+      );
+      console.error(
+        "connection timeout"
+      );
+    }
+  );
+  request.write(
+    JSON.stringify(
+      {
+        player_id: maker.id,
+        from_province: interaction.options.getString(
+          "from-province"
+        ),
+        to_province: interaction.options.getString(
+          "to-province"
+        ),
+        action_points: interaction.options.getNumber(
+          "action-points"
         )
       }
-    );
-    const contentType = response.headers.get(
-      "content-type"
-    );
-    let data = undefined;
-    if (
-      contentType != undefined &&
-      contentType.includes(
-        "text/plain"
-      )
-    ) {
-      data = await response.text();
-    } else {
-      data = await response.json();
-    }
-    if (
-      response.status != 200
-    ) {
-      await interaction.editReply(
-        data
-      );
-      return;
-    }
-    if (
-      data.error
-    ) {
-      await interaction.editReply(
-        `something goes wrong: ${data.error}`
-      );
-    } else {
-      const {
-        sender,
-        receiver,
-        from,
-        to,
-        action_points
-      } = data;
-      const s = action_points > 1
-        ? "points"
-        : "point";
-      const description = sender.nickname === receiver.nickname
-        ? `🗺️ map game - europe: 👤 *${sender.nickname}* moves ${action_points} *action ${s}* from *${from}* to *${to}*`
-        : `🗺️ map game - europe: 👤 *${sender.nickname}* moves ${action_points} *action ${s}* from *${from}* to *${to}* of *${receiver.nickname}*`;
-      const message = new EmbedBuilder().setDescription(
-        description
-      ).setFooter(
-        {
-          text: `${points} ⭐ to ${maker.displayName}`,
-          iconURL: `${maker.displayAvatarURL()}`
-        }
-      ).setColor(
-        role.color
-      ).setTimestamp();
-      await interaction.editReply(
-        {
-          embeds: [
-            message
-          ]
-        }
-      );
-    }
-  } catch (
-  __error
+    )
+  );
+  request.end();
+}
+
+async function moveActionPointsAutocomplete(
+  interaction
+) {
+  const focusedOption = interaction.options.getFocused(
+    true
+  );
+
+  if (
+    focusedOption.name === "from-province" ||
+    focusedOption.name === "to-province"
   ) {
-    await interaction.editReply(
-      `something goes wrong: ${__error}`
+    const provinceNames = await getProvinceNames(
+      0 // map_id
+    );
+    const filteredProvinces = provinceNames.filter(
+      province => province.name.toLowerCase().includes(
+        focusedOption.value.toLowerCase()
+      )
+    ).map(
+      province => (
+        {
+          name: province.name,
+          value: province.value
+        }
+      )
+    );
+    await interaction.respond(
+      filteredProvinces.slice(
+        0, 8
+      ) // massimo 25
     );
   }
+
+  return; // esci dopo l'autocompletamento!
 }
 
 export {
-  moveActionPoints
+  moveActionPoints,
+  moveActionPointsAutocomplete
 };

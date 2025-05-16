@@ -1,15 +1,26 @@
+import {
+  EmbedBuilder
+} from "discord.js";
 import http from "node:http";
-import {getCustomRole} from "../../resources/custom-roles.js";
-import {customPoints} from "../../resources/custom-points.js";
-import {reputationPoints} from "../../events/ready.js";
-import {getCalculatedPoints} from "../../resources/custom-points.js";
-import {getPlayersNicknames} from "../../resources/general-utilities.js";
-import {EmbedBuilder} from "discord.js";
-
-async function donateProvince(
+import {
+  reputationPoints
+} from "../../events/ready.js";
+import {
+  customPoints,
+  getCalculatedPoints
+} from "../../resources/custom-points.js";
+import {
+  getCustomRole
+} from "../../resources/custom-roles.js";
+import {
+  getPlayersNicknames
+} from "../../resources/general-utilities.js";
+/**
+ * @param {import("discord.js").Interaction} interaction
+ */
+async function setDiplomacy(
   interaction
 ) {
-  // aggiungi gli id dei canali consentiti
   const allowed_channels = [
     "1168970952311328768",
     "1165937736121860198"
@@ -32,16 +43,17 @@ async function donateProvince(
   await interaction.deferReply();
   const maker = interaction.member;
   const role = getCustomRole(
-    interaction.member
+    maker
   );
   const activity_points = getCalculatedPoints(
-    customPoints.interactionCreate, reputationPoints[maker.guild.id][maker.id].points
+    customPoints.interactionCreate,
+    reputationPoints[interaction.guildId][maker.id].points
   );
   const request = http.request(
     {
       host: "localhost",
       port: "3000",
-      path: "/donate_province?map_id=0",
+      path: "/set_diplomacy?map_id=0",
       method: "POST",
       timeout: 2900
     },
@@ -57,9 +69,10 @@ async function donateProvince(
             response.statusCode === 200
           ) {
             const {
-              donor,
-              receiver,
-              province,
+              player,
+              target_player,
+              new_relation,
+              previous_relation,
               cost
             } = JSON.parse(
               data
@@ -67,7 +80,19 @@ async function donateProvince(
             const message = new EmbedBuilder().setTitle(
               "🗺️ map game - europe"
             ).setDescription(
-              `📜 *${donor}* donate *${province}* to *${receiver}*`
+              `📜 *${player}* have changed diplomatic relations with *${target_player}*`
+            ).addFields(
+              {
+                name: "actual relationship",
+                value: `${new_relation.label}`,
+                inline: true
+              }
+            ).addFields(
+              {
+                name: "previous relationship",
+                value: `${previous_relation.label}`,
+                inline: true
+              }
             ).addFields(
               {
                 name: "operation cost",
@@ -93,53 +118,49 @@ async function donateProvince(
             await interaction.editReply(
               data
             );
-            console.log(
-              data
-            );
           }
-        }
-      ).on(
-        "error",
-        async error => {
-          await interaction.editReply(
-            "connection error, try again later"
-          );
-          console.error(
-            error.message
-          );
-        }
-      ).on(
-        "timeout",
-        async () => {
-          request.destroy();
-          await interaction.editReply(
-            "connection timeout, try again later"
-          );
-          console.error(
-            "connection timeout"
-          );
         }
       );
     }
+  ).on(
+    "error",
+    async error => {
+      await interaction.editReply(
+        "connection error, try again later"
+      );
+      console.error(
+        `connection error, try again later: ${error.message}`,
+      );
+    }
+  ).on(
+    "timeout",
+    async () => {
+      request.destroy();
+      await interaction.editReply(
+        "connection timeout, try again later"
+      );
+      console.error(
+        "connection timeout"
+      );
+    }
   );
-
   request.write(
     JSON.stringify(
       {
-        donor_id: maker.id,
-        receiver_id: interaction.options.getString(
+        player_id: maker.id,
+        player_target_id: interaction.options.getString(
           "player-nickname"
         ),
-        province_name: interaction.options.getString(
-          "province-name"
-        ),
+        relation_value: interaction.options.getNumber(
+          "relation-value"
+        )
       }
     )
   );
   request.end();
 }
 
-async function donateProvinceAutocomplete(
+async function setDiplomacyAutocomplete(
   interaction
 ) {
   const focusedOption = interaction.options.getFocused(
@@ -175,6 +196,6 @@ async function donateProvinceAutocomplete(
 }
 
 export {
-  donateProvince,
-  donateProvinceAutocomplete
+  setDiplomacy,
+  setDiplomacyAutocomplete
 };

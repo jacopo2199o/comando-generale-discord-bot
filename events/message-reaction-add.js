@@ -1,4 +1,5 @@
 import {
+  ChannelType,
   EmbedBuilder
 } from "discord.js";
 import {
@@ -145,10 +146,22 @@ async function messageReactionAdd(
       taker,
       takerPoints
     );
+    let description = "";
+
+    if (
+      reaction.message.channel.isThread()
+    ) {
+      description = reaction.message.channel.type === ChannelType.PublicThread
+        ? `${makerRole} *${maker}* reacted ${reaction.emoji} to message sent by ${takerRole} *${taker}* in ${reaction.message.channel.name} of ${reaction.message.channel.parent}`
+        : `${makerRole} *${maker}* reacted ${reaction.emoji} to message sent by ${takerRole} *${taker}* in ${reaction.message.channel.parent.name}`;
+    } else {
+      description = `${makerRole} *${maker}* reacted ${reaction.emoji} to message sent by ${takerRole} *${taker}* in ${reaction.message.channel.name}`;
+    }
+
     const message = new EmbedBuilder().setTitle(
       "🧸 reaction"
     ).setDescription(
-      `${makerRole} *${maker}* reacted ${reaction.emoji} to message sent by ${takerRole} *${taker}* in *${reaction.message.channel.name}*`
+      description
     ).addFields(
       {
         name: "promotion points",

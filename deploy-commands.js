@@ -245,11 +245,11 @@ commands.push(
     option => option.setName(
       "red"
     ).setDescription(
-      "red channel value (16 to 128) for color to show on map"
+      "red channel value (31 to 223) for color to show on map"
     ).setMinValue(
-      16
+      31
     ).setMaxValue(
-      128
+      223
     ).setRequired(
       true
     )
@@ -257,11 +257,11 @@ commands.push(
     option => option.setName(
       "green"
     ).setDescription(
-      "green channel value (16 to 128) for color to show on map"
+      "green channel value (31 to 223) for color to show on map"
     ).setMinValue(
-      16
+      31
     ).setMaxValue(
-      128
+      223
     ).setRequired(
       true
     )
@@ -269,11 +269,11 @@ commands.push(
     option => option.setName(
       "blue"
     ).setDescription(
-      "blue channel value (16 to 128) for color to show on map"
+      "blue channel value (31 to 223) for color to show on map"
     ).setMinValue(
-      16
+      31
     ).setMaxValue(
-      128
+      223
     ).setRequired(
       true
     )
@@ -385,11 +385,11 @@ commands.push(
     option => option.setName(
       "red"
     ).setDescription(
-      "red channel value (16 to 128) for color to show on map"
+      "red channel value (31 to 223) for color to show on map"
     ).setMinValue(
-      16
+      31
     ).setMaxValue(
-      128
+      223
     ).setRequired(
       true
     )
@@ -397,11 +397,11 @@ commands.push(
     option => option.setName(
       "green"
     ).setDescription(
-      "green channel value (16 to 128) for color to show on map"
+      "green channel value (31 to 223) for color to show on map"
     ).setMinValue(
-      16
+      31
     ).setMaxValue(
-      128
+      223
     ).setRequired(
       true
     )
@@ -409,11 +409,11 @@ commands.push(
     option => option.setName(
       "blue"
     ).setDescription(
-      "blue channel value (16 to 128) for color to show on map"
+      "blue channel value (31 to 223) for color to show on map"
     ).setMinValue(
-      16
+      31
     ).setMaxValue(
-      128
+      223
     ).setRequired(
       true
     )
@@ -432,7 +432,7 @@ commands.push(
     ).setMinLength(
       0
     ).setMaxLength(
-      24
+      32
     ).setRequired(
       true
     )
@@ -450,6 +450,8 @@ commands.push(
       "name of the province you are transferring from"
     ).setRequired(
       true
+    ).setAutocomplete(
+      true
     )
   ).addStringOption(
     option => option.setName(
@@ -457,6 +459,8 @@ commands.push(
     ).setDescription(
       "name of the province you are transferring to"
     ).setRequired(
+      true
+    ).setAutocomplete(
       true
     )
   ).addNumberOption(
@@ -524,6 +528,35 @@ commands.push(
     ).setRequired(
       true
     ).setAutocomplete(
+      true
+    )
+  )
+);
+commands.push(
+  new SlashCommandBuilder().setName(
+    "mg-set-diplomacy"
+  ).setDescription(
+    "set your diplomacy stance with other players"
+  ).addStringOption(
+    option => option.setName(
+      "player-nickname"
+    ).setDescription(
+      "player nickname to adjust diplomatic relations with"
+    ).setRequired(
+      true
+    ).setAutocomplete(
+      true
+    )
+  ).addNumberOption(
+    option => option.setName(
+      "relation-value"
+    ).setDescription(
+      "relation value from war (-3) to allies (3)"
+    ).setMinValue(
+      -3
+    ).setMaxValue(
+      3
+    ).setRequired(
       true
     )
   )

@@ -27,6 +27,17 @@ async function checkMembers(
       const customRole = getCustomRole(
         member
       );
+
+      if (
+        !customRole &&
+        !member.user.bot
+      ) {
+        messages.push(
+          `member *${member}* does not have a custom role assigned\n`
+        );
+        return;
+      }
+
       const customRoles = getCustomRoles(
         member
       );

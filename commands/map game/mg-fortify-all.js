@@ -77,9 +77,11 @@ async function fortifyAll(
               ? "points"
               : "point";
             const messageDescription = donor === receiver
-              ? `🗺️ map game - europe: 🛡️ *${donor}* has fortified its territories by ${cost} *action* ${pointString}`
-              : `🗺️ map game - europe: 🛡️ *${donor}* has fortified territories of *${receiver}* by ${cost} *action* ${pointString}`;
-            const message = new EmbedBuilder().setDescription(
+              ? `🛡️ *${donor}* has fortified its territories by ${cost} *action ${pointString}*`
+              : `🛡️ *${donor}* has fortified territories of *${receiver}* by ${cost} *action ${pointString}*`;
+            const message = new EmbedBuilder().setTitle(
+              "🗺️ map game - europe"
+            ).setDescription(
               messageDescription
             ).setFooter(
               {
@@ -109,7 +111,7 @@ async function fortifyAll(
             "connection error, try again later"
           );
           console.error(
-            error.message
+            `connection error, try again later: ${error.message}`
           );
         }
       ).on(
