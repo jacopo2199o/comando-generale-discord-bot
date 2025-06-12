@@ -1,7 +1,7 @@
-import http from "node:http";
 import {
   EmbedBuilder
 } from "discord.js";
+import http from "node:http";
 import {
   reputationPoints
 } from "../../events/ready.js";
@@ -15,13 +15,12 @@ import {
 /**
  * @param {import("discord.js").Interaction} interaction
  */
-async function fortifyAll(
+async function set_nation_profile(
   interaction
 ) {
-  // aggiungi gli id dei canali consentiti
   const allowed_channels = [
-    "1168970952311328768", // int-roleplay
-    "1165937736121860198" // bot-testing
+    "1168970952311328768",
+    "1165937736121860198"
   ];
 
   if (
@@ -43,7 +42,7 @@ async function fortifyAll(
   const role = getCustomRole(
     maker
   );
-  const promotionPoints = getCalculatedPoints(
+  const activity_points = getCalculatedPoints(
     customPoints.interactionCreate,
     reputationPoints[interaction.guildId][maker.id].points
   );
@@ -51,7 +50,7 @@ async function fortifyAll(
     {
       host: "localhost",
       port: "3000",
-      path: "/fortify-all?map_id=0",
+      path: "/set_nation_profile?map_id=0",
       method: "POST",
       timeout: 2900
     },
@@ -67,25 +66,29 @@ async function fortifyAll(
             response.statusCode === 200
           ) {
             const {
-              player_1,
-              player_2,
-              cost
+              player_nickname,
+              resources,
+              population,
+              materials,
+              food,
+              civilians,
+              military
             } = JSON.parse(
               data
             );
-            const pointString = cost > 1
-              ? "points"
-              : "point";
-            const messageDescription = player_1 === player_2
-              ? `🛡️ *${player_1}* has fortified its territories by ${cost} *action ${pointString}*`
-              : `🛡️ *${player_1}* has fortified territories of *${player_2}* by ${cost} *action ${pointString}*`;
+            const details = `⛰️ **resources:** ${resources}/10\n` +
+              `👤 **population:** ${population}/10\n` +
+              `🪨 **materials:** ${materials}/10\n` +
+              `🍞 **food:** ${food}/10\n` +
+              `🧢 **civilians:** ${civilians}/10\n` +
+              `🪖 **military:** ${military}/10`;
             const message = new EmbedBuilder().setTitle(
               "🗺️ map game - europe"
             ).setDescription(
-              messageDescription
+              `🔶 *${player_nickname}* edited his nation profile\n\n${details}`
             ).setFooter(
               {
-                text: `${promotionPoints} ⭐ to ${maker.displayName}`,
+                text: `${activity_points} ⭐ to ${maker.displayName}`,
                 iconURL: `${maker.displayAvatarURL()}`
               }
             ).setColor(
@@ -104,39 +107,42 @@ async function fortifyAll(
             );
           }
         }
-      ).on(
-        "error",
-        async error => {
-          await interaction.editReply(
-            "connection error, try again later"
-          );
-          console.error(
-            `connection error, try again later: ${error.message}`
-          );
-        }
-      ).on(
-        "timeout",
-        async () => {
-          request.destroy();
-          await interaction.editReply(
-            "connection timeout, try again later"
-          );
-          console.error(
-            "connection timeout"
-          );
-        }
+      );
+    }
+  ).on(
+    "error",
+    async error => {
+      await interaction.editReply(
+        "connection error, try again later"
+      );
+      console.error(
+        `connection error, try again later: ${error.message}`,
+      );
+    }
+  ).on(
+    "timeout",
+    async () => {
+      request.destroy();
+      await interaction.editReply(
+        "connection timeout, try again later"
+      );
+      console.error(
+        "connection timeout"
       );
     }
   );
   request.write(
     JSON.stringify(
       {
-        player_1_id: maker.id,
-        player_2_id: interaction.options.getString(
-          "player-nickname"
-        ) || maker.id,
-        action_points: interaction.options.getNumber(
-          "action-points"
+        player_id: maker.id,
+        resources_population: interaction.options.getNumber(
+          "resources-population"
+        ),
+        materials_food: interaction.options.getNumber(
+          "materials-food"
+        ),
+        civilians_military: interaction.options.getNumber(
+          "civilians-military"
         )
       }
     )
@@ -145,5 +151,5 @@ async function fortifyAll(
 }
 
 export {
-  fortifyAll
+  set_nation_profile
 };

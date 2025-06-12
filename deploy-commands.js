@@ -327,7 +327,7 @@ commands.push(
     ).setDescription(
       "player who will receive reinforces"
     ).setRequired(
-      true
+      false
     ).setAutocomplete(
       true
     ) // abilita l'autocompletamento
@@ -432,7 +432,7 @@ commands.push(
     ).setMinLength(
       0
     ).setMaxLength(
-      32
+      64
     ).setRequired(
       true
     )
@@ -557,6 +557,66 @@ commands.push(
     ).setMaxValue(
       3
     ).setRequired(
+      true
+    )
+  )
+);
+commands.push(
+  new SlashCommandBuilder().setName(
+    "mg-set-nation-profile"
+  ).setDescription(
+    "edit your nation profile of action points distribution"
+  ).addNumberOption(
+    option => option.setName(
+      "resources-population"
+    ).setDescription(
+      "action points distribution of resources (up to -4) over population (up to 4)"
+    ).setMinValue(
+      -4
+    ).setMaxValue(
+      4
+    ).setRequired(
+      true
+    )
+  ).addNumberOption(
+    option => option.setName(
+      "materials-food"
+    ).setDescription(
+      "resources distribution of raw materials (up to -4) over food goods (up to 4)"
+    ).setMinValue(
+      -4
+    ).setMaxValue(
+      4
+    ).setRequired(
+      true
+    )
+  ).addNumberOption(
+    option => option.setName(
+      "civilians-military"
+    ).setDescription(
+      "population distribution of civilians (up to -4) over military (up to 4)"
+    ).setMinValue(
+      -4
+    ).setMaxValue(
+      4
+    ).setRequired(
+      true
+    )
+  )
+);
+commands.push(
+  new SlashCommandBuilder().setName(
+    "mg-view-nation-profile"
+  ).setDescription(
+    "view player's nation profile and other useful data"
+  ).addStringOption(
+    option => option.setName(
+      "player-nickname"
+    ).setDescription(
+      "in game player nickname to inspect"
+    ).setRequired(
+      true
+    ).setAutocomplete(
       true
     )
   )

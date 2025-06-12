@@ -52,34 +52,30 @@ async function viewProvince(
       path: `/province?map_id=0&player_id=${maker.id}&province_name=${provinceName}`,
       method: "GET",
     },
-    function (
-      response
-    ) {
+    response => {
       let data = "";
       response.on(
         "data",
-        function (
-          chunk
-        ) {
-          data += chunk;
-        }
+        chunk => data += chunk
       ).on(
         "end",
-        async function () {
+        async () => {
           if (
             response.statusCode == 200
           ) {
-            const response = JSON.parse(data);
+            const {
+              action_points,
+              player_nickname
+            } = JSON.parse(
+              data
+            );
+            const descsription = action_points
+              ? `🔷 *${provinceName}* of *${player_nickname}* province have:`
+              : `🔷 *${provinceName}* of *${player_nickname}*`;
             const message = new EmbedBuilder().setTitle(
               "🗺️ map game - europe"
             ).setDescription(
-              `🛖 *${provinceName}* province has:`
-            ).addFields(
-              {
-                name: "action points",
-                value: `${response}`,
-                inline: true
-              }
+              descsription
             ).setFooter(
               {
                 text: `${points} ⭐ to ${maker.displayName}`,
@@ -88,6 +84,19 @@ async function viewProvince(
             ).setColor(
               role.color
             ).setTimestamp();
+
+            if (
+              action_points
+            ) {
+              message.addFields(
+                {
+                  name: "action points",
+                  value: `${action_points}`,
+                  inline: true
+                }
+              );
+            }
+
             await interaction.editReply(
               {
                 embeds: [

@@ -16,6 +16,9 @@ import {
   getProvinceNames
 } from "../../resources/general-utilities.js";
 
+/**
+ * @param {import("discord.js").Interaction} interaction
+ */
 async function takeProvince(
   interaction
 ) {
@@ -71,17 +74,21 @@ async function takeProvince(
               province,
               attacker,
               defender,
-              defenderId,
-              damage
+              defender_id,
+              damage,
+              size_bonus,
+              capital_bonus,
+              coastal_bonus,
+              diplomacy_bonus
             } = JSON.parse(
               data
             );
             const responses = {
               failed: `⚔️ *${attacker}* failed to conquer *${province}* of *${defender}*: defense lost ${damage} *action points*`,
-              occupied: `🛖 *${attacker}* occupied *${province}*`,
+              occupied: `🔷 *${attacker}* occupied *${province}*`,
               reinforced: `🛡️ *${attacker}* reinforced *${province}*`,
               conquered: `🔥 *${attacker}* conquered *${province}* of *${defender}*`,
-              defeated: `💀 *${attacker}* conquered *${province}* last province of ${defender}. if no action is taken, next hour he will be declared defeated`
+              defeated: `💀 *${attacker}* conquered *${province}* the capital of *${defender}*. if no action is taken, next hour he will be declared defeated`
             };
             const description = responses[name];
             const message = new EmbedBuilder().setTitle(
@@ -96,15 +103,72 @@ async function takeProvince(
             ).setColor(
               role.color
             ).setTimestamp();
+
+            if (
+              capital_bonus
+            ) {
+              message.addFields(
+                {
+                  name: "🔶 capital bonus",
+                  value: `${capital_bonus}%`,
+                  inline: true
+                }
+              );
+            }
+
+            if (
+              size_bonus
+            ) {
+              message.addFields(
+                {
+                  name: "🟦 size bonus",
+                  value: `${size_bonus}%`,
+                  inline: true
+                }
+              );
+            }
+
+            if (
+              coastal_bonus
+            ) {
+              console.log(`${coastal_bonus} ${province}`);
+              message.addFields(
+                {
+                  name: "🌊 coastal bonus",
+                  value: `${coastal_bonus}%`,
+                  inline: true
+                }
+              );
+            }
+
+            if (
+              diplomacy_bonus
+            ) {
+              message.addFields(
+                {
+                  name: "🏛️ diplomacy bonus",
+                  value: `${diplomacy_bonus}%`,
+                  inline: true
+                }
+              );
+            }
+
+            const defender_user = defender_id
+              ? await interaction.guild.members.fetch(
+                defender_id
+              )
+              : null;
             await interaction.editReply(
               {
-                content: defender ? `<@${defenderId}> is under attack` : null, // menziona il difensore se esiste
-                allowedMentions: {
-                  repliedUser: defender ? false : undefined
-                },
+                //content: defender_user ? `<@${defender_user.id}> is under attack` : null,
                 embeds: [
                   message
                 ]
+              }
+            );
+            await interaction.followUp(
+              {
+                content: defender_user ? `<@${defender_user.id}> is under attack` : null,
               }
             );
           } else {

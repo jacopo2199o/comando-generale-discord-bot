@@ -93,9 +93,6 @@ async function donateProvince(
             await interaction.editReply(
               data
             );
-            console.log(
-              data
-            );
           }
         }
       ).on(

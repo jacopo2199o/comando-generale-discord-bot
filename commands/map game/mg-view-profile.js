@@ -224,9 +224,6 @@ async function viewProfile(
             await interaction.editReply(
               data
             );
-            console.log(
-              data
-            );
           }
         }
       );

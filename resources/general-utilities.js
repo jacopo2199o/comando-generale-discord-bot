@@ -84,6 +84,61 @@ function saveFile(
 }
 
 /**
+ * converte una stringa "rgb(r, g, b)" in un colore esadecimale "#rrggbb"
+ * @param {string} rgbString - stringa nel formato "rgb(r, g, b)"
+ * @returns {string|null} colore esadecimale nel formato "#rrggbb" oppure null se il formato non è valido
+ */
+function rgbToHex(
+  rgbString
+) {
+  const match = rgbString.match(
+    /^rgb\s*\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/i
+  );
+  if (
+    !match
+  ) return null; // se la stringa non corrisponde al formato, restituisce null
+  const r = parseInt(
+    match[1],
+    10
+  );
+  const g = parseInt(
+    match[2],
+    10
+  );
+  const b = parseInt(
+    match[3],
+    10
+  );
+  if (
+    [
+      r,
+      g,
+      b
+    ].some(
+      v => v < 0 ||
+        v > 255
+    )
+  ) return null; // controlla che i valori siano validi
+  return (
+    "#" +
+    [
+      r,
+      g,
+      b
+    ].map(
+      x => x.toString(
+        16
+      ).padStart(
+        2,
+        "0"
+      )
+    ).join(
+      ""
+    )
+  );
+}
+
+/**
  * @param { import("../community.js").Community } community
  * @param { Array<String> } messages
  */
@@ -308,6 +363,7 @@ export {
   getPlayersNicknames,
   getProvinceNames,
   loadFile,
+  rgbToHex,
   saveFile,
   sendMesseges
 };

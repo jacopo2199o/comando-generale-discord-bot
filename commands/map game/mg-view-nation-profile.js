@@ -10,15 +10,14 @@ import {
   getCalculatedPoints
 } from "../../resources/custom-points.js";
 import {
-  getCustomRole
-} from "../../resources/custom-roles.js";
-import {
+  rgbToHex,
   getPlayersNicknames
 } from "../../resources/general-utilities.js";
+
 /**
  * @param {import("discord.js").Interaction} interaction
  */
-async function setDiplomacy(
+async function view_nation_profile(
   interaction
 ) {
   const allowed_channels = [
@@ -42,19 +41,19 @@ async function setDiplomacy(
 
   await interaction.deferReply();
   const maker = interaction.member;
-  const role = getCustomRole(
-    maker
-  );
   const activity_points = getCalculatedPoints(
     customPoints.interactionCreate,
     reputationPoints[interaction.guildId][maker.id].points
+  );
+  const playerId = interaction.options.getString(
+    "player-nickname"
   );
   const request = http.request(
     {
       host: "localhost",
       port: "3000",
-      path: "/set_diplomacy?map_id=0",
-      method: "POST",
+      path: `/view_nation_profile?map_id=0&player_id=${playerId}`,
+      method: "GET",
       timeout: 2900
     },
     response => {
@@ -69,45 +68,34 @@ async function setDiplomacy(
             response.statusCode === 200
           ) {
             const {
-              player_1,
-              player_2,
-              new_relation,
-              previous_relation,
-              cost
+              color,
+              nickname,
+              materials,
+              food,
+              civilians,
+              military
             } = JSON.parse(
               data
             );
+            const details = `🪨 **materials:** ${materials}/10\n` +
+              `🍞 **food:** ${food}/10\n` +
+              `🧢 **civilians:** ${civilians}/10\n` +
+              `🪖 **military:** ${military}/10\n`;
             const message = new EmbedBuilder().setTitle(
               "🗺️ map game - europe"
             ).setDescription(
-              `📜 *${player_1}* have changed diplomatic relations with *${player_2}*`
-            ).addFields(
-              {
-                name: "actual relationship",
-                value: `${new_relation.label}`,
-                inline: true
-              }
-            ).addFields(
-              {
-                name: "previous relationship",
-                value: `${previous_relation.label}`,
-                inline: true
-              }
-            ).addFields(
-              {
-                name: "operation cost",
-                value: `${cost} 🪙`,
-                inline: false
-              }
+              `🔶 *${nickname}* nation profile\n\n${details}`
             ).setFooter(
               {
                 text: `${activity_points} ⭐ to ${maker.displayName}`,
                 iconURL: `${maker.displayAvatarURL()}`
               }
             ).setColor(
-              role.color
+              rgbToHex(
+                color
+              )
             ).setTimestamp();
-            await interaction.editReply(
+            await interaction.followUp(
               {
                 embeds: [
                   message
@@ -125,7 +113,7 @@ async function setDiplomacy(
   ).on(
     "error",
     async error => {
-      await interaction.editReply(
+      await interaction.followUp(
         "connection error, try again later"
       );
       console.error(
@@ -136,7 +124,7 @@ async function setDiplomacy(
     "timeout",
     async () => {
       request.destroy();
-      await interaction.editReply(
+      await interaction.followUp(
         "connection timeout, try again later"
       );
       console.error(
@@ -144,23 +132,10 @@ async function setDiplomacy(
       );
     }
   );
-  request.write(
-    JSON.stringify(
-      {
-        player_1_id: maker.id,
-        player_2_id: interaction.options.getString(
-          "player-nickname"
-        ),
-        relation_value: interaction.options.getNumber(
-          "relation-value"
-        )
-      }
-    )
-  );
   request.end();
 }
 
-async function setDiplomacyAutocomplete(
+async function view_player_autocomplete(
   interaction
 ) {
   const focusedOption = interaction.options.getFocused(
@@ -170,23 +145,23 @@ async function setDiplomacyAutocomplete(
   if (
     focusedOption.name === "player-nickname"
   ) {
-    const players = await getPlayersNicknames(
+    const playersNicknames = await getPlayersNicknames(
       0 // map_id
     );
-    const filteredPlayers = players.filter(
-      player => player.name.toLowerCase().includes(
+    const filteredNicknames = playersNicknames.filter(
+      nickname => nickname.name.toLowerCase().includes(
         focusedOption.value.toLowerCase()
       )
     ).map(
-      player => (
+      nickname => (
         {
-          name: player.name,
-          value: player.value
+          name: nickname.name,
+          value: nickname.value
         }
       )
     );
     await interaction.respond(
-      filteredPlayers.slice(
+      filteredNicknames.slice(
         0, 8
       ) // massimo 25
     );
@@ -196,6 +171,6 @@ async function setDiplomacyAutocomplete(
 }
 
 export {
-  setDiplomacy,
-  setDiplomacyAutocomplete
+  view_nation_profile,
+  view_player_autocomplete
 };

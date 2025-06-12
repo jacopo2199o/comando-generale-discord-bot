@@ -89,6 +89,8 @@ import {
   takePromotionPoints
 } from "./take-promotion-points.js";
 import {setDiplomacy, setDiplomacyAutocomplete} from "../commands/map game/mg-set-diplomacy.js";
+import {set_nation_profile} from "../commands/map game/mg-edit-nation-profile.js";
+import {view_nation_profile, view_player_autocomplete} from "../commands/map game/mg-view-nation-profile.js";
 
 /**
  * @param {import("discord.js").Interaction} interaction
@@ -146,6 +148,12 @@ async function interactionCreate(
       setDiplomacyAutocomplete(
         interaction
       );
+    } else if (
+      interaction.commandName === "mg-view-nation-profile"
+    ) {
+      view_player_autocomplete(
+        interaction
+      );
     }
   }
 
@@ -153,6 +161,7 @@ async function interactionCreate(
     interaction.isChatInputCommand()
   ) {
     const maker = interaction.member;
+
     if (
       maker === undefined
     ) {
@@ -163,6 +172,7 @@ async function interactionCreate(
     const makerRole = getCustomRole(
       maker
     );
+
     if (
       makerRole === undefined
     ) {
@@ -177,6 +187,7 @@ async function interactionCreate(
     const channelName = interaction.channel.name;
     const threadName = interaction.channel.parent.name;
     let isValidCommand = true;
+
     if (
       interaction.commandName === "about"
     ) {
@@ -355,6 +366,18 @@ async function interactionCreate(
       interaction.commandName === "mg-set-diplomacy"
     ) {
       setDiplomacy(
+        interaction
+      );
+    } else if (
+      interaction.commandName === "mg-set-nation-profile"
+    ) {
+      set_nation_profile(
+        interaction
+      );
+    } else if (
+      interaction.commandName === "mg-view-nation-profile"
+    ) {
+      view_nation_profile(
         interaction
       );
     } else {

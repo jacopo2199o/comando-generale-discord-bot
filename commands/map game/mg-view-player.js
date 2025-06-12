@@ -1,21 +1,29 @@
-import http from "node:http";
-import {
-  getPlayersNicknames
-} from "../../resources/general-utilities.js";
-import Canvas from "canvas";
-import {
+import Canvas, {
   Image
 } from "canvas";
 import {
-  AttachmentBuilder
+  AttachmentBuilder,
+  EmbedBuilder
 } from "discord.js";
+import http from "node:http";
+import {
+  reputationPoints
+} from "../../events/ready.js";
+import {
+  customPoints,
+  getCalculatedPoints
+} from "../../resources/custom-points.js";
+import {
+  getPlayersNicknames,
+  rgbToHex
+} from "../../resources/general-utilities.js";
+
 /**
  * @param {import("discord.js").Interaction} interaction
  */
 async function viewPlayer(
   interaction
 ) {
-  // aggiungi gli id dei canali consentiti
   const allowed_channels = [
     "1168970952311328768",
     "1165937736121860198"
@@ -39,6 +47,14 @@ async function viewPlayer(
     {
       ephemeral: false
     }
+  );
+  const maker = interaction.member;
+  const activity_points = getCalculatedPoints(
+    customPoints.interactionCreate,
+    reputationPoints[interaction.guildId][maker.id].points
+  );
+  const playerId = interaction.options.getString(
+    "player-nickname"
   );
   const request = http.request(
     {
@@ -93,6 +109,91 @@ async function viewPlayer(
                 ]
               }
             );
+            const player_request = http.request(
+              {
+                host: "localhost",
+                port: "3000",
+                path: `/map/player?map_id=0&player_id=${playerId}`,
+                method: "GET",
+                timeout: 2900
+              },
+              player_response => {
+                let data = "";
+                player_response.on(
+                  "data",
+                  chunk => data += chunk
+                ).on(
+                  "end",
+                  async () => {
+                    if (
+                      player_response.statusCode === 200
+                    ) {
+                      const {
+                        id,
+                        color,
+                        nickname,
+                        global_relationships,
+                        score,
+                        totals
+                      } = JSON.parse(
+                        data
+                      );
+                      const details = `✒️ **username:** <@${id}>\n` +
+                        `🏳️‍🌈 **color:** ${color}\n` +
+                        `🔷 **regions:** ${score}\n` +
+                        `🏛️ **global relationships:** ${global_relationships}\n` +
+                        `🪨 **materials:** ${totals.materials} t\n` +
+                        `🍞 **food:** ${totals.food} t\n` +
+                        `🧢 **civilians:** ${totals.civilians}\n` +
+                        `🪖 **military:** ${totals.military}`;
+                      const message = new EmbedBuilder().setTitle(
+                        "🗺️ map game - europe"
+                      ).setDescription(
+                        `👤 *${nickname}* player\n\n${details}`
+                      ).setFooter(
+                        {
+                          text: `${activity_points} ⭐ to ${maker.displayName}`,
+                          iconURL: `${maker.displayAvatarURL()}`
+                        }
+                      ).setColor(
+                        rgbToHex(
+                          color
+                        )
+                      ).setTimestamp();
+                      await interaction.followUp(
+                        {
+                          embeds: [
+                            message
+                          ]
+                        }
+                      );
+                    }
+                  }
+                );
+              }
+            ).on(
+              "error",
+              async error => {
+                await interaction.followUp(
+                  "connection error, try again later"
+                );
+                console.error(
+                  `connection error, try again later: ${error.message}`,
+                );
+              }
+            ).on(
+              "timeout",
+              async () => {
+                request.destroy();
+                await interaction.followUp(
+                  "connection timeout, try again later"
+                );
+                console.error(
+                  "connection timeout"
+                );
+              }
+            );
+            player_request.end();
           } else {
             await interaction.editReply(
               data
@@ -122,10 +223,6 @@ async function viewPlayer(
         "mg-view-player: connection timeout"
       );
     }
-  );
-
-  const playerId = interaction.options.getString(
-    "player-nickname"
   );
   request.write(
     JSON.stringify(

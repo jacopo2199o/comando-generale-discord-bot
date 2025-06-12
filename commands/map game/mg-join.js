@@ -89,9 +89,7 @@ async function join(
             );
           } else {
             await interaction.editReply(
-              {
-                data
-              }
+              data
             );
           }
         }
