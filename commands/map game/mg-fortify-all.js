@@ -67,18 +67,20 @@ async function fortifyAll(
             response.statusCode === 200
           ) {
             const {
-              player_1,
-              player_2,
-              cost
+              player_1_id,
+              player_1_nickname,
+              player_2_id,
+              player_2_nickname,
+              action_points
             } = JSON.parse(
               data
             );
-            const pointString = cost > 1
+            const pointString = action_points > 1
               ? "points"
               : "point";
-            const messageDescription = player_1 === player_2
-              ? `🛡️ *${player_1}* has fortified its territories by ${cost} *action ${pointString}*`
-              : `🛡️ *${player_1}* has fortified territories of *${player_2}* by ${cost} *action ${pointString}*`;
+            const messageDescription = player_1_id === player_2_id
+              ? `🛡️ *${player_1_nickname}* has fortified its territories by ${action_points} *action ${pointString}*`
+              : `🛡️ *${player_1_nickname}* has fortified territories of *${player_2_nickname}* by ${action_points} *action ${pointString}*`;
             const message = new EmbedBuilder().setTitle(
               "🗺️ map game - europe"
             ).setDescription(
@@ -98,6 +100,16 @@ async function fortifyAll(
                 ]
               }
             );
+
+            if (
+              player_1_id !== player_2_id
+            ) {
+              await interaction.followUp(
+                {
+                  content: `<@${player_2_id}>: you were reinforced by *${player_1_nickname}*`,
+                }
+              );
+            }
           } else {
             await interaction.editReply(
               data

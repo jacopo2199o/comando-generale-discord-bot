@@ -357,11 +357,84 @@ async function getProvinceNames(
   );
 }
 
+async function get_special_resources() {
+  return new Promise(
+    (
+      resolve,
+      reject
+    ) => {
+      const request = http.request(
+        {
+          host: "localhost",
+          port: "3000",
+          path: "/special_resources",
+          method: "GET",
+          timout: 2900
+        },
+        response => {
+          let data = "";
+          response.on(
+            "data",
+            chunk => data += chunk
+          ).on(
+            "end",
+            () => {
+              try {
+                const special_resources = Object.keys(
+                  JSON.parse(
+                    data
+                  )
+                ).map(
+                  special_resource => (
+                    {
+                      name: special_resource, // testo visibile nel menu
+                      value: special_resource // valore restituito al bot
+                    }
+                  )
+                );
+                resolve(
+                  special_resources
+                );
+              } catch (
+              __error
+              ) {
+                reject(
+                  __error
+                );
+              }
+            }
+          );
+        }
+      ).on(
+        "error",
+        error => reject(
+          error
+        )
+      ).on(
+        "timeout",
+        () => {
+          request.destroy();
+          console.error(
+            "request timed out"
+          );
+          reject(
+            new Error(
+              "request timeout"
+            )
+          );
+        }
+      );
+      request.end();
+    }
+  );
+}
+
 export {
   addMember,
   deleteMember,
   getPlayersNicknames,
   getProvinceNames,
+  get_special_resources,
   loadFile,
   rgbToHex,
   saveFile,

@@ -142,8 +142,8 @@ async function viewPlayer(
                         `🏳️‍🌈 **color:** ${color}\n` +
                         `🔷 **regions:** ${score}\n` +
                         `🏛️ **global relationships:** ${global_relationships}\n` +
-                        `🪨 **materials:** ${totals.materials} t\n` +
-                        `🍞 **food:** ${totals.food} t\n` +
+                        `🪨 **materials:** ${totals.materials}\n` +
+                        `🍞 **food:** ${totals.food}\n` +
                         `🧢 **civilians:** ${totals.civilians}\n` +
                         `🪖 **military:** ${totals.military}`;
                       const message = new EmbedBuilder().setTitle(

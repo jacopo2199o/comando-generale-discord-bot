@@ -70,6 +70,8 @@ async function view_nation_profile(
             const {
               color,
               nickname,
+              resources,
+              population,
               materials,
               food,
               civilians,
@@ -77,7 +79,9 @@ async function view_nation_profile(
             } = JSON.parse(
               data
             );
-            const details = `🪨 **materials:** ${materials}/10\n` +
+            const details = `⛰️ **resources:** ${resources}/10\n` +
+              `👤 **population:** ${population}/10\n` +
+              `🪨 **materials:** ${materials}/10\n` +
               `🍞 **food:** ${food}/10\n` +
               `🧢 **civilians:** ${civilians}/10\n` +
               `🪖 **military:** ${military}/10\n`;

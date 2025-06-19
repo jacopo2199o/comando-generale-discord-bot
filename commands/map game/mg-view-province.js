@@ -18,15 +18,25 @@ import http from "node:http";
 async function viewProvince(
   interaction
 ) {
-  // Aggiungi gli ID dei canali consentiti
-  const allowed_channels = ["1168970952311328768", "1165937736121860198"];
-  if (!allowed_channels.includes(interaction.channelId)) {
-    await interaction.reply({
-      content: "*map game* commands can only be used in *int-roleplay* channel",
-      ephemeral: true
-    });
+  const allowed_channels = [
+    "1168970952311328768",
+    "1165937736121860198"
+  ];
+
+  if (
+    !allowed_channels.includes(
+      interaction.channelId
+    )
+  ) {
+    await interaction.reply(
+      {
+        content: "*map game* commands can only be used in *int-roleplay* channel",
+        ephemeral: true
+      }
+    );
     return;
   }
+
   await interaction.deferReply(
     {
       ephemeral: true
@@ -65,17 +75,58 @@ async function viewProvince(
           ) {
             const {
               action_points,
-              player_nickname
+              player_nickname,
+              resources,
+              population,
+              materials,
+              food,
+              civilians,
+              military,
+              special_resource,
+              emoji
             } = JSON.parse(
               data
             );
-            const descsription = action_points
+            const description = action_points
               ? `🔷 *${provinceName}* of *${player_nickname}* province have:`
               : `🔷 *${provinceName}* of *${player_nickname}*`;
             const message = new EmbedBuilder().setTitle(
               "🗺️ map game - europe"
             ).setDescription(
-              descsription
+              description
+            ).addFields(
+              {
+                name: "action points",
+                value: `${action_points} 🪖`
+              },
+              {
+                name: "resources",
+                value: `${resources} 🏔️`
+              },
+              {
+                name: "population",
+                value: `${population} 👤`
+              },
+              {
+                name: "materials",
+                value: `${materials} 🪨`
+              },
+              {
+                name: "food",
+                value: `${food} 🍞`
+              },
+              {
+                name: "civilians",
+                value: `${civilians} 🧢`
+              },
+              {
+                name: "military",
+                value: `${military} 🪖`
+              },
+              {
+                name: "special resource",
+                value: `${special_resource} ${emoji}`
+              }
             ).setFooter(
               {
                 text: `${points} ⭐ to ${maker.displayName}`,
@@ -91,8 +142,7 @@ async function viewProvince(
               message.addFields(
                 {
                   name: "action points",
-                  value: `${action_points}`,
-                  inline: true
+                  value: `${action_points}`
                 }
               );
             }

@@ -288,7 +288,7 @@ commands.push(
     option => option.setName(
       "province-name"
     ).setDescription(
-      "province name with no abbreviations"
+      "nuts2 province name"
     ).setRequired(
       true
     ).setAutocomplete(
@@ -349,7 +349,7 @@ commands.push(
     option => option.setName(
       "province-name"
     ).setDescription(
-      "province name with no abbreviations"
+      "nuts2 province name"
     ).setRequired(
       true
     )
@@ -357,9 +357,9 @@ commands.push(
 );
 commands.push(
   new SlashCommandBuilder().setName(
-    "mg-view-map"
+    "mg-view-political-map"
   ).setDescription(
-    "view map game image"
+    "view a map game image of players distribution"
   )
 );
 commands.push(
@@ -484,7 +484,7 @@ commands.push(
     option => option.setName(
       "province-name"
     ).setDescription(
-      "name of the province to set as capital"
+      "nuts2 province name to set capital"
     ).setRequired(
       true
     )
@@ -499,7 +499,7 @@ commands.push(
     option => option.setName(
       "province-name"
     ).setDescription(
-      "name of the province you want to donate"
+      "nuts2 province name you want to donate"
     ).setRequired(
       true
     )
@@ -565,7 +565,7 @@ commands.push(
   new SlashCommandBuilder().setName(
     "mg-set-nation-profile"
   ).setDescription(
-    "edit your nation profile of action points distribution"
+    "set your nation profile of action points distribution"
   ).addNumberOption(
     option => option.setName(
       "resources-population"
@@ -619,6 +619,83 @@ commands.push(
     ).setAutocomplete(
       true
     )
+  )
+);
+commands.push(
+  new SlashCommandBuilder().setName(
+    "mg-set-province"
+  ).setDescription(
+    "set your province profile of action points distribution"
+  ).addStringOption(
+    option => option.setName(
+      "province-name"
+    ).setDescription(
+      "nuts2 province name"
+    ).setRequired(
+      true
+    ).setAutocomplete(
+      true
+    )
+  ).addNumberOption(
+    option => option.setName(
+      "resources-population"
+    ).setDescription(
+      "distribution of resources (up to -4) over population (up to 4)"
+    ).setMinValue(
+      -4
+    ).setMaxValue(
+      4
+    ).setRequired(
+      true
+    )
+  ).addNumberOption(
+    option => option.setName(
+      "materials-food"
+    ).setDescription(
+      "distribution of materials (up to -4) over food (up to 4)"
+    ).setMinValue(
+      -4
+    ).setMaxValue(
+      4
+    ).setRequired(
+      true
+    )
+  ).addNumberOption(
+    option => option.setName(
+      "civilians-military"
+    ).setDescription(
+      "distribution of civilians (up to -4) over military (up to 4)"
+    ).setMinValue(
+      -4
+    ).setMaxValue(
+      4
+    ).setRequired(
+      true
+    )
+  ).addStringOption(
+    option => option.setName(
+      "special-resource"
+    ).setDescription(
+      "select one special resource to produce in this province"
+    ).setRequired(
+      true
+    ).setAutocomplete(
+      true
+    )
+  )
+);
+commands.push(
+  new SlashCommandBuilder().setName(
+    "mg-view-special-resources-map"
+  ).setDescription(
+    "view a map game image of special resources distribution"
+  )
+);
+commands.push(
+  new SlashCommandBuilder().setName(
+    "mg-view-resources-map"
+  ).setDescription(
+    "view a map game image of resources distribution"
   )
 );
 

@@ -109,9 +109,8 @@ async function takeProvince(
             ) {
               message.addFields(
                 {
-                  name: "🔶 capital bonus",
-                  value: `${capital_bonus}%`,
-                  inline: true
+                  name: "capital bonus",
+                  value: `${capital_bonus}% 🔶`
                 }
               );
             }
@@ -121,9 +120,8 @@ async function takeProvince(
             ) {
               message.addFields(
                 {
-                  name: "🟦 size bonus",
-                  value: `${size_bonus}%`,
-                  inline: true
+                  name: "size bonus",
+                  value: `${size_bonus}% 🟦`
                 }
               );
             }
@@ -131,12 +129,10 @@ async function takeProvince(
             if (
               coastal_bonus
             ) {
-              console.log(`${coastal_bonus} ${province}`);
               message.addFields(
                 {
-                  name: "🌊 coastal bonus",
-                  value: `${coastal_bonus}%`,
-                  inline: true
+                  name: "coastal bonus",
+                  value: `${coastal_bonus}% 🌊`
                 }
               );
             }
@@ -146,31 +142,34 @@ async function takeProvince(
             ) {
               message.addFields(
                 {
-                  name: "🏛️ diplomacy bonus",
-                  value: `${diplomacy_bonus}%`,
-                  inline: true
+                  name: "diplomacy bonus",
+                  value: `${diplomacy_bonus}% 🏛️`
                 }
               );
             }
 
-            const defender_user = defender_id
-              ? await interaction.guild.members.fetch(
-                defender_id
-              )
-              : null;
             await interaction.editReply(
               {
-                //content: defender_user ? `<@${defender_user.id}> is under attack` : null,
                 embeds: [
                   message
                 ]
               }
             );
-            await interaction.followUp(
-              {
-                content: defender_user ? `<@${defender_user.id}> is under attack` : null,
-              }
-            );
+            // const defender_user = defender_id
+            //   ? await interaction.guild.members.fetch(
+            //     defender_id
+            //   )
+            //   : null;
+
+            if (
+              defender_id
+            ) {
+              await interaction.followUp(
+                {
+                  content: `<@${defender_id}>: you are under attack from *${attacker}* in *${province}*`,
+                }
+              );
+            }
           } else {
             await interaction.editReply(
               data

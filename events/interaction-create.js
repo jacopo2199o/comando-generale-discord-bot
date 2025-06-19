@@ -91,6 +91,9 @@ import {
 import {setDiplomacy, setDiplomacyAutocomplete} from "../commands/map game/mg-set-diplomacy.js";
 import {set_nation_profile} from "../commands/map game/mg-edit-nation-profile.js";
 import {view_nation_profile, view_player_autocomplete} from "../commands/map game/mg-view-nation-profile.js";
+import {set_province, set_province_autocomplete} from "../commands/map game/mg-set-province.js";
+import {view_special_resources_map} from "../commands/map game/mg-view-special-resources-map.js";
+import {view_resources_map} from "../commands/map game/mg-view-resources-map.js";
 
 /**
  * @param {import("discord.js").Interaction} interaction
@@ -102,8 +105,7 @@ async function interactionCreate(
     interaction.guild === null
   ) {
     const invite = "https://discord.com/api/oauth2/authorize?client_id=1149977789496311888&permissions=8&scope=bot";
-    await interaction.deferReply();
-    await interaction.editReply(
+    await interaction.reply(
       `my commands work only into servers - invite link: ${invite}`
     );
     return;
@@ -152,6 +154,12 @@ async function interactionCreate(
       interaction.commandName === "mg-view-nation-profile"
     ) {
       view_player_autocomplete(
+        interaction
+      );
+    } else if (
+      interaction.commandName === "mg-set-province"
+    ) {
+      set_province_autocomplete(
         interaction
       );
     }
@@ -309,7 +317,7 @@ async function interactionCreate(
         interaction
       );
     } else if (
-      interaction.commandName === "mg-view-map"
+      interaction.commandName === "mg-view-political-map"
     ) {
       viewMap(
         interaction
@@ -378,6 +386,24 @@ async function interactionCreate(
       interaction.commandName === "mg-view-nation-profile"
     ) {
       view_nation_profile(
+        interaction
+      );
+    } else if (
+      interaction.commandName === "mg-set-province"
+    ) {
+      set_province(
+        interaction
+      );
+    } else if (
+      interaction.commandName === "mg-view-special-resources-map"
+    ) {
+      view_special_resources_map(
+        interaction
+      );
+    } else if (
+      interaction.commandName === "mg-view-resources-map"
+    ) {
+      view_resources_map(
         interaction
       );
     } else {

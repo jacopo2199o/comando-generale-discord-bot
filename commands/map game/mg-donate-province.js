@@ -57,8 +57,9 @@ async function donateProvince(
             response.statusCode === 200
           ) {
             const {
-              donor,
-              receiver,
+              donor_nickname,
+              receiver_id,
+              receiver_nickname,
               province,
               cost
             } = JSON.parse(
@@ -67,12 +68,11 @@ async function donateProvince(
             const message = new EmbedBuilder().setTitle(
               "🗺️ map game - europe"
             ).setDescription(
-              `📜 *${donor}* donate *${province}* to *${receiver}*`
+              `📜 *${donor_nickname}* donate *${province}* to *${receiver_nickname}*`
             ).addFields(
               {
                 name: "operation cost",
-                value: `${cost} 🪙`,
-                inline: false
+                value: `${cost} 🪙`
               }
             ).setFooter(
               {
@@ -87,6 +87,11 @@ async function donateProvince(
                 embeds: [
                   message
                 ]
+              }
+            );
+            await interaction.followUp(
+              {
+                content: `<@${receiver_id}>: you received *${province}* from *${donor_nickname}*`,
               }
             );
           } else {
